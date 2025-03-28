@@ -51,7 +51,6 @@ namespace ActionTimelineReplacement
             if (!Directory.Exists(configDirPath))
             {
                 Directory.CreateDirectory(configDirPath);
-
                 ActionTimelineReplacements.Clear();
             }
             var ActionTimelines = Service.DataManager.GetExcelSheet<Lumina.Excel.Sheets.ActionTimeline>();
@@ -93,8 +92,8 @@ namespace ActionTimelineReplacement
             {
                 var ret = GetActionDataHook.Original(actionId);
                 Marshal.WriteInt16(ret + 0xC, (short)replacement.ActionTimelineHit);
-                Marshal.WriteInt16(ret + 0x1E, (short)replacement.AnimationEnd);
-                Marshal.WriteInt16(ret + 0x22, (short)replacement.AnimationStart);
+                Marshal.WriteInt16(ret + 0x20, (short)replacement.AnimationEnd);
+                Marshal.WriteInt16(ret + 0x24, (short)replacement.AnimationStart);
                 return ret;
             }
             return GetActionDataHook.Original(actionId);
