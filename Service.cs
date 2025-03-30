@@ -1,36 +1,22 @@
-using Dalamud.Data;
+using ActionTimelineReplacement.Configurations;
 using Dalamud.Game;
-using Dalamud.Game.ClientState;
-using Dalamud.Game.Command;
-using Dalamud.Game.Gui;
 using Dalamud.IoC;
 using Dalamud.Plugin;
 using Dalamud.Plugin.Services;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace SocialList
+namespace ActionTimelineReplacement;
+
+internal class Service
 {
-    internal class Service
-    {
-        [PluginService]
-        internal static IDalamudPluginInterface PluginInterface { get; set; }
-        [PluginService]
-        internal static ISigScanner Scanner { get; set; }
-        [PluginService]
-        internal static ICommandManager CommandManager { get; set; }
-        [PluginService]
-        internal static IClientState ClientState { get; set; }
-        [PluginService]
-        internal static IChatGui ChatGui { get; set; }
-        [PluginService]
-        internal static IDataManager DataManager { get; set; }
-        [PluginService]
-        internal static IGameInteropProvider GameInteropProvider { get; set; }
-        [PluginService]
-        internal static IFramework Framework { get; set; }
-    }
+    internal static Configuration Config { get; set; } = null!;
+
+    [PluginService] internal static IDalamudPluginInterface PluginInterface { get; set; } = null!;
+    [PluginService] internal static ISigScanner Scanner { get; set; } = null!;
+    [PluginService] internal static ICommandManager CommandManager { get; set; } = null!;
+    [PluginService] internal static IClientState ClientState { get; set; } = null!;
+    [PluginService] internal static IChatGui ChatGui { get; set; } = null!;
+    [PluginService] internal static IDataManager DataManager { get; set; } = null!;
+    [PluginService] internal static IGameInteropProvider GameInteropProvider { get; set; } = null!;
+    [PluginService] internal static IFramework Framework { get; set; } = null!;
+    [PluginService] public static IPluginLog Log { get; set; } = null!;
 }
