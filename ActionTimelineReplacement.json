@@ -4,5 +4,6 @@
   "Punchline": "A simple plugin to replace timelines of actions.",
   "Description": "A simple plugin to replace timelines of actions.",
   "RepoUrl": "https://github.com/Loskh/ActionTimelineReplacement",
+  "Tags" : ["Action"],
   "IconUrl": "https://raw.githubusercontent.com/papapachin/ActionTimelineReplacement/Global/actiontimeline.png"
 }
