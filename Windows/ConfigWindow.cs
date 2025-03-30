@@ -4,6 +4,7 @@ using System.Numerics;
 using System.Runtime.InteropServices;
 using ActionTimelineReplacement.Configurations;
 using ActionTimelineReplacement.Hookers;
+using Dalamud.Interface;
 using Dalamud.Interface.Colors;
 using Dalamud.Interface.GameFonts;
 using Dalamud.Interface.ImGuiFileDialog;
@@ -122,7 +123,7 @@ public sealed class ConfigWindow : Window
                     {
                         Service.Config.ActionTimelineReplacements.Remove(set);
                         Service.Config.Save();
-                        Methods.SetupAction(set.Replacements.Keys);
+                        Methods.SetupActions(set.Replacements.Keys);
                         ImGui.CloseCurrentPopup();
                     }
                 }
@@ -146,7 +147,7 @@ public sealed class ConfigWindow : Window
                 {
                     if (ActionTimelineReplacementSet.Load(file) is not { } set) continue;
                     Service.Config.ActionTimelineReplacements.Add(set);
-                    Methods.SetupAction(set.Replacements.Keys);
+                    Methods.SetupActions(set.Replacements.Keys);
                 }
 
                 Service.Config.Save();
@@ -175,7 +176,7 @@ public sealed class ConfigWindow : Window
 
         if (ImGui.Checkbox("Enable", ref _activeSet.Enabled))
         {
-            Methods.SetupAction(_activeSet.Replacements.Keys);
+            Methods.SetupActions(_activeSet.Replacements.Keys);
             Service.Config.Save();
         }
 
@@ -183,7 +184,7 @@ public sealed class ConfigWindow : Window
         ImGui.SetNextItemWidth(50 * Scale);
         if (ImGui.DragInt("Priority", ref _activeSet.Priority))
         {
-            Methods.SetupAction(_activeSet.Replacements.Keys);
+            Methods.SetupActions(_activeSet.Replacements.Keys);
             Service.Config.Save();
         }
 
@@ -218,20 +219,20 @@ public sealed class ConfigWindow : Window
                 ImGui.Text(ReplacementsManager.GetName(key));
 
                 ImGui.TableNextColumn();
-                DrawItem("Start", ref replacement.Replacement.AnimationStart);
+                DrawItem("Start", ref replacement.Replacement.AnimationStart, i => i.AnimationStart);
 
                 ImGui.TableNextColumn();
-                DrawItem("End", ref replacement.Replacement.AnimationEnd);
+                DrawItem("End", ref replacement.Replacement.AnimationEnd, i => i.AnimationEnd);
 
                 ImGui.TableNextColumn();
-                DrawItem("Hit", ref replacement.Replacement.ActionTimelineHit);
+                DrawItem("Hit", ref replacement.Replacement.ActionTimelineHit, i => i.ActionTimelineHit);
 
                 ImGui.TableNextColumn();
-                DrawItem("Cast", ref replacement.Replacement.CastVfx);
+                DrawItem("Cast", ref replacement.Replacement.CastVfx, i => i.CastVfx);
 
                 continue;
 
-                void DrawItem(string name, ref ushort value)
+                void DrawItem(string name, ref ushort value, Func<Configurations.ActionTimelineReplacement,ushort> getDefault)
                 {
                     ImGui.SetNextItemWidth(80 * Scale);
                     int relay = value;
@@ -240,6 +241,17 @@ public sealed class ConfigWindow : Window
                         value = (ushort)relay;
                         Methods.SetupAction(key);
                         Service.Config.Save();
+                    }
+
+                    ImGui.SameLine();
+                    using (ImRaii.PushFont(UiBuilder.IconFont))
+                    {
+                        if (ImGui.Button($"{FontAwesomeIcon.Reply.ToIconString()}##{name}{key}"))
+                        {
+                            value =getDefault(ReplacementsManager.GetOriginalReplacement(key));
+                            Methods.SetupAction(key);
+                            Service.Config.Save();
+                        }
                     }
                 }
             }
@@ -269,8 +281,13 @@ public sealed class ConfigWindow : Window
             {
                 if (ImGui.Selectable($"#{pair.Key:D5} {pair.Value}"))
                 {
+                    var original = ReplacementsManager.GetOriginalReplacement(pair.Key);
                     _activeSet.Replacements[pair.Key] =
-                        new ActionTimelineReplacementConfig(new Configurations.ActionTimelineReplacement(0, 0, 0, 0),
+                        new ActionTimelineReplacementConfig(new Configurations.ActionTimelineReplacement(
+                                original.AnimationStart,
+                                original.AnimationEnd,
+                                original.ActionTimelineHit,
+                                original.CastVfx),
                             false);
                     Service.Config.Save();
                 }
@@ -319,8 +336,15 @@ public sealed class ConfigWindow : Window
     {
         if (ImGui.Checkbox("Enable", ref Service.Config.EnableReplacement))
         {
-            Methods.SetupAction(ReplacementsManager.AllActionIds);
+            Methods.SetupActions(ReplacementsManager.AllActionIds);
             Service.Config.Save();
+        }
+
+        ImGui.SameLine();
+
+        if (ImGui.Button("Redraw"))
+        {
+            Methods.SetupActions(ReplacementsManager.AllActionIds);
         }
     }
 

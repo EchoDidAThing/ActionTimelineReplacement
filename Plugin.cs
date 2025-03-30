@@ -21,13 +21,13 @@ public sealed class Plugin : IDalamudPlugin
         //添加各种小模组
         _disposables = [new WindowManager()];
 
-        Methods.SetupAction(ReplacementsManager.AllActionIds);
+        Methods.SetupActions(ReplacementsManager.AllActionIds);
 
     }
 
     public void Dispose()
     {
-        Methods.SetupAction(ReplacementsManager.AllActionIds, true);
+        Methods.SetupActions(ReplacementsManager.AllActionIds, true);
         Service.Config.Save();
         foreach (var disposable in _disposables)
         {

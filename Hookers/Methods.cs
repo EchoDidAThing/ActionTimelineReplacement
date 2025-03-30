@@ -19,7 +19,7 @@ public static unsafe class Methods
         return _getActionDataHook(actionId);
     }
 
-    public static void SetupAction(IEnumerable<uint> actionIds, bool reset = false)
+    public static void SetupActions(IEnumerable<uint> actionIds, bool reset = false)
     {
         foreach (var actionId in actionIds)
         {
@@ -34,6 +34,8 @@ public static unsafe class Methods
             ? ReplacementsManager.GetOriginalReplacement(actionId)
             : ReplacementsManager.GetReplacement(actionId);
 
+        Service.Log.Info("Set the Action[{ActionID}] with Start[{Start}] End[{End}] Hit[{Hit}] Vfc[{Vfx}]",
+            actionId, replacement.AnimationStart, replacement.AnimationEnd, replacement.ActionTimelineHit, replacement.CastVfx);
         replacement.WriteToPointer(data);
     }
 }
