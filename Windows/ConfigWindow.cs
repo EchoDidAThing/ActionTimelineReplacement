@@ -31,10 +31,10 @@ public sealed class ConfigWindow : Window
             ImGuiWindowFlags.NoScrollbar)
     {
         SizeCondition = ImGuiCond.FirstUseEver;
-        Size = new Vector2(500, 200);
+        Size = new Vector2(960, 540);
         SizeConstraints = new WindowSizeConstraints()
         {
-            MinimumSize = new Vector2(250, 300),
+            MinimumSize = new Vector2(960, 540),
             MaximumSize = new Vector2(5000, 5000),
         };
     }
@@ -48,6 +48,7 @@ public sealed class ConfigWindow : Window
 
         ImGui.TableSetupColumn("Rotation Config Side Bar", ImGuiTableColumnFlags.WidthFixed, 100 * Scale);
         ImGui.TableNextColumn();
+
         try
         {
             using var style = ImRaii.PushStyle(ImGuiStyleVar.SelectableTextAlign, new Vector2(0.5f, 0.5f));
@@ -155,6 +156,8 @@ public sealed class ConfigWindow : Window
         }
     }
 
+    private float _itemWidth;
+
     private void DrawBody()
     {
         using var child = ImRaii.Child("Body", -Vector2.One, false, ImGuiWindowFlags.NoScrollbar);
@@ -188,108 +191,143 @@ public sealed class ConfigWindow : Window
             Service.Config.Save();
         }
 
-        using (ImRaii.Table("SetSkills", 5, ImGuiTableFlags.Resizable))
+        ImGui.SetCursorPosY(ImGui.GetCursorPosY() + 10 * Scale);
+
+        using (ImRaii.PushFont(GetFont(18)))
         {
-            ImGui.TableSetupColumn("Skill", ImGuiTableColumnFlags.WidthStretch);
-            ImGui.TableSetupColumn("Start timeline", ImGuiTableColumnFlags.WidthFixed);
-            ImGui.TableSetupColumn("End timeline", ImGuiTableColumnFlags.WidthFixed);
-            ImGui.TableSetupColumn("Hit timeline", ImGuiTableColumnFlags.WidthFixed);
-            ImGui.TableSetupColumn("Cast Vfx", ImGuiTableColumnFlags.WidthFixed);
-            ImGui.TableHeadersRow();
+            ImGui.Text("Skill");
 
-            foreach (var key in _activeSet.Replacements.Keys)
+            if (_itemWidth == 0)
             {
-                var replacement = _activeSet.Replacements[key];
-                ImGui.TableNextRow();
-
-                ImGui.TableNextColumn();
-                if (ImGui.Checkbox("##" + key, ref replacement.Enabled))
-                {
-                    Methods.SetupAction(key);
-                    Service.Config.Save();
-                }
+                ImGui.SameLine();
+                ImGui.Text(" Cast Vfx Start timeline End timeline Hit timeline");
+            }
+            else
+            {
+                ImGui.SameLine();
+                ImGui.SetCursorPosX(ImGui.GetWindowWidth() - _itemWidth * 4 / 4);
+                ImGui.Text("Cast Vfx");
 
                 ImGui.SameLine();
-                if (ImGui.Button(" - ##" + key))
-                {
-                    _activeSet.Replacements.Remove(key);
-                }
+                ImGui.SetCursorPosX(ImGui.GetWindowWidth() - _itemWidth * 3 / 4);
+                ImGui.Text("Start timeline");
 
                 ImGui.SameLine();
-                ImGui.Text(ReplacementsManager.GetName(key));
+                ImGui.SetCursorPosX(ImGui.GetWindowWidth() - _itemWidth * 2 / 4);
+                ImGui.Text("End timeline");
 
-                ImGui.TableNextColumn();
-                DrawItem("Start", ref replacement.Replacement.AnimationStart, i => i.AnimationStart);
+                ImGui.SameLine();
+                ImGui.SetCursorPosX(ImGui.GetWindowWidth() - _itemWidth * 1 / 4);
+                ImGui.Text("Hit timeline");
+            }
+        }
 
-                ImGui.TableNextColumn();
-                DrawItem("End", ref replacement.Replacement.AnimationEnd, i => i.AnimationEnd);
-
-                ImGui.TableNextColumn();
-                DrawItem("Hit", ref replacement.Replacement.ActionTimelineHit, i => i.ActionTimelineHit);
-
-                ImGui.TableNextColumn();
-                DrawItem("Cast", ref replacement.Replacement.CastVfx, i => i.CastVfx);
-
-                continue;
-
-                void DrawItem(string name, ref ushort value, Func<Configurations.ActionTimelineReplacement,ushort> getDefault)
+        using (var subList = ImRaii.Child("SubList", -Vector2.One, false))
+        {
+            if (subList)
+            {
+                foreach (var key in _activeSet.Replacements.Keys)
                 {
-                    ImGui.SetNextItemWidth(80 * Scale);
-                    int relay = value;
-                    if (ImGui.DragInt("##" + name + key, ref relay))
+                    var replacement = _activeSet.Replacements[key];
+
+                    if (ImGui.Checkbox("##" + key, ref replacement.Enabled))
                     {
-                        value = (ushort)relay;
                         Methods.SetupAction(key);
                         Service.Config.Save();
                     }
 
                     ImGui.SameLine();
-                    using (ImRaii.PushFont(UiBuilder.IconFont))
+                    if (ImGui.Button(" - ##" + key))
                     {
-                        if (ImGui.Button($"{FontAwesomeIcon.Reply.ToIconString()}##{name}{key}"))
+                        _activeSet.Replacements.Remove(key);
+                    }
+
+                    ImGui.SameLine();
+                    ImGui.Text(ReplacementsManager.GetName(key));
+
+                    ImGui.SameLine();
+                    if (_itemWidth != 0)
+                    {
+                        ImGui.SetCursorPosX(ImGui.GetWindowWidth() - _itemWidth);
+                    }
+
+                    var startwidth = ImGui.GetCursorPosX();
+                    DrawItem("Cast", ref replacement.Replacement.CastVfx, i => i.CastVfx);
+                    ImGui.SameLine();
+
+                    DrawItem("Start", ref replacement.Replacement.AnimationStart, i => i.AnimationStart);
+
+                    ImGui.SameLine();
+                    DrawItem("End", ref replacement.Replacement.AnimationEnd, i => i.AnimationEnd);
+
+                    ImGui.SameLine();
+                    DrawItem("Hit", ref replacement.Replacement.ActionTimelineHit, i => i.ActionTimelineHit);
+
+                    ImGui.SameLine();
+                    _itemWidth = ImGui.GetCursorPosX() - startwidth;
+                    ImGui.NewLine();
+                    continue;
+
+                    void DrawItem(string name, ref ushort value,
+                        Func<Configurations.ActionTimelineReplacement, ushort> getDefault)
+                    {
+                        ImGui.SetNextItemWidth(60 * Scale);
+                        int relay = value;
+                        if (ImGui.DragInt("##" + name + key, ref relay))
                         {
-                            value =getDefault(ReplacementsManager.GetOriginalReplacement(key));
+                            value = (ushort)relay;
                             Methods.SetupAction(key);
                             Service.Config.Save();
                         }
+
+                        ImGui.SameLine();
+                        using (ImRaii.PushFont(UiBuilder.IconFont))
+                        {
+                            if (ImGui.Button($"{FontAwesomeIcon.Reply.ToIconString()}##{name}{key}"))
+                            {
+                                value = getDefault(ReplacementsManager.GetOriginalReplacement(key));
+                                Methods.SetupAction(key);
+                                Service.Config.Save();
+                            }
+                        }
                     }
                 }
-            }
-        }
 
-        const string searchActionsPopup = "Search actions";
-        if (ImGui.Button(" + "))
-        {
-            ImGui.OpenPopup(searchActionsPopup);
-        }
-
-        using var searchPopup = ImRaii.Popup(searchActionsPopup);
-        if (searchPopup)
-        {
-            var width = 200 * Scale;
-
-            ImGui.SetNextItemWidth(width);
-            ImGui.InputText("##Search Action", ref _searchAction, 256);
-
-            using var popUpChild = ImRaii.Child(searchActionsPopup, new Vector2(width, 200 * Scale), true);
-            foreach (var pair in ReplacementsManager.ActionNames.OrderBy(i =>
-                     {
-                         if (string.IsNullOrEmpty(_searchAction)) return 0;
-                         return Math.Min(ScoreString(i.Value, _searchAction),
-                             ScoreString(i.Key.ToString(), _searchAction));
-                     }))
-            {
-                if (ImGui.Selectable($"#{pair.Key:D5} {pair.Value}"))
+                const string searchActionsPopup = "Search actions";
+                if (ImGui.Button(" + "))
                 {
-                    var original = ReplacementsManager.GetOriginalReplacement(pair.Key);
-                    _activeSet.Replacements[pair.Key] =
-                        new ActionTimelineReplacementConfig(new Configurations.ActionTimelineReplacement(
-                                original.AnimationStart,
-                                original.AnimationEnd,
-                                original.ActionTimelineHit,
-                                original.CastVfx),
-                            false);
-                    Service.Config.Save();
+                    ImGui.OpenPopup(searchActionsPopup);
+                }
+
+                using var searchPopup = ImRaii.Popup(searchActionsPopup);
+                if (searchPopup)
+                {
+                    var width = 200 * Scale;
+
+                    ImGui.SetNextItemWidth(width);
+                    ImGui.InputText("##Search Action", ref _searchAction, 256);
+
+                    using var popUpChild = ImRaii.Child(searchActionsPopup, new Vector2(width, 200 * Scale), true);
+                    foreach (var pair in ReplacementsManager.ActionNames.OrderBy(i =>
+                             {
+                                 if (string.IsNullOrEmpty(_searchAction)) return 0;
+                                 return Math.Min(ScoreString(i.Value, _searchAction),
+                                     ScoreString(i.Key.ToString(), _searchAction));
+                             }))
+                    {
+                        if (ImGui.Selectable($"#{pair.Key:D5} {pair.Value}"))
+                        {
+                            var original = ReplacementsManager.GetOriginalReplacement(pair.Key);
+                            _activeSet.Replacements[pair.Key] =
+                                new ActionTimelineReplacementConfig(new Configurations.ActionTimelineReplacement(
+                                        original.AnimationStart,
+                                        original.AnimationEnd,
+                                        original.ActionTimelineHit,
+                                        original.CastVfx),
+                                    false);
+                            Service.Config.Save();
+                        }
+                    }
                 }
             }
         }
@@ -303,8 +341,10 @@ public sealed class ConfigWindow : Window
         {
             return s1.Length - search.Length;
         }
-        return LevenshteinDistance(s1, search)  + 20;
+
+        return LevenshteinDistance(s1, search) + 20;
     }
+
     private static int LevenshteinDistance(string s1, string s2)
     {
         var len1 = s1.Length;
