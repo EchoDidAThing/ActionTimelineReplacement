@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
 using ActionTimelineReplacement.Configurations;
 using Dalamud.Game;
 using Dalamud.IoC;
@@ -15,6 +16,8 @@ internal class Service
 
     private static Dictionary<uint, string>? _actionNames;
 
+    private static Dictionary<uint, Configurations.ActionTimelineReplacement> _oldValue = [];
+
     public static Dictionary<uint, string> ActionNames => _actionNames
         ??= DataManager.GetExcelSheet<Action>()
             .Where(i => !string.IsNullOrEmpty(i.Name.ToString()))
@@ -24,6 +27,22 @@ internal class Service
     {
         var actionName = ActionNames.GetValueOrDefault(id, "Unknown");
         return $"#{id:D5} {actionName}";
+    }
+
+    public static Configurations.ActionTimelineReplacement GetOriginalReplacement(uint actionId)
+    {
+        ref var replacement = ref CollectionsMarshal.GetValueRefOrAddDefault(_oldValue, actionId, out var exists);
+        if (!exists)
+        {
+            var act = DataManager.GetExcelSheet<Action>()?.GetRow(actionId);
+            replacement = new Configurations.ActionTimelineReplacement(
+                (ushort)(act?.AnimationStart.RowId ?? 0),
+                (ushort)(act?.AnimationEnd.RowId ?? 0),
+                (ushort)(act?.ActionTimelineHit.RowId ?? 0),
+                (ushort)(act?.VFX.RowId ?? 0));
+        }
+
+        return replacement;
     }
 
     [PluginService] internal static IDalamudPluginInterface PluginInterface { get; set; } = null!;

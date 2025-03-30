@@ -21,21 +21,20 @@ public unsafe class Hooker : IDisposable
     private ActionData* GetActionDataDetour(uint actionId)
     {
         var ret = GetActionDataHook.Original(actionId);
-        if (!Service.Config.EnableReplacement) return ret;
-
-        foreach (var replacement in Service.Config.ActionTimelineReplacements
-                     .Where(replacement => replacement.Enabled)
-                     .OrderByDescending(replacement => replacement.Priority))
+        if (Service.Config.EnableReplacement)
         {
-            if (!replacement.Replacements.TryGetValue(actionId, out var replacementValue)) continue;
-            if (!replacementValue.Enabled) continue;
-            var replacementItem = replacementValue.Replacement;
+            foreach (var replacement in Service.Config.ActionTimelineReplacements
+                         .Where(replacement => replacement.Enabled)
+                         .OrderByDescending(replacement => replacement.Priority))
+            {
+                if (!replacement.Replacements.TryGetValue(actionId, out var replacementValue)) continue;
+                if (!replacementValue.Enabled) continue;
 
-            replacementItem.WriteToPointer(ret);
-            break;
+                return  replacementValue.Replacement.WriteToPointer(ret);
+            }
         }
-
-        return ret;
+        
+        return  Service.GetOriginalReplacement(actionId).WriteToPointer(ret);
     }
 
     public void Dispose()

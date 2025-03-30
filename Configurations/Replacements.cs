@@ -76,16 +76,12 @@ public class ActionTimelineReplacement(
     public ushort AnimationEnd = animationEnd;
     public ushort ActionTimelineHit = actionTimelineHit;
     public ushort CastVfx = castVfx;
-    public unsafe void WriteToPointer(ActionData* pointer)
+    public unsafe ActionData* WriteToPointer(ActionData* pointer)
     {
         pointer->CastVfx = CastVfx;
         pointer->AnimationStart = AnimationStart;
         pointer->AnimationEnd = AnimationEnd;
         pointer->ActionTimelineHit = ActionTimelineHit;
-
-        // Marshal.WriteInt16(pointer + 0xA, (short)CastVfx);
-        // Marshal.WriteInt16(pointer + 0xC, (short)ActionTimelineHit);
-        // Marshal.WriteInt16(pointer + 0x20, (short)AnimationEnd);
-        // Marshal.WriteInt16(pointer + 0x24, (short)AnimationStart);
+        return pointer;
     }
 }
