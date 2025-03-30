@@ -3,6 +3,7 @@ using System.Linq;
 using System.Numerics;
 using System.Runtime.InteropServices;
 using ActionTimelineReplacement.Configurations;
+using ActionTimelineReplacement.Hookers;
 using Dalamud.Interface.Colors;
 using Dalamud.Interface.GameFonts;
 using Dalamud.Interface.ImGuiFileDialog;
@@ -121,6 +122,7 @@ public sealed class ConfigWindow : Window
                     {
                         Service.Config.ActionTimelineReplacements.Remove(set);
                         Service.Config.Save();
+                        Methods.SetupAction(set.Replacements.Keys);
                         ImGui.CloseCurrentPopup();
                     }
                 }
@@ -144,6 +146,7 @@ public sealed class ConfigWindow : Window
                 {
                     if (ActionTimelineReplacementSet.Load(file) is not { } set) continue;
                     Service.Config.ActionTimelineReplacements.Add(set);
+                    Methods.SetupAction(set.Replacements.Keys);
                 }
 
                 Service.Config.Save();
@@ -172,6 +175,7 @@ public sealed class ConfigWindow : Window
 
         if (ImGui.Checkbox("Enable", ref _activeSet.Enabled))
         {
+            Methods.SetupAction(_activeSet.Replacements.Keys);
             Service.Config.Save();
         }
 
@@ -179,6 +183,7 @@ public sealed class ConfigWindow : Window
         ImGui.SetNextItemWidth(50 * Scale);
         if (ImGui.DragInt("Priority", ref _activeSet.Priority))
         {
+            Methods.SetupAction(_activeSet.Replacements.Keys);
             Service.Config.Save();
         }
 
@@ -199,6 +204,7 @@ public sealed class ConfigWindow : Window
                 ImGui.TableNextColumn();
                 if (ImGui.Checkbox("##" + key, ref replacement.Enabled))
                 {
+                    Methods.SetupAction(key);
                     Service.Config.Save();
                 }
 
@@ -209,7 +215,7 @@ public sealed class ConfigWindow : Window
                 }
 
                 ImGui.SameLine();
-                ImGui.Text(Service.GetName(key));
+                ImGui.Text(ReplacementsManager.GetName(key));
 
                 ImGui.TableNextColumn();
                 DrawItem("Start", ref replacement.Replacement.AnimationStart);
@@ -232,6 +238,7 @@ public sealed class ConfigWindow : Window
                     if (ImGui.DragInt("##" + name + key, ref relay))
                     {
                         value = (ushort)relay;
+                        Methods.SetupAction(key);
                         Service.Config.Save();
                     }
                 }
@@ -253,7 +260,7 @@ public sealed class ConfigWindow : Window
             ImGui.InputText("##Search Action", ref _searchAction, 256);
 
             using var popUpChild = ImRaii.Child(searchActionsPopup, new Vector2(width, 200 * Scale), true);
-            foreach (var pair in Service.ActionNames.OrderBy(i =>
+            foreach (var pair in ReplacementsManager.ActionNames.OrderBy(i =>
                      {
                          if (string.IsNullOrEmpty(_searchAction)) return 0;
                          return Math.Min(ScoreString(i.Value, _searchAction),
@@ -312,6 +319,7 @@ public sealed class ConfigWindow : Window
     {
         if (ImGui.Checkbox("Enable", ref Service.Config.EnableReplacement))
         {
+            Methods.SetupAction(ReplacementsManager.AllActionIds);
             Service.Config.Save();
         }
     }

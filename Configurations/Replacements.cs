@@ -76,12 +76,11 @@ public class ActionTimelineReplacement(
     public ushort AnimationEnd = animationEnd;
     public ushort ActionTimelineHit = actionTimelineHit;
     public ushort CastVfx = castVfx;
-    public unsafe ActionData* WriteToPointer(ActionData* pointer)
+    public unsafe void WriteToPointer(ActionData* pointer)
     {
         pointer->CastVfx = CastVfx;
         pointer->AnimationStart = AnimationStart;
         pointer->AnimationEnd = AnimationEnd;
         pointer->ActionTimelineHit = ActionTimelineHit;
-        return pointer;
     }
 }

@@ -19,11 +19,15 @@ public sealed class Plugin : IDalamudPlugin
         Service.Config = pluginInterface.GetPluginConfig() as Configuration ?? new Configuration();
 
         //添加各种小模组
-        _disposables = [new Hooker(), new WindowManager()];
+        _disposables = [new WindowManager()];
+
+        Methods.SetupAction(ReplacementsManager.AllActionIds);
+
     }
 
     public void Dispose()
     {
+        Methods.SetupAction(ReplacementsManager.AllActionIds, true);
         Service.Config.Save();
         foreach (var disposable in _disposables)
         {
