@@ -34,7 +34,7 @@ public sealed class ConfigWindow : Window
         Size = new Vector2(960, 540);
         SizeConstraints = new WindowSizeConstraints()
         {
-            MinimumSize = new Vector2(960, 540),
+            MinimumSize = new Vector2(480, 360),
             MaximumSize = new Vector2(5000, 5000),
         };
     }
@@ -262,20 +262,19 @@ public sealed class ConfigWindow : Window
                     ImGui.Text($"#{key:D5}");
 
                     ImGui.SameLine();
-                    if (_itemWidth != 0)
+                    if (_itemWidth != 0 && Service.Config.AdvancedMode)
                     {
                         var widthRest = ImGui.GetWindowWidth() - _itemWidth - ImGui.GetCursorPosX() - 5 * Scale;
                         ImGui.PushTextWrapPos(Math.Max(widthRest, 60 * Scale)+ ImGui.GetCursorPosX());
                     }
                     ImGui.TextWrapped(ReplacementsManager.GetName(key));
-                    if (_itemWidth != 0)
+                    if (_itemWidth != 0 && Service.Config.AdvancedMode)
                     {
                         ImGui.PopTextWrapPos();
                     }
 
                     if (!Service.Config.AdvancedMode)
                     {
-                        _itemWidth = 0;
                         continue;
                     }
 
@@ -421,9 +420,10 @@ public sealed class ConfigWindow : Window
         }
 
         ImGui.SameLine();
-        if (ImGui.Button(Service.Config.AdvancedMode ? "simple using mode" : "advanced editing mode"))
+        if (ImGui.Button(Service.Config.AdvancedMode ? "To Simple Mode" : "To Advanced Mode"))
         {
             Service.Config.AdvancedMode = !Service.Config.AdvancedMode;
+            Service.Config.Save();
         }
     }
 
