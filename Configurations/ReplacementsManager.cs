@@ -21,8 +21,7 @@ public static class ReplacementsManager
 
     public static string GetName(uint id)
     {
-        var actionName = ActionNames.GetValueOrDefault(id, "Unknown");
-        return $"#{id:D5} {actionName}";
+        return ActionNames.GetValueOrDefault(id, "Unknown");
     }
 
     public static ActionTimelineReplacement GetReplacement(uint actionId)

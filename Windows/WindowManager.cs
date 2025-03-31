@@ -14,12 +14,18 @@ public sealed class WindowManager : IDisposable
         Service.PluginInterface.UiBuilder.Draw += DrawUi;
         Service.PluginInterface.UiBuilder.OpenConfigUi += _configWindow.Toggle;
         Service.PluginInterface.UiBuilder.OpenMainUi += _configWindow.Toggle;
+        Service.CommandManager.AddHandler("/atr", new((_, _) => _configWindow.Toggle())
+        {
+            HelpMessage = "Toggle action timeline config window",
+            ShowInHelp = true,
+        });
     }
     public void Dispose()
     {
         Service.PluginInterface.UiBuilder.Draw -= DrawUi;
         Service.PluginInterface.UiBuilder.OpenConfigUi -= _configWindow.Toggle;
         Service.PluginInterface.UiBuilder.OpenMainUi -= _configWindow.Toggle;
+        Service.CommandManager.RemoveHandler("/atr");
         _windowSystem.RemoveAllWindows();
     }
 

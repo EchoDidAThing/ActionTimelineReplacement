@@ -11,6 +11,8 @@ public class Configuration: IPluginConfiguration
     public int Version { get; set; } = 0;
 
     public bool EnableReplacement = true;
+
+    public bool AdvancedMode = false;
     public List<ActionTimelineReplacementSet> ActionTimelineReplacements { get; set; } = [];
 
     internal void Save()

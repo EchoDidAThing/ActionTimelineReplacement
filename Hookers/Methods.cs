@@ -12,8 +12,7 @@ public static unsafe class Methods
 
     private static ActionData* GetActionData(uint actionId)
     {
-        _getActionDataHook ??=
-            Marshal.GetDelegateForFunctionPointer<GetActionDataDelegate>(
+        _getActionDataHook ??= Marshal.GetDelegateForFunctionPointer<GetActionDataDelegate>(
                 Service.Scanner.ScanText("E8 ?? ?? ?? ?? 80 FB 12"));
 
         return _getActionDataHook(actionId);

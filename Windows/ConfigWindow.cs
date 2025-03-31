@@ -75,10 +75,12 @@ public sealed class ConfigWindow : Window
 
     private void DrawSideBar()
     {
+        using var windowPadding = ImRaii.PushStyle(ImGuiStyleVar.WindowPadding, Vector2.Zero);
+
         using var child = ImRaii.Child("Side bar", -Vector2.One, true, ImGuiWindowFlags.NoScrollbar);
         if (!child) return;
 
-        var itemHeight = ImGui.CalcTextSize("C").Y + ImGui.GetStyle().CellPadding.Y * 2 +
+        var itemHeight = ImGui.CalcTextSize("C").Y + ImGui.GetStyle().FramePadding.Y * 2 +
                          ImGui.GetStyle().WindowPadding.Y;
 
         using (ImRaii.Child("Items",
@@ -122,6 +124,7 @@ public sealed class ConfigWindow : Window
 
                     if (ImGui.Selectable("Delete"))
                     {
+                        if (_activeSet == set) _activeSet = null;
                         Service.Config.ActionTimelineReplacements.Remove(set);
                         Service.Config.Save();
                         Methods.SetupActions(set.Replacements.Keys);
@@ -132,27 +135,37 @@ public sealed class ConfigWindow : Window
         }
 
         ImGui.SetCursorPosY(ImGui.GetWindowSize().Y - itemHeight);
-        if (ImGui.Button("Create"))
-        {
-            Service.Config.ActionTimelineReplacements.Add(new ActionTimelineReplacementSet("New Item", [], true, 0));
-            Service.Config.Save();
-        }
 
-        ImGui.SameLine();
-        if (ImGui.Button("Import"))
+        using (ImRaii.PushStyle(ImGuiStyleVar.ItemSpacing, new Vector2(0, 0)))
         {
-            _dialogManager.OpenFileDialog("Import", ".json", (b, files) =>
+            using var corner = ImRaii.PushStyle(ImGuiStyleVar.FrameRounding, 0);
+            var width = Math.Max(ImGui.GetWindowWidth() / 2, 60 * Scale);
+            var buttonSize = new Vector2(width, 0);
+
+            ImGui.PushItemWidth(width);
+            if (ImGui.Button("Create", buttonSize))
             {
-                if (!b) return;
-                foreach (var file in files)
-                {
-                    if (ActionTimelineReplacementSet.Load(file) is not { } set) continue;
-                    Service.Config.ActionTimelineReplacements.Add(set);
-                    Methods.SetupActions(set.Replacements.Keys);
-                }
-
+                Service.Config.ActionTimelineReplacements.Add(new ActionTimelineReplacementSet("New Item", [], true, 0));
                 Service.Config.Save();
-            }, 10, ".");
+            }
+
+            ImGui.SameLine();
+            if (ImGui.Button("Import", buttonSize))
+            {
+                _dialogManager.OpenFileDialog("Import", ".json", (b, files) =>
+                {
+                    if (!b) return;
+                    foreach (var file in files)
+                    {
+                        if (ActionTimelineReplacementSet.Load(file) is not { } set) continue;
+                        Service.Config.ActionTimelineReplacements.Add(set);
+                        Methods.SetupActions(set.Replacements.Keys);
+                    }
+
+                    Service.Config.Save();
+                }, 10, ".");
+            }
+            ImGui.PopItemWidth();
         }
     }
 
@@ -193,34 +206,37 @@ public sealed class ConfigWindow : Window
 
         ImGui.SetCursorPosY(ImGui.GetCursorPosY() + 10 * Scale);
 
-        using (ImRaii.PushFont(GetFont(18)))
-        {
-            ImGui.Text("Skill");
-
-            if (_itemWidth == 0)
+            using (ImRaii.PushFont(GetFont(18)))
             {
-                ImGui.SameLine();
-                ImGui.Text(" Cast Vfx Start timeline End timeline Hit timeline");
+                ImGui.Text("Skill");
+
+                if (Service.Config.AdvancedMode)
+                {
+                    if (_itemWidth == 0)
+                    {
+                        ImGui.SameLine();
+                        ImGui.Text(" Cast Vfx Start timeline End timeline Hit timeline");
+                    }
+                    else
+                    {
+                        ImGui.SameLine();
+                        ImGui.SetCursorPosX(ImGui.GetWindowWidth() - _itemWidth * 4 / 4);
+                        ImGui.Text("Cast Vfx");
+
+                        ImGui.SameLine();
+                        ImGui.SetCursorPosX(ImGui.GetWindowWidth() - _itemWidth * 3 / 4);
+                        ImGui.Text("Start timeline");
+
+                        ImGui.SameLine();
+                        ImGui.SetCursorPosX(ImGui.GetWindowWidth() - _itemWidth * 2 / 4);
+                        ImGui.Text("End timeline");
+
+                        ImGui.SameLine();
+                        ImGui.SetCursorPosX(ImGui.GetWindowWidth() - _itemWidth * 1 / 4);
+                        ImGui.Text("Hit timeline");
+                    }
+                }
             }
-            else
-            {
-                ImGui.SameLine();
-                ImGui.SetCursorPosX(ImGui.GetWindowWidth() - _itemWidth * 4 / 4);
-                ImGui.Text("Cast Vfx");
-
-                ImGui.SameLine();
-                ImGui.SetCursorPosX(ImGui.GetWindowWidth() - _itemWidth * 3 / 4);
-                ImGui.Text("Start timeline");
-
-                ImGui.SameLine();
-                ImGui.SetCursorPosX(ImGui.GetWindowWidth() - _itemWidth * 2 / 4);
-                ImGui.Text("End timeline");
-
-                ImGui.SameLine();
-                ImGui.SetCursorPosX(ImGui.GetWindowWidth() - _itemWidth * 1 / 4);
-                ImGui.Text("Hit timeline");
-            }
-        }
 
         using (var subList = ImRaii.Child("SubList", -Vector2.One, false))
         {
@@ -243,7 +259,25 @@ public sealed class ConfigWindow : Window
                     }
 
                     ImGui.SameLine();
-                    ImGui.Text(ReplacementsManager.GetName(key));
+                    ImGui.Text($"#{key:D5}");
+
+                    ImGui.SameLine();
+                    if (_itemWidth != 0)
+                    {
+                        var widthRest = ImGui.GetWindowWidth() - _itemWidth - ImGui.GetCursorPosX() - 5 * Scale;
+                        ImGui.PushTextWrapPos(Math.Max(widthRest, 60 * Scale)+ ImGui.GetCursorPosX());
+                    }
+                    ImGui.TextWrapped(ReplacementsManager.GetName(key));
+                    if (_itemWidth != 0)
+                    {
+                        ImGui.PopTextWrapPos();
+                    }
+
+                    if (!Service.Config.AdvancedMode)
+                    {
+                        _itemWidth = 0;
+                        continue;
+                    }
 
                     ImGui.SameLine();
                     if (_itemWidth != 0)
@@ -371,7 +405,6 @@ public sealed class ConfigWindow : Window
         return dp[len1, len2];
     }
 
-
     private static void DrawHeader()
     {
         if (ImGui.Checkbox("Enable", ref Service.Config.EnableReplacement))
@@ -385,6 +418,12 @@ public sealed class ConfigWindow : Window
         if (ImGui.Button("Redraw"))
         {
             Methods.SetupActions(ReplacementsManager.AllActionIds);
+        }
+
+        ImGui.SameLine();
+        if (ImGui.Button(Service.Config.AdvancedMode ? "simple using mode" : "advanced editing mode"))
+        {
+            Service.Config.AdvancedMode = !Service.Config.AdvancedMode;
         }
     }
 
