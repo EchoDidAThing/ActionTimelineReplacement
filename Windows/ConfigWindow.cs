@@ -122,6 +122,7 @@ public sealed class ConfigWindow : Window
 
                     if (ImGui.Selectable("Delete"))
                     {
+                        if (_activeSet == set) _activeSet = null;
                         Service.Config.ActionTimelineReplacements.Remove(set);
                         Service.Config.Save();
                         Methods.SetupActions(set.Replacements.Keys);
