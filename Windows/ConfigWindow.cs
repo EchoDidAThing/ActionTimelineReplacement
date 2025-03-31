@@ -206,34 +206,37 @@ public sealed class ConfigWindow : Window
 
         ImGui.SetCursorPosY(ImGui.GetCursorPosY() + 10 * Scale);
 
-        using (ImRaii.PushFont(GetFont(18)))
-        {
-            ImGui.Text("Skill");
-
-            if (_itemWidth == 0)
+            using (ImRaii.PushFont(GetFont(18)))
             {
-                ImGui.SameLine();
-                ImGui.Text(" Cast Vfx Start timeline End timeline Hit timeline");
+                ImGui.Text("Skill");
+
+                if (Service.Config.AdvancedMode)
+                {
+                    if (_itemWidth == 0)
+                    {
+                        ImGui.SameLine();
+                        ImGui.Text(" Cast Vfx Start timeline End timeline Hit timeline");
+                    }
+                    else
+                    {
+                        ImGui.SameLine();
+                        ImGui.SetCursorPosX(ImGui.GetWindowWidth() - _itemWidth * 4 / 4);
+                        ImGui.Text("Cast Vfx");
+
+                        ImGui.SameLine();
+                        ImGui.SetCursorPosX(ImGui.GetWindowWidth() - _itemWidth * 3 / 4);
+                        ImGui.Text("Start timeline");
+
+                        ImGui.SameLine();
+                        ImGui.SetCursorPosX(ImGui.GetWindowWidth() - _itemWidth * 2 / 4);
+                        ImGui.Text("End timeline");
+
+                        ImGui.SameLine();
+                        ImGui.SetCursorPosX(ImGui.GetWindowWidth() - _itemWidth * 1 / 4);
+                        ImGui.Text("Hit timeline");
+                    }
+                }
             }
-            else
-            {
-                ImGui.SameLine();
-                ImGui.SetCursorPosX(ImGui.GetWindowWidth() - _itemWidth * 4 / 4);
-                ImGui.Text("Cast Vfx");
-
-                ImGui.SameLine();
-                ImGui.SetCursorPosX(ImGui.GetWindowWidth() - _itemWidth * 3 / 4);
-                ImGui.Text("Start timeline");
-
-                ImGui.SameLine();
-                ImGui.SetCursorPosX(ImGui.GetWindowWidth() - _itemWidth * 2 / 4);
-                ImGui.Text("End timeline");
-
-                ImGui.SameLine();
-                ImGui.SetCursorPosX(ImGui.GetWindowWidth() - _itemWidth * 1 / 4);
-                ImGui.Text("Hit timeline");
-            }
-        }
 
         using (var subList = ImRaii.Child("SubList", -Vector2.One, false))
         {
@@ -269,6 +272,13 @@ public sealed class ConfigWindow : Window
                     {
                         ImGui.PopTextWrapPos();
                     }
+
+                    if (!Service.Config.AdvancedMode)
+                    {
+                        _itemWidth = 0;
+                        continue;
+                    }
+
                     ImGui.SameLine();
                     if (_itemWidth != 0)
                     {
@@ -395,7 +405,6 @@ public sealed class ConfigWindow : Window
         return dp[len1, len2];
     }
 
-
     private static void DrawHeader()
     {
         if (ImGui.Checkbox("Enable", ref Service.Config.EnableReplacement))
@@ -409,6 +418,12 @@ public sealed class ConfigWindow : Window
         if (ImGui.Button("Redraw"))
         {
             Methods.SetupActions(ReplacementsManager.AllActionIds);
+        }
+
+        ImGui.SameLine();
+        if (ImGui.Button(Service.Config.AdvancedMode ? "simple using mode" : "advanced editing mode"))
+        {
+            Service.Config.AdvancedMode = !Service.Config.AdvancedMode;
         }
     }
 
