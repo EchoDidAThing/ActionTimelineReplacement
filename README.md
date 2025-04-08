@@ -12,6 +12,7 @@ Open config window by `/atr`.
 
 ## How to use ?(for simple using)
 If you are just an ordinary user rather than a modder, it is sufficient for you to check only steps 1 and 2. 
+![S7(H@~XQLL%UW GG VV1}LF](https://github.com/user-attachments/assets/83cd283f-4838-4294-ad2b-efd801d386a0)
 
 ### 1. Install the plugin
 By adding the repo link into your dalamud custom Plugin Repositories and search it in Plugin Installer.Then install it.
