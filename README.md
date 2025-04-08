@@ -1,6 +1,6 @@
 # ActionTimelineReplacement aka.ATR
 
-**Specially Credit to Loskh for the original development, and also very credit to DethiCra for comprehensively rebuilding the plugin as well as creating the graphic interface!!**
+**Specially Credit to Loskh for the original development, and also very credit to DethiCra for completely rebuilding the plugin as well as creating the graphic interface!!**
 
 This is a plugin that can simply replace the timeline(tmb) the casting VFX for skill invocation in the game. 
 It can assist some mods in separating skills that originally use the same timeline(tmb) into using different timelines (tmb).
