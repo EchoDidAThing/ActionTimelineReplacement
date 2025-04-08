@@ -1,4 +1,4 @@
-# MultiHit
+# ActionTimelineReplacement aka.ATR
 
 **Specially Credit to Loskh for the original development, and also very credit to DethiCra for comprehensively rebuilding the plugin as well as creating the graphic interface!!**
 
