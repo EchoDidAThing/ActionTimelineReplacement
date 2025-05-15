@@ -1,9 +1,9 @@
 using Dalamud.Plugin;
 using System;
 using System.Collections.Immutable;
-using ActionTimelineReplacement.Configurations;
 using ActionTimelineReplacement.Hookers;
 using ActionTimelineReplacement.Windows;
+using ActionTimelineReplacement.Configurations;
 
 namespace ActionTimelineReplacement;
 
@@ -17,17 +17,19 @@ public sealed class Plugin : IDalamudPlugin
 
         //用于读取Config
         Service.Config = pluginInterface.GetPluginConfig() as Configuration ?? new Configuration();
-
+        
         //添加各种小模组
         _disposables = [new WindowManager()];
 
-        Methods.SetupActions(ReplacementsManager.AllActionIds);
+        Methods.SetupActions(ActionReplacementsManager.AllActionIds);
+        Methods.SetupActions(MountReplacementsManager.AllMountIds);
 
     }
 
     public void Dispose()
     {
-        Methods.SetupActions(ReplacementsManager.AllActionIds, true);
+        Methods.SetupActions(ActionReplacementsManager.AllActionIds, true);
+        Methods.SetupMounts(MountReplacementsManager.AllMountIds, true);
         Service.Config.Save();
         foreach (var disposable in _disposables)
         {

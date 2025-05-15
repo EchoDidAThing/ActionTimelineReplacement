@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 using System.Runtime.InteropServices;
@@ -24,7 +25,7 @@ public sealed class ConfigWindow : Window
 
     private static float Scale => ImGuiHelpers.GlobalScale;
 
-    private ActionTimelineReplacementSet? _activeSet;
+    private Configuration.ReplacementSet? _activeSet;
 
     public ConfigWindow()
         : base("ActionTimeline Replacement v" + typeof(ConfigWindow).Assembly.GetName().Version,
@@ -88,16 +89,16 @@ public sealed class ConfigWindow : Window
                        ImGui.GetWindowSize().Y - ImGui.GetCursorPosY() - itemHeight - ImGui.GetStyle().WindowPadding.Y),
                    false))
         {
-            var span = CollectionsMarshal.AsSpan(Service.Config.ActionTimelineReplacements);
+            var span = CollectionsMarshal.AsSpan(Configuration.ReplacementSets.Keys.ToList<string>());
             for (var i = 0; i < span.Length; i++)
             {
                 var set = span[i];
                 // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
                 if (set is null) continue;
-                using var style = !set.Enabled ? ImRaii.PushColor(ImGuiCol.Text, ImGuiColors.DalamudGrey) : null;
-                if (ImGui.Selectable($"{set.Name}##{i}", _activeSet == set))
+                using var style = !Configuration.ReplacementSets[set].Enabled ? ImRaii.PushColor(ImGuiCol.Text, ImGuiColors.DalamudGrey) : null;
+                if (ImGui.Selectable($"{Configuration.ReplacementSets[set].Name}##{i}", _activeSet == Configuration.ReplacementSets[set]))
                 {
-                    _activeSet = set;
+                    _activeSet = Configuration.ReplacementSets[set];
                 }
 
                 var popUpId = $"Set{i}PopUp";
@@ -115,19 +116,21 @@ public sealed class ConfigWindow : Window
 
                     if (ImGui.Selectable("Export"))
                     {
-                        _dialogManager.SaveFileDialog("Save", ".json", set.Name, ".json", (b, file) =>
+                        _dialogManager.SaveFileDialog("Save", ".json", Configuration.ReplacementSets[set].Name, ".json", (b, file) =>
                         {
                             if (!b) return;
-                            set.Save(file);
+                            //FIX
+                            //set.Save(file);
                         });
                     }
 
                     if (ImGui.Selectable("Delete"))
                     {
-                        if (_activeSet == set) _activeSet = null;
-                        Service.Config.ActionTimelineReplacements.Remove(set);
+                        if (_activeSet == Configuration.ReplacementSets[set]) _activeSet = null;
+                        Configuration.ReplacementSets.Remove(set);
                         Service.Config.Save();
-                        Methods.SetupActions(set.Replacements.Keys);
+                        Methods.SetupActions(Configuration.ReplacementSets[set].ActionReplacements.Keys);
+                        Methods.SetupMounts(Configuration.ReplacementSets[set].MountReplacements.Keys);
                         ImGui.CloseCurrentPopup();
                     }
                 }
@@ -145,7 +148,7 @@ public sealed class ConfigWindow : Window
             ImGui.PushItemWidth(width);
             if (ImGui.Button("Create", buttonSize))
             {
-                Service.Config.ActionTimelineReplacements.Add(new ActionTimelineReplacementSet("New Item", [], true, 0));
+                Configuration.ReplacementSets.Add("new Set",new Configuration.ReplacementSet("New Set", true, 0, new Dictionary<uint, ActionReplacementConfig>() , new Dictionary<uint, MountReplacementConfig>()));
                 Service.Config.Save();
             }
 
@@ -157,9 +160,10 @@ public sealed class ConfigWindow : Window
                     if (!b) return;
                     foreach (var file in files)
                     {
-                        if (ActionTimelineReplacementSet.Load(file) is not { } set) continue;
-                        Service.Config.ActionTimelineReplacements.Add(set);
-                        Methods.SetupActions(set.Replacements.Keys);
+                        if (Configuration.ReplacementSet.Load(file) is not { } set) continue;
+                        Configuration.ReplacementSets.Add(set.Name, set);
+                        Methods.SetupActions(set.ActionReplacements.Keys);
+                        Methods.SetupActions(set.MountReplacements.Keys);
                     }
 
                     Service.Config.Save();
@@ -173,7 +177,7 @@ public sealed class ConfigWindow : Window
 
     private void DrawBody()
     {
-        using var child = ImRaii.Child("Body", -Vector2.One, false, ImGuiWindowFlags.NoScrollbar);
+        using var child = ImRaii.Child("Body",-Vector2.One, false, ImGuiWindowFlags.NoScrollbar);
         if (!child) return;
         if (_activeSet is null) return;
 
@@ -192,7 +196,8 @@ public sealed class ConfigWindow : Window
 
         if (ImGui.Checkbox("Enable", ref _activeSet.Enabled))
         {
-            Methods.SetupActions(_activeSet.Replacements.Keys);
+            Methods.SetupActions(_activeSet.ActionReplacements.Keys);
+            Methods.SetupMounts(_activeSet.ActionReplacements.Keys);
             Service.Config.Save();
         }
 
@@ -200,15 +205,18 @@ public sealed class ConfigWindow : Window
         ImGui.SetNextItemWidth(50 * Scale);
         if (ImGui.DragInt("Priority", ref _activeSet.Priority))
         {
-            Methods.SetupActions(_activeSet.Replacements.Keys);
+            Methods.SetupActions(_activeSet.ActionReplacements.Keys);
+            Methods.SetupMounts(_activeSet.ActionReplacements.Keys);
             Service.Config.Save();
         }
 
         ImGui.SetCursorPosY(ImGui.GetCursorPosY() + 10 * Scale);
 
+
+        if (ImGui.CollapsingHeader($"Action"))
+        {
             using (ImRaii.PushFont(GetFont(18)))
             {
-                ImGui.Text("Skill");
 
                 if (Service.Config.AdvancedMode)
                 {
@@ -238,127 +246,305 @@ public sealed class ConfigWindow : Window
                 }
             }
 
-        using (var subList = ImRaii.Child("SubList", -Vector2.One, false))
-        {
-            if (subList)
+            using (var subList = ImRaii.Child("ActionSubList", -Vector2.One, false))
             {
-                foreach (var key in _activeSet.Replacements.Keys)
+                if (subList)
                 {
-                    var replacement = _activeSet.Replacements[key];
-
-                    if (ImGui.Checkbox("##" + key, ref replacement.Enabled))
+                    foreach (var key in _activeSet.ActionReplacements.Keys)
                     {
-                        Methods.SetupAction(key);
-                        Service.Config.Save();
-                    }
+                        var replacement = _activeSet.ActionReplacements[key].Replacement;
 
-                    ImGui.SameLine();
-                    if (ImGui.Button(" - ##" + key))
-                    {
-                        _activeSet.Replacements.Remove(key);
-                    }
-
-                    ImGui.SameLine();
-                    ImGui.Text($"#{key:D5}");
-
-                    ImGui.SameLine();
-                    if (_itemWidth != 0 && Service.Config.AdvancedMode)
-                    {
-                        var widthRest = ImGui.GetWindowWidth() - _itemWidth - ImGui.GetCursorPosX() - 5 * Scale;
-                        ImGui.PushTextWrapPos(Math.Max(widthRest, 60 * Scale)+ ImGui.GetCursorPosX());
-                    }
-                    ImGui.TextWrapped(ReplacementsManager.GetName(key));
-                    if (_itemWidth != 0 && Service.Config.AdvancedMode)
-                    {
-                        ImGui.PopTextWrapPos();
-                    }
-
-                    if (!Service.Config.AdvancedMode)
-                    {
-                        continue;
-                    }
-
-                    ImGui.SameLine();
-                    if (_itemWidth != 0)
-                    {
-                        ImGui.SetCursorPosX(ImGui.GetWindowWidth() - _itemWidth);
-                    }
-
-                    var startwidth = ImGui.GetCursorPosX();
-                    DrawItem("Cast", ref replacement.Replacement.CastVfx, i => i.CastVfx);
-                    ImGui.SameLine();
-
-                    DrawItem("Start", ref replacement.Replacement.AnimationStart, i => i.AnimationStart);
-
-                    ImGui.SameLine();
-                    DrawItem("End", ref replacement.Replacement.AnimationEnd, i => i.AnimationEnd);
-
-                    ImGui.SameLine();
-                    DrawItem("Hit", ref replacement.Replacement.ActionTimelineHit, i => i.ActionTimelineHit);
-
-                    ImGui.SameLine();
-                    _itemWidth = ImGui.GetCursorPosX() - startwidth;
-                    ImGui.NewLine();
-                    continue;
-
-                    void DrawItem(string name, ref ushort value,
-                        Func<Configurations.ActionTimelineReplacement, ushort> getDefault)
-                    {
-                        ImGui.SetNextItemWidth(60 * Scale);
-                        int relay = value;
-                        if (ImGui.DragInt("##" + name + key, ref relay))
+                        if (ImGui.Checkbox("##" + key, ref _activeSet.ActionReplacements[key].Enabled))
                         {
-                            value = (ushort)relay;
                             Methods.SetupAction(key);
                             Service.Config.Save();
                         }
 
                         ImGui.SameLine();
-                        using (ImRaii.PushFont(UiBuilder.IconFont))
+                        if (ImGui.Button(" - ##" + key))
                         {
-                            if (ImGui.Button($"{FontAwesomeIcon.Reply.ToIconString()}##{name}{key}"))
+                            _activeSet.ActionReplacements.Remove(key);
+                        }
+
+                        ImGui.SameLine();
+                        ImGui.Text($"#{key:D5}");
+
+                        ImGui.SameLine();
+                        if (_itemWidth != 0 && Service.Config.AdvancedMode)
+                        {
+                            var widthRest = ImGui.GetWindowWidth() - _itemWidth - ImGui.GetCursorPosX() - 5 * Scale;
+                            ImGui.PushTextWrapPos(Math.Max(widthRest, 60 * Scale) + ImGui.GetCursorPosX());
+                        }
+                        ImGui.TextWrapped(ActionReplacementsManager.GetName(key));
+                        if (_itemWidth != 0 && Service.Config.AdvancedMode)
+                        {
+                            ImGui.PopTextWrapPos();
+                        }
+
+                        if (!Service.Config.AdvancedMode)
+                        {
+                            continue;
+                        }
+
+                        ImGui.SameLine();
+                        if (_itemWidth != 0)
+                        {
+                            ImGui.SetCursorPosX(ImGui.GetWindowWidth() - _itemWidth);
+                        }
+
+                        var startwidth = ImGui.GetCursorPosX();
+                        DrawItem("Cast", ref replacement.CastVfx, i => i.CastVfx);
+                        ImGui.SameLine();
+
+                        DrawItem("Start", ref replacement.AnimationStart, i => i.AnimationStart);
+
+                        ImGui.SameLine();
+                        DrawItem("End", ref replacement.AnimationEnd, i => i.AnimationEnd);
+
+                        ImGui.SameLine();
+                        DrawItem("Hit", ref replacement.ActionTimelineHit, i => i.ActionTimelineHit);
+
+                        ImGui.SameLine();
+                        _itemWidth = ImGui.GetCursorPosX() - startwidth;
+                        ImGui.NewLine();
+                        continue;
+
+                        void DrawItem(string name, ref ushort value,
+                            Func<Configurations.ActionReplacement, ushort> getDefault)
+                        {
+                            ImGui.SetNextItemWidth(60 * Scale);
+                            int relay = value;
+                            if (ImGui.DragInt("##" + name + key, ref relay))
                             {
-                                value = getDefault(ReplacementsManager.GetOriginalReplacement(key));
+                                value = (ushort)relay;
                                 Methods.SetupAction(key);
+                                Service.Config.Save();
+                            }
+
+                            ImGui.SameLine();
+                            using (ImRaii.PushFont(UiBuilder.IconFont))
+                            {
+                                if (ImGui.Button($"{FontAwesomeIcon.Reply.ToIconString()}##{name}{key}"))
+                                {
+                                    value = getDefault(ActionReplacementsManager.GetOriginalReplacement(key));
+                                    Methods.SetupAction(key);
+                                    Service.Config.Save();
+                                }
+                            }
+                        }
+                    }
+
+                    const string searchActionsPopup = "Search actions";
+                    if (ImGui.Button(" + "))
+                    {
+                        ImGui.OpenPopup(searchActionsPopup);
+                    }
+
+                    using var searchPopup = ImRaii.Popup(searchActionsPopup);
+                    if (searchPopup)
+                    {
+                        var width = 200 * Scale;
+
+                        ImGui.SetNextItemWidth(width);
+                        ImGui.InputText("##Search Action", ref _searchAction, 256);
+
+                        using var popUpChild = ImRaii.Child(searchActionsPopup, new Vector2(width, 200 * Scale), true);
+                        foreach (var pair in ActionReplacementsManager.ActionNames.OrderBy(i =>
+                                {
+                                    if (string.IsNullOrEmpty(_searchAction)) return 0;
+                                    return Math.Min(ScoreString(i.Value, _searchAction),
+                                        ScoreString(i.Key.ToString(), _searchAction));
+                                }))
+                        {
+                            if (ImGui.Selectable($"#{pair.Key:D5} {pair.Value}"))
+                            {
+                                var original = ActionReplacementsManager.GetOriginalReplacement(pair.Key);
+                                _activeSet.ActionReplacements[pair.Key] =
+                                    new ActionReplacementConfig(new Configurations.ActionReplacement(
+                                            original.AnimationStart,
+                                            original.AnimationEnd,
+                                            original.ActionTimelineHit,
+                                            original.CastVfx),
+                                        false);
                                 Service.Config.Save();
                             }
                         }
                     }
                 }
+            }
+        }
 
-                const string searchActionsPopup = "Search actions";
-                if (ImGui.Button(" + "))
+        if (ImGui.CollapsingHeader($"Mount"))
+        {
+            using (ImRaii.PushFont(GetFont(18)))
+            {
+
+                if (Service.Config.AdvancedMode)
                 {
-                    ImGui.OpenPopup(searchActionsPopup);
-                }
-
-                using var searchPopup = ImRaii.Popup(searchActionsPopup);
-                if (searchPopup)
-                {
-                    var width = 200 * Scale;
-
-                    ImGui.SetNextItemWidth(width);
-                    ImGui.InputText("##Search Action", ref _searchAction, 256);
-
-                    using var popUpChild = ImRaii.Child(searchActionsPopup, new Vector2(width, 200 * Scale), true);
-                    foreach (var pair in ReplacementsManager.ActionNames.OrderBy(i =>
-                             {
-                                 if (string.IsNullOrEmpty(_searchAction)) return 0;
-                                 return Math.Min(ScoreString(i.Value, _searchAction),
-                                     ScoreString(i.Key.ToString(), _searchAction));
-                             }))
+                    if (_itemWidth == 0)
                     {
-                        if (ImGui.Selectable($"#{pair.Key:D5} {pair.Value}"))
+                        ImGui.SameLine();
+                        ImGui.Text(" RideBGM TiltParam1 TiltParam2 TiltParam3 TiltParam4 MountCustomize");
+                    }
+                    else
+                    {
+                        ImGui.SameLine();
+                        ImGui.SetCursorPosX(ImGui.GetWindowWidth() - _itemWidth * 6 / 6);
+                        ImGui.Text("RideBGM");
+
+                        ImGui.SameLine();
+                        ImGui.SetCursorPosX(ImGui.GetWindowWidth() - _itemWidth * 5 / 6);
+                        ImGui.Text("TiltParam1");
+
+                        ImGui.SameLine();
+                        ImGui.SetCursorPosX(ImGui.GetWindowWidth() - _itemWidth * 4 / 6);
+                        ImGui.Text("TiltParam2");
+
+                        ImGui.SameLine();
+                        ImGui.SetCursorPosX(ImGui.GetWindowWidth() - _itemWidth * 3 / 6);
+                        ImGui.Text("TiltParam3");
+
+                        ImGui.SameLine();
+                        ImGui.SetCursorPosX(ImGui.GetWindowWidth() - _itemWidth * 2 / 6);
+                        ImGui.Text("TiltParam3");
+
+                        ImGui.SameLine();
+                        ImGui.SetCursorPosX(ImGui.GetWindowWidth() - _itemWidth * 1 / 6);
+                        ImGui.Text("TiltParam3");
+                    }
+                }
+            }
+
+            using (var subList = ImRaii.Child("MountSubList", -Vector2.One, false))
+            {
+                if (subList)
+                {
+                    foreach (var key in _activeSet.MountReplacements.Keys)
+                    {
+                        var replacement = _activeSet.MountReplacements[key].Replacement;
+
+                        if (ImGui.Checkbox("##" + key, ref _activeSet.MountReplacements[key].Enabled))
                         {
-                            var original = ReplacementsManager.GetOriginalReplacement(pair.Key);
-                            _activeSet.Replacements[pair.Key] =
-                                new ActionTimelineReplacementConfig(new Configurations.ActionTimelineReplacement(
-                                        original.AnimationStart,
-                                        original.AnimationEnd,
-                                        original.ActionTimelineHit,
-                                        original.CastVfx),
-                                    false);
+                            Methods.SetupAction(key);
                             Service.Config.Save();
+                        }
+
+                        ImGui.SameLine();
+                        if (ImGui.Button(" - ##" + key))
+                        {
+                            _activeSet.MountReplacements.Remove(key);
+                        }
+
+                        ImGui.SameLine();
+                        ImGui.Text($"#{key:D5}");
+
+                        ImGui.SameLine();
+                        if (_itemWidth != 0 && Service.Config.AdvancedMode)
+                        {
+                            var widthRest = ImGui.GetWindowWidth() - _itemWidth - ImGui.GetCursorPosX() - 5 * Scale;
+                            ImGui.PushTextWrapPos(Math.Max(widthRest, 60 * Scale) + ImGui.GetCursorPosX());
+                        }
+                        ImGui.TextWrapped(MountReplacementsManager.GetName(key));
+                        if (_itemWidth != 0 && Service.Config.AdvancedMode)
+                        {
+                            ImGui.PopTextWrapPos();
+                        }
+
+                        if (!Service.Config.AdvancedMode)
+                        {
+                            continue;
+                        }
+
+                        ImGui.SameLine();
+                        if (_itemWidth != 0)
+                        {
+                            ImGui.SetCursorPosX(ImGui.GetWindowWidth() - _itemWidth);
+                        }
+
+                        var startwidth = ImGui.GetCursorPosX();
+                        DrawItem("Cast", ref replacement.RideBGM, i => i.RideBGM);
+                        ImGui.SameLine();
+
+                        DrawItem("Start", ref replacement.TiltParam1, i => i.TiltParam1);
+
+                        ImGui.SameLine();
+                        DrawItem("Start", ref replacement.TiltParam2, i => i.TiltParam2);
+
+                        ImGui.SameLine();
+                        DrawItem("Start", ref replacement.TiltParam3, i => i.TiltParam3);
+
+                        ImGui.SameLine();
+                        DrawItem("Start", ref replacement.TiltParam3, i => i.TiltParam4);
+
+                        ImGui.SameLine();
+                        DrawItem("Start", ref replacement.MountCustomize, i => i.MountCustomize);
+
+                        ImGui.SameLine();
+                        _itemWidth = ImGui.GetCursorPosX() - startwidth;
+                        ImGui.NewLine();
+                        continue;
+
+                        void DrawItem(string name, ref ushort value,
+                            Func<Configurations.MountReplacement, ushort> getDefault)
+                        {
+                            ImGui.SetNextItemWidth(60 * Scale);
+                            int relay = value;
+                            if (ImGui.DragInt("##" + name + key, ref relay))
+                            {
+                                value = (ushort)relay;
+                                Methods.SetupMount(key);
+                                Service.Config.Save();
+                            }
+
+                            ImGui.SameLine();
+                            using (ImRaii.PushFont(UiBuilder.IconFont))
+                            {
+                                if (ImGui.Button($"{FontAwesomeIcon.Reply.ToIconString()}##{name}{key}"))
+                                {
+                                    value = getDefault(MountReplacementsManager.GetOriginalReplacement(key));
+                                    Methods.SetupMount(key);
+                                    Service.Config.Save();
+                                }
+                            }
+                        }
+                    }
+
+                    const string searchMountsPopup = "Search mounts";
+                    if (ImGui.Button(" + "))
+                    {
+                        ImGui.OpenPopup(searchMountsPopup);
+                    }
+
+                    using var searchPopup = ImRaii.Popup(searchMountsPopup);
+                    if (searchPopup)
+                    {
+                        var width = 200 * Scale;
+
+                        ImGui.SetNextItemWidth(width);
+                        ImGui.InputText("##Search Action", ref _searchMount, 256);
+
+                        using var popUpChild = ImRaii.Child(searchMountsPopup, new Vector2(width, 200 * Scale), true);
+                        foreach (var pair in MountReplacementsManager.MountNames.OrderBy(i =>
+                        {
+                            if (string.IsNullOrEmpty(_searchMount)) return 0;
+                            return Math.Min(ScoreString(i.Value, _searchMount),
+                                ScoreString(i.Key.ToString(), _searchMount));
+                        }))
+                        {
+                            if (ImGui.Selectable($"#{pair.Key:D5} {pair.Value}"))
+                            {
+                                var original = MountReplacementsManager.GetOriginalReplacement(pair.Key);
+                                _activeSet.MountReplacements[pair.Key] =
+                                    new MountReplacementConfig(new Configurations.MountReplacement(
+                                            original.RideBGM,
+                                            original.TiltParam1,
+                                            original.TiltParam2,
+                                            original.TiltParam3,
+                                            original.TiltParam4,
+                                            original.MountCustomize),
+                                        false);
+                                Service.Config.Save();
+                            }
                         }
                     }
                 }
@@ -367,6 +553,7 @@ public sealed class ConfigWindow : Window
     }
 
     private string _searchAction = string.Empty;
+    private string _searchMount = string.Empty;
 
     private static int ScoreString(string s1, string search)
     {
@@ -408,7 +595,8 @@ public sealed class ConfigWindow : Window
     {
         if (ImGui.Checkbox("Enable", ref Service.Config.EnableReplacement))
         {
-            Methods.SetupActions(ReplacementsManager.AllActionIds);
+            Methods.SetupActions(ActionReplacementsManager.AllActionIds);
+            Methods.SetupActions(MountReplacementsManager.AllMountIds);
             Service.Config.Save();
         }
 
@@ -416,7 +604,8 @@ public sealed class ConfigWindow : Window
 
         if (ImGui.Button("Redraw"))
         {
-            Methods.SetupActions(ReplacementsManager.AllActionIds);
+            Methods.SetupActions(ActionReplacementsManager.AllActionIds);
+            Methods.SetupActions(MountReplacementsManager.AllMountIds);
         }
 
         ImGui.SameLine();

@@ -7,8 +7,18 @@ namespace ActionTimelineReplacement.Hookers;
 public static unsafe class Methods
 {
     private delegate ActionData* GetActionDataDelegate(uint actionId);
+    private delegate MountData* GetMountDataDelegate(uint mountId);
+    private delegate TiltData* GetMountTilt1DataDelegate(uint tiltID);
+    private delegate TiltData* GetMountTilt2DataDelegate(uint tiltID);
+    private delegate TiltData* GetMountTilt3DataDelegate(uint tiltID);
+    private delegate TiltData* GetMountTilt4DataDelegate(uint tiltID);
 
     private static GetActionDataDelegate? _getActionDataHook;
+    private static GetMountDataDelegate? _getMountDataHook;
+    private static GetMountTilt1DataDelegate? _getMountTilt1DataHook;
+    private static GetMountTilt2DataDelegate? _getMountTilt2DataHook;
+    private static GetMountTilt3DataDelegate? _getMountTilt3DataHook;
+    private static GetMountTilt4DataDelegate? _getMountTilt4DataHook;
 
     private static ActionData* GetActionData(uint actionId)
     {
@@ -17,6 +27,43 @@ public static unsafe class Methods
 
         return _getActionDataHook(actionId);
     }
+    private static MountData* GetMountData(uint mountId)
+    {
+        _getMountDataHook ??= Marshal.GetDelegateForFunctionPointer<GetMountDataDelegate>(
+                Service.Scanner.ScanText("E8 ?? ?? ?? ?? 48 8B F8 48 85 C0 0F 84 ?? ?? ?? ?? 0F B7 40 ?? 66 85 C0 75 ?? 66 39 6F"));
+
+        return _getMountDataHook(mountId);
+    }
+    private static TiltData* GetMountTilt1Data(uint tiltId)
+    {
+        _getMountTilt1DataHook ??= Marshal.GetDelegateForFunctionPointer<GetMountTilt1DataDelegate>(
+                Service.Scanner.ScanText("E8 ?? ?? ?? ?? 0F B7 4F ?? 48 8B F0 E8 ?? ?? ?? ?? C6 43 "));
+
+        return _getMountTilt1DataHook(tiltId);
+    }
+    private static TiltData* GetMountTilt2Data(uint tiltId)
+    {
+        _getMountTilt2DataHook ??= Marshal.GetDelegateForFunctionPointer<GetMountTilt2DataDelegate>(
+                Service.Scanner.ScanText("E8 ?? ?? ?? ?? C6 43 ?? ?? 4C 8B C0"));
+
+        return _getMountTilt2DataHook(tiltId);
+    }
+    private static TiltData* GetMountTilt3Data(uint tiltId)
+    {
+        _getMountTilt3DataHook ??= Marshal.GetDelegateForFunctionPointer<GetMountTilt3DataDelegate>(
+                Service.Scanner.ScanText("E8 ?? ?? ?? ?? 0F B7 4F ?? 48 8B F0 E8 ?? ?? ?? ?? 33 D2"));
+
+        return _getMountTilt3DataHook(tiltId);
+    }
+    private static TiltData* GetMountTilt4Data(uint tiltId)
+    {
+        _getMountTilt4DataHook ??= Marshal.GetDelegateForFunctionPointer<GetMountTilt4DataDelegate>(
+                Service.Scanner.ScanText("E8 ?? ?? ?? ?? 33 D2 4C 8B C0 48 85 F6"));
+
+        return _getMountTilt4DataHook(tiltId);
+    }
+
+
 
     public static void SetupActions(IEnumerable<uint> actionIds, bool reset = false)
     {
@@ -30,11 +77,33 @@ public static unsafe class Methods
     {
         var data = GetActionData(actionId);
         var replacement = reset
-            ? ReplacementsManager.GetOriginalReplacement(actionId)
-            : ReplacementsManager.GetReplacement(actionId);
+            ? ActionReplacementsManager.GetOriginalReplacement(actionId)
+            : ActionReplacementsManager.GetReplacement(actionId);
 
         Service.Log.Info("Set the Action[{ActionID}] with Start[{Start}] End[{End}] Hit[{Hit}] Vfc[{Vfx}]",
             actionId, replacement.AnimationStart, replacement.AnimationEnd, replacement.ActionTimelineHit, replacement.CastVfx);
+        replacement.WriteToPointer(data);
+    }
+
+
+
+    public static void SetupMounts(IEnumerable<uint> mountIds, bool reset = false)
+    {
+        foreach (var mountId in mountIds)
+        {
+            SetupAction(mountId, reset);
+        }
+    }
+
+    public static void SetupMount(uint mountId, bool reset = false)
+    {
+        var data = GetMountData(mountId);
+        var replacement = reset
+            ? MountReplacementsManager.GetOriginalReplacement(mountId)
+            : MountReplacementsManager.GetReplacement(mountId);
+
+        Service.Log.Info("Set the Mount[{MountID}] with TiltParam1[{TiltParam1}] TiltParam2[{TiltParam2}] TiltParam3[{TiltParam3}] TiltParam4[{TiltParam4}]",
+            mountId, replacement.TiltParam1, replacement.TiltParam2, replacement.TiltParam3, replacement.TiltParam4);
         replacement.WriteToPointer(data);
     }
 }

@@ -16,10 +16,11 @@ public sealed class WindowManager : IDisposable
         Service.PluginInterface.UiBuilder.OpenMainUi += _configWindow.Toggle;
         Service.CommandManager.AddHandler("/atr", new((_, _) => _configWindow.Toggle())
         {
-            HelpMessage = "Toggle action timeline config window",
+            HelpMessage = "Toggle config window",
             ShowInHelp = true,
         });
     }
+    
     public void Dispose()
     {
         Service.PluginInterface.UiBuilder.Draw -= DrawUi;
