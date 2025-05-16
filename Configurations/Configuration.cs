@@ -44,12 +44,12 @@ public class Configuration : IPluginConfiguration
             }
         }
 
-        public bool Save(string jsonFile)
+        public bool Save(string jsonFile, int index)
         {
             try
             {
 
-                File.WriteAllText(jsonFile, JsonConvert.SerializeObject(Service.Config.ReplacementSets[jsonFile]));
+                File.WriteAllText(jsonFile, JsonConvert.SerializeObject(Service.Config.ReplacementSets[index]));
                 
                 return true;
             }
@@ -66,7 +66,7 @@ public class Configuration : IPluginConfiguration
 
     public bool AdvancedMode = false;
 
-    public Dictionary<string, ReplacementSet> ReplacementSets { get; set; } = [];
+    public List<ReplacementSet> ReplacementSets { get; set; } = [];
 
     internal void Save()
     {

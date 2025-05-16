@@ -18,7 +18,7 @@ public static class ActionReplacementsManager
 
     
     public static IEnumerable<uint> AllActionIds =>
-        Service.Config.ReplacementSets.SelectMany(i => i.Value.ActionReplacements.Keys);
+        Service.Config.ReplacementSets.SelectMany(i => i.ActionReplacements.Keys);
 
     public static string GetName(uint id)
     {
@@ -34,9 +34,9 @@ public static class ActionReplacementsManager
 
         foreach (var item in Service.Config.ReplacementSets)
         {
-            foreach (var replacement in item.Value.ActionReplacements
-                         .Where(replacement => item.Value.Enabled)
-                         .OrderByDescending(replacement => item.Value.Priority))
+            foreach (var replacement in item.ActionReplacements
+                         .Where(replacement => item.Enabled)
+                         .OrderByDescending(replacement => item.Priority))
             {
                 return replacement.Value.Replacement;
             }
