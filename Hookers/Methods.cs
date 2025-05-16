@@ -91,7 +91,7 @@ public static unsafe class Methods
     {
         foreach (var mountId in mountIds)
         {
-            SetupAction(mountId, reset);
+            SetupMount(mountId, reset);
         }
     }
 
@@ -102,8 +102,8 @@ public static unsafe class Methods
             ? MountReplacementsManager.GetOriginalReplacement(mountId)
             : MountReplacementsManager.GetReplacement(mountId);
 
-        Service.Log.Info("Set the Mount[{MountID}] with TiltParam1[{TiltParam1}] TiltParam2[{TiltParam2}] TiltParam3[{TiltParam3}] TiltParam4[{TiltParam4}]",
-            mountId, replacement.TiltParam1, replacement.TiltParam2, replacement.TiltParam3, replacement.TiltParam4);
+        Service.Log.Info("Set the Mount[{MountID}] with RideBGM[{RideBGM}] TiltParam1[{TiltParam1}] TiltParam2[{TiltParam2}] TiltParam3[{TiltParam3}] TiltParam4[{TiltParam4}] MountCustomize[{MountCustomize}]",
+            mountId, replacement.RideBGM, replacement.TiltParam1, replacement.TiltParam2, replacement.TiltParam3, replacement.TiltParam4, replacement.MountCustomize);
         replacement.WriteToPointer(data);
     }
 }

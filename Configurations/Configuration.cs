@@ -31,7 +31,7 @@ public class Configuration : IPluginConfiguration
             try
             {
                 ReplacementSet? replacements =
-                    JsonConvert.DeserializeObject<ReplacementSet>(
+                    JsonConvert.DeserializeObject<Configuration.ReplacementSet>(
                         File.ReadAllText(jsonFile));
 
                 if (replacements == null) return null;
@@ -49,7 +49,8 @@ public class Configuration : IPluginConfiguration
             try
             {
 
-                File.WriteAllText(jsonFile, JsonConvert.SerializeObject(ReplacementSets[jsonFile]));
+                File.WriteAllText(jsonFile, JsonConvert.SerializeObject(Service.Config.ReplacementSets[jsonFile]));
+                
                 return true;
             }
             catch
@@ -65,7 +66,7 @@ public class Configuration : IPluginConfiguration
 
     public bool AdvancedMode = false;
 
-    public static Dictionary<string, ReplacementSet> ReplacementSets { get; set; } = [];
+    public Dictionary<string, ReplacementSet> ReplacementSets { get; set; } = [];
 
     internal void Save()
     {

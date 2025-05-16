@@ -89,16 +89,16 @@ public sealed class ConfigWindow : Window
                        ImGui.GetWindowSize().Y - ImGui.GetCursorPosY() - itemHeight - ImGui.GetStyle().WindowPadding.Y),
                    false))
         {
-            var span = CollectionsMarshal.AsSpan(Configuration.ReplacementSets.Keys.ToList<string>());
+            var span = CollectionsMarshal.AsSpan(Service.Config.ReplacementSets.Keys.ToList<string>());
             for (var i = 0; i < span.Length; i++)
             {
                 var set = span[i];
                 // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
                 if (set is null) continue;
-                using var style = !Configuration.ReplacementSets[set].Enabled ? ImRaii.PushColor(ImGuiCol.Text, ImGuiColors.DalamudGrey) : null;
-                if (ImGui.Selectable($"{Configuration.ReplacementSets[set].Name}##{i}", _activeSet == Configuration.ReplacementSets[set]))
+                using var style = !Service.Config.ReplacementSets[set].Enabled ? ImRaii.PushColor(ImGuiCol.Text, ImGuiColors.DalamudGrey) : null;
+                if (ImGui.Selectable($"{Service.Config.ReplacementSets[set].Name}##{i}", _activeSet == Service.Config.ReplacementSets[set]))
                 {
-                    _activeSet = Configuration.ReplacementSets[set];
+                    _activeSet = Service.Config.ReplacementSets[set];
                 }
 
                 var popUpId = $"Set{i}PopUp";
@@ -116,7 +116,7 @@ public sealed class ConfigWindow : Window
 
                     if (ImGui.Selectable("Export"))
                     {
-                        _dialogManager.SaveFileDialog("Save", ".json", Configuration.ReplacementSets[set].Name, ".json", (b, file) =>
+                        _dialogManager.SaveFileDialog("Save", ".json", Service.Config.ReplacementSets[set].Name, ".json", (b, file) =>
                         {
                             if (!b) return;
                             //FIX
@@ -126,11 +126,11 @@ public sealed class ConfigWindow : Window
 
                     if (ImGui.Selectable("Delete"))
                     {
-                        if (_activeSet == Configuration.ReplacementSets[set]) _activeSet = null;
-                        Configuration.ReplacementSets.Remove(set);
+                        if (_activeSet == Service.Config.ReplacementSets[set]) _activeSet = null;
+                        Service.Config.ReplacementSets.Remove(set);
                         Service.Config.Save();
-                        Methods.SetupActions(Configuration.ReplacementSets[set].ActionReplacements.Keys);
-                        Methods.SetupMounts(Configuration.ReplacementSets[set].MountReplacements.Keys);
+                        Methods.SetupActions(Service.Config.ReplacementSets[set].ActionReplacements.Keys);
+                        Methods.SetupMounts(Service.Config.ReplacementSets[set].MountReplacements.Keys);
                         ImGui.CloseCurrentPopup();
                     }
                 }
@@ -148,7 +148,8 @@ public sealed class ConfigWindow : Window
             ImGui.PushItemWidth(width);
             if (ImGui.Button("Create", buttonSize))
             {
-                Configuration.ReplacementSets.Add("new Set",new Configuration.ReplacementSet("New Set", true, 0, new Dictionary<uint, ActionReplacementConfig>() , new Dictionary<uint, MountReplacementConfig>()));
+                var randomset = new Random().Next(1, 100).ToString();
+                Service.Config.ReplacementSets.Add("new Set" + randomset,new Configuration.ReplacementSet("New Set" + randomset, true, 0, new Dictionary<uint, ActionReplacementConfig>() , new Dictionary<uint, MountReplacementConfig>()));
                 Service.Config.Save();
             }
 
@@ -161,7 +162,7 @@ public sealed class ConfigWindow : Window
                     foreach (var file in files)
                     {
                         if (Configuration.ReplacementSet.Load(file) is not { } set) continue;
-                        Configuration.ReplacementSets.Add(set.Name, set);
+                        Service.Config.ReplacementSets.Add(set.Name, set);
                         Methods.SetupActions(set.ActionReplacements.Keys);
                         Methods.SetupActions(set.MountReplacements.Keys);
                     }
@@ -425,7 +426,7 @@ public sealed class ConfigWindow : Window
 
                         if (ImGui.Checkbox("##" + key, ref _activeSet.MountReplacements[key].Enabled))
                         {
-                            Methods.SetupAction(key);
+                            Methods.SetupMount(key);
                             Service.Config.Save();
                         }
 
