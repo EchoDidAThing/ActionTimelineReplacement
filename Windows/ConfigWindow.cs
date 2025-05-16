@@ -64,11 +64,21 @@ public sealed class ConfigWindow : Window
 
         try
         {
-            DrawBody();
+            DrawBodyMain();
         }
         catch (Exception ex)
         {
-            Service.Log.Warning(ex, "Something wrong with body");
+            Service.Log.Warning(ex, "Something wrong with bodymain");
+        }
+
+        //FIX LOG SPAM
+        try
+        {
+            DrawBodySheets();
+        }
+        catch (Exception ex)
+        {
+            Service.Log.Warning(ex, "Something wrong with bodySheets");
         }
 
         _dialogManager.Draw();
@@ -89,16 +99,16 @@ public sealed class ConfigWindow : Window
                        ImGui.GetWindowSize().Y - ImGui.GetCursorPosY() - itemHeight - ImGui.GetStyle().WindowPadding.Y),
                    false))
         {
-            var span = CollectionsMarshal.AsSpan(Service.Config.ReplacementSets.Keys.ToList<string>());
+            var span = CollectionsMarshal.AsSpan(Service.Config.ReplacementSets);
             for (var i = 0; i < span.Length; i++)
             {
                 var set = span[i];
                 // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
                 if (set is null) continue;
-                using var style = !Service.Config.ReplacementSets[set].Enabled ? ImRaii.PushColor(ImGuiCol.Text, ImGuiColors.DalamudGrey) : null;
-                if (ImGui.Selectable($"{Service.Config.ReplacementSets[set].Name}##{i}", _activeSet == Service.Config.ReplacementSets[set]))
+                using var style = !Service.Config.ReplacementSets[i].Enabled ? ImRaii.PushColor(ImGuiCol.Text, ImGuiColors.DalamudGrey) : null;
+                if (ImGui.Selectable($"{Service.Config.ReplacementSets[i].Name}##{i}", _activeSet == Service.Config.ReplacementSets[i]))
                 {
-                    _activeSet = Service.Config.ReplacementSets[set];
+                    _activeSet = Service.Config.ReplacementSets[i];
                 }
 
                 var popUpId = $"Set{i}PopUp";
@@ -116,7 +126,7 @@ public sealed class ConfigWindow : Window
 
                     if (ImGui.Selectable("Export"))
                     {
-                        _dialogManager.SaveFileDialog("Save", ".json", Service.Config.ReplacementSets[set].Name, ".json", (b, file) =>
+                        _dialogManager.SaveFileDialog("Save", ".json", Service.Config.ReplacementSets[i].Name, ".json", (b, file) =>
                         {
                             if (!b) return;
                             //FIX
@@ -126,11 +136,11 @@ public sealed class ConfigWindow : Window
 
                     if (ImGui.Selectable("Delete"))
                     {
-                        if (_activeSet == Service.Config.ReplacementSets[set]) _activeSet = null;
+                        if (_activeSet == Service.Config.ReplacementSets[i]) _activeSet = null;
                         Service.Config.ReplacementSets.Remove(set);
                         Service.Config.Save();
-                        Methods.SetupActions(Service.Config.ReplacementSets[set].ActionReplacements.Keys);
-                        Methods.SetupMounts(Service.Config.ReplacementSets[set].MountReplacements.Keys);
+                        Methods.SetupActions(Service.Config.ReplacementSets[i].ActionReplacements.Keys);
+                        Methods.SetupMounts(Service.Config.ReplacementSets[i].MountReplacements.Keys);
                         ImGui.CloseCurrentPopup();
                     }
                 }
@@ -149,7 +159,7 @@ public sealed class ConfigWindow : Window
             if (ImGui.Button("Create", buttonSize))
             {
                 var randomset = new Random().Next(1, 100).ToString();
-                Service.Config.ReplacementSets.Add("new Set" + randomset,new Configuration.ReplacementSet("New Set" + randomset, true, 0, new Dictionary<uint, ActionReplacementConfig>() , new Dictionary<uint, MountReplacementConfig>()));
+                Service.Config.ReplacementSets.Add(new Configuration.ReplacementSet("New Set" + randomset, true, 0, new Dictionary<uint, ActionReplacementConfig>() , new Dictionary<uint, MountReplacementConfig>()));
                 Service.Config.Save();
             }
 
@@ -162,7 +172,7 @@ public sealed class ConfigWindow : Window
                     foreach (var file in files)
                     {
                         if (Configuration.ReplacementSet.Load(file) is not { } set) continue;
-                        Service.Config.ReplacementSets.Add(set.Name, set);
+                        Service.Config.ReplacementSets.Add(set);
                         Methods.SetupActions(set.ActionReplacements.Keys);
                         Methods.SetupActions(set.MountReplacements.Keys);
                     }
@@ -174,11 +184,11 @@ public sealed class ConfigWindow : Window
         }
     }
 
-    private float _itemWidth;
+    
 
-    private void DrawBody()
+    private void DrawBodyMain()
     {
-        using var child = ImRaii.Child("Body",-Vector2.One, false, ImGuiWindowFlags.NoScrollbar);
+        using var child = ImRaii.Child("BodyMain", new Vector2(-1f,60f), false);
         if (!child) return;
         if (_activeSet is null) return;
 
@@ -210,6 +220,17 @@ public sealed class ConfigWindow : Window
             Methods.SetupMounts(_activeSet.ActionReplacements.Keys);
             Service.Config.Save();
         }
+    }
+    
+    private float _ActionitemWidth;
+    private float _MountitemWidth;
+
+    private void DrawBodySheets()
+    {
+
+        using var child = ImRaii.Child("BodySheets", new Vector2(-1f, -1f), false);
+        if (!child) return;
+        if (_activeSet is null) return;
 
         ImGui.SetCursorPosY(ImGui.GetCursorPosY() + 10 * Scale);
 
@@ -221,7 +242,7 @@ public sealed class ConfigWindow : Window
 
                 if (Service.Config.AdvancedMode)
                 {
-                    if (_itemWidth == 0)
+                    if (_ActionitemWidth == 0)
                     {
                         ImGui.SameLine();
                         ImGui.Text(" Cast Vfx Start timeline End timeline Hit timeline");
@@ -229,28 +250,29 @@ public sealed class ConfigWindow : Window
                     else
                     {
                         ImGui.SameLine();
-                        ImGui.SetCursorPosX(ImGui.GetWindowWidth() - _itemWidth * 4 / 4);
+                        ImGui.SetCursorPosX(ImGui.GetWindowWidth() - _ActionitemWidth * 4 / 4);
                         ImGui.Text("Cast Vfx");
 
                         ImGui.SameLine();
-                        ImGui.SetCursorPosX(ImGui.GetWindowWidth() - _itemWidth * 3 / 4);
+                        ImGui.SetCursorPosX(ImGui.GetWindowWidth() - _ActionitemWidth * 3 / 4);
                         ImGui.Text("Start timeline");
 
                         ImGui.SameLine();
-                        ImGui.SetCursorPosX(ImGui.GetWindowWidth() - _itemWidth * 2 / 4);
+                        ImGui.SetCursorPosX(ImGui.GetWindowWidth() - _ActionitemWidth * 2 / 4);
                         ImGui.Text("End timeline");
 
                         ImGui.SameLine();
-                        ImGui.SetCursorPosX(ImGui.GetWindowWidth() - _itemWidth * 1 / 4);
+                        ImGui.SetCursorPosX(ImGui.GetWindowWidth() - _ActionitemWidth * 1 / 4);
                         ImGui.Text("Hit timeline");
                     }
                 }
             }
 
-            using (var subList = ImRaii.Child("ActionSubList", -Vector2.One, false))
+            using (var subList = ImRaii.Child("ActionSubList", new Vector2(-1f, (float)(_activeSet.ActionReplacements.Count()*30)+30), false))
             {
                 if (subList)
                 {
+
                     foreach (var key in _activeSet.ActionReplacements.Keys)
                     {
                         var replacement = _activeSet.ActionReplacements[key].Replacement;
@@ -260,7 +282,6 @@ public sealed class ConfigWindow : Window
                             Methods.SetupAction(key);
                             Service.Config.Save();
                         }
-
                         ImGui.SameLine();
                         if (ImGui.Button(" - ##" + key))
                         {
@@ -271,13 +292,13 @@ public sealed class ConfigWindow : Window
                         ImGui.Text($"#{key:D5}");
 
                         ImGui.SameLine();
-                        if (_itemWidth != 0 && Service.Config.AdvancedMode)
+                        if (_ActionitemWidth != 0 && Service.Config.AdvancedMode)
                         {
-                            var widthRest = ImGui.GetWindowWidth() - _itemWidth - ImGui.GetCursorPosX() - 5 * Scale;
+                            var widthRest = ImGui.GetWindowWidth() - _ActionitemWidth - ImGui.GetCursorPosX() - 5 * Scale;
                             ImGui.PushTextWrapPos(Math.Max(widthRest, 60 * Scale) + ImGui.GetCursorPosX());
                         }
                         ImGui.TextWrapped(ActionReplacementsManager.GetName(key));
-                        if (_itemWidth != 0 && Service.Config.AdvancedMode)
+                        if (_ActionitemWidth != 0 && Service.Config.AdvancedMode)
                         {
                             ImGui.PopTextWrapPos();
                         }
@@ -288,9 +309,9 @@ public sealed class ConfigWindow : Window
                         }
 
                         ImGui.SameLine();
-                        if (_itemWidth != 0)
+                        if (_ActionitemWidth != 0)
                         {
-                            ImGui.SetCursorPosX(ImGui.GetWindowWidth() - _itemWidth);
+                            ImGui.SetCursorPosX(ImGui.GetWindowWidth() - _ActionitemWidth);
                         }
 
                         var startwidth = ImGui.GetCursorPosX();
@@ -306,7 +327,7 @@ public sealed class ConfigWindow : Window
                         DrawItem("Hit", ref replacement.ActionTimelineHit, i => i.ActionTimelineHit);
 
                         ImGui.SameLine();
-                        _itemWidth = ImGui.GetCursorPosX() - startwidth;
+                        _ActionitemWidth = ImGui.GetCursorPosX() - startwidth;
                         ImGui.NewLine();
                         continue;
 
@@ -382,7 +403,7 @@ public sealed class ConfigWindow : Window
 
                 if (Service.Config.AdvancedMode)
                 {
-                    if (_itemWidth == 0)
+                    if (_MountitemWidth == 0)
                     {
                         ImGui.SameLine();
                         ImGui.Text(" RideBGM TiltParam1 TiltParam2 TiltParam3 TiltParam4 MountCustomize");
@@ -390,33 +411,33 @@ public sealed class ConfigWindow : Window
                     else
                     {
                         ImGui.SameLine();
-                        ImGui.SetCursorPosX(ImGui.GetWindowWidth() - _itemWidth * 6 / 6);
+                        ImGui.SetCursorPosX(ImGui.GetWindowWidth() - _MountitemWidth * 6 / 6);
                         ImGui.Text("RideBGM");
 
                         ImGui.SameLine();
-                        ImGui.SetCursorPosX(ImGui.GetWindowWidth() - _itemWidth * 5 / 6);
+                        ImGui.SetCursorPosX(ImGui.GetWindowWidth() - _MountitemWidth * 5 / 6);
                         ImGui.Text("TiltParam1");
 
                         ImGui.SameLine();
-                        ImGui.SetCursorPosX(ImGui.GetWindowWidth() - _itemWidth * 4 / 6);
+                        ImGui.SetCursorPosX(ImGui.GetWindowWidth() - _MountitemWidth * 4 / 6);
                         ImGui.Text("TiltParam2");
 
                         ImGui.SameLine();
-                        ImGui.SetCursorPosX(ImGui.GetWindowWidth() - _itemWidth * 3 / 6);
+                        ImGui.SetCursorPosX(ImGui.GetWindowWidth() - _MountitemWidth * 3 / 6);
                         ImGui.Text("TiltParam3");
 
                         ImGui.SameLine();
-                        ImGui.SetCursorPosX(ImGui.GetWindowWidth() - _itemWidth * 2 / 6);
+                        ImGui.SetCursorPosX(ImGui.GetWindowWidth() - _MountitemWidth * 2 / 6);
                         ImGui.Text("TiltParam3");
 
                         ImGui.SameLine();
-                        ImGui.SetCursorPosX(ImGui.GetWindowWidth() - _itemWidth * 1 / 6);
+                        ImGui.SetCursorPosX(ImGui.GetWindowWidth() - _MountitemWidth * 1 / 6);
                         ImGui.Text("TiltParam3");
                     }
                 }
             }
 
-            using (var subList = ImRaii.Child("MountSubList", -Vector2.One, false))
+            using (var subList = ImRaii.Child("MountSubList", new Vector2(-1f, (float)(_activeSet.MountReplacements.Count() * 30) + 30), false))
             {
                 if (subList)
                 {
@@ -440,13 +461,13 @@ public sealed class ConfigWindow : Window
                         ImGui.Text($"#{key:D5}");
 
                         ImGui.SameLine();
-                        if (_itemWidth != 0 && Service.Config.AdvancedMode)
+                        if (_MountitemWidth != 0 && Service.Config.AdvancedMode)
                         {
-                            var widthRest = ImGui.GetWindowWidth() - _itemWidth - ImGui.GetCursorPosX() - 5 * Scale;
+                            var widthRest = ImGui.GetWindowWidth() - _MountitemWidth - ImGui.GetCursorPosX() - 5 * Scale;
                             ImGui.PushTextWrapPos(Math.Max(widthRest, 60 * Scale) + ImGui.GetCursorPosX());
                         }
                         ImGui.TextWrapped(MountReplacementsManager.GetName(key));
-                        if (_itemWidth != 0 && Service.Config.AdvancedMode)
+                        if (_MountitemWidth != 0 && Service.Config.AdvancedMode)
                         {
                             ImGui.PopTextWrapPos();
                         }
@@ -457,9 +478,9 @@ public sealed class ConfigWindow : Window
                         }
 
                         ImGui.SameLine();
-                        if (_itemWidth != 0)
+                        if (_MountitemWidth != 0)
                         {
-                            ImGui.SetCursorPosX(ImGui.GetWindowWidth() - _itemWidth);
+                            ImGui.SetCursorPosX(ImGui.GetWindowWidth() - _MountitemWidth);
                         }
 
                         var startwidth = ImGui.GetCursorPosX();
@@ -481,7 +502,7 @@ public sealed class ConfigWindow : Window
                         DrawItem("Start", ref replacement.MountCustomize, i => i.MountCustomize);
 
                         ImGui.SameLine();
-                        _itemWidth = ImGui.GetCursorPosX() - startwidth;
+                        _MountitemWidth = ImGui.GetCursorPosX() - startwidth;
                         ImGui.NewLine();
                         continue;
 

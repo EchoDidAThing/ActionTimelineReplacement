@@ -17,7 +17,7 @@ public static class MountReplacementsManager
             .ToDictionary(i => i.RowId, i => i.Singular.ToString());
 
     public static IEnumerable<uint> AllMountIds =>
-       Service.Config.ReplacementSets.SelectMany(i => i.Value.MountReplacements.Keys);
+       Service.Config.ReplacementSets.SelectMany(i => i.MountReplacements.Keys);
 
     public static string GetName(uint id)
     {
@@ -33,7 +33,7 @@ public static class MountReplacementsManager
 
         foreach (var item in Service.Config.ReplacementSets)
         {
-            foreach (var replacement in item.Value.MountReplacements
+            foreach (var replacement in item.MountReplacements
                          .Where(replacement => replacement.Value.Enabled)
                          .OrderByDescending(replacement => replacement.Key))
             {
