@@ -1,12 +1,10 @@
 #Echo's TODO
 - add more sheets
-- add handling for Strings(CHECK NAMINGWAY) and packedbools
+- add handling for Strings(CHECK NAMINGWAY) and packedbools (taco's addendum: might have worked packed bools out, but check my work, please)
 - Add codepath to create custom entries(reference field, edited fields)
 - Redo readme
 
-#misc TODO/clarifications
-- how is `FieldOffset(0x??)` interacting with addresses in relation to Lumina data? example: defined 0x4F reads 0x50 instead in the GUI b/c of parsing discrepancy, so which field is it actually changing?
-- use local sheet data instead so it's up-to-date? or get them to modify the source idk
+taco's clarification for self: `FieldOffset(0x??)` is the actual address being updated. Lumina sheets are just used for pulling base data. so, technically, if the column doesn't exist in the source data, a dummy field can be supplied, although that does make things slightly obtuse.
 
 
 # ActionTimelineReplacement aka.ATR
