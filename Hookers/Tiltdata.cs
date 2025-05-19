@@ -22,6 +22,6 @@ public struct TiltData
     public Byte Unknown4;
 
     //There is a packed boolean but I dunno how to work with them yet
-    //[FieldOffset(0x8)]
-    //public Boolean Unknown5;
+    [FieldOffset(0x8)]
+    public bool Unknown5;
 }

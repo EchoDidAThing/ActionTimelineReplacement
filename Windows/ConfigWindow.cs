@@ -412,33 +412,57 @@ public sealed class ConfigWindow : Window
                     if (_MountitemWidth == 0)
                     {
                         ImGui.SameLine();
-                        ImGui.Text(" RideBGM TiltGround TiltFlySwim TiltParam3 TiltParam4 MountCustomize");
+                        ImGui.Text(" RideBGM TiltGround TiltFlySwim TiltParam3 TiltParam4 MountCustomize Unk1 Unk2 Unk3 Unk4 Unk5 Unk6");
                     }
                     else
                     {
                         ImGui.SameLine();
-                        ImGui.SetCursorPosX(ImGui.GetWindowWidth() - _MountitemWidth * 6 / 6);
+                        ImGui.SetCursorPosX(ImGui.GetWindowWidth() - _MountitemWidth * 12 / 12);
                         ImGui.Text("RideBGM");
 
                         ImGui.SameLine();
-                        ImGui.SetCursorPosX(ImGui.GetWindowWidth() - _MountitemWidth * 5 / 6);
+                        ImGui.SetCursorPosX(ImGui.GetWindowWidth() - _MountitemWidth * 11 / 12);
                         ImGui.Text("TiltGround");
 
                         ImGui.SameLine();
-                        ImGui.SetCursorPosX(ImGui.GetWindowWidth() - _MountitemWidth * 4 / 6);
+                        ImGui.SetCursorPosX(ImGui.GetWindowWidth() - _MountitemWidth * 10 / 12);
                         ImGui.Text("TiltFlySwim");
 
                         ImGui.SameLine();
-                        ImGui.SetCursorPosX(ImGui.GetWindowWidth() - _MountitemWidth * 3 / 6);
+                        ImGui.SetCursorPosX(ImGui.GetWindowWidth() - _MountitemWidth * 9 / 12);
                         ImGui.Text("TiltParam3");
 
                         ImGui.SameLine();
-                        ImGui.SetCursorPosX(ImGui.GetWindowWidth() - _MountitemWidth * 2 / 6);
+                        ImGui.SetCursorPosX(ImGui.GetWindowWidth() - _MountitemWidth * 8 / 12);
                         ImGui.Text("TiltParam4");
 
                         ImGui.SameLine();
-                        ImGui.SetCursorPosX(ImGui.GetWindowWidth() - _MountitemWidth * 1 / 6);
+                        ImGui.SetCursorPosX(ImGui.GetWindowWidth() - _MountitemWidth * 7 / 12);
                         ImGui.Text("MountCustomize");
+
+                        ImGui.SameLine();
+                        ImGui.SetCursorPosX(ImGui.GetWindowWidth() - _MountitemWidth * 6 / 12);
+                        ImGui.Text("Unk1");
+
+                        ImGui.SameLine();
+                        ImGui.SetCursorPosX(ImGui.GetWindowWidth() - _MountitemWidth * 5 / 12);
+                        ImGui.Text("Unk2");
+
+                        ImGui.SameLine();
+                        ImGui.SetCursorPosX(ImGui.GetWindowWidth() - _MountitemWidth * 4 / 12);
+                        ImGui.Text("Unk3");
+
+                        ImGui.SameLine();
+                        ImGui.SetCursorPosX(ImGui.GetWindowWidth() - _MountitemWidth * 3 / 12);
+                        ImGui.Text("Unk4");
+
+                        ImGui.SameLine();
+                        ImGui.SetCursorPosX(ImGui.GetWindowWidth() - _MountitemWidth * 2 / 12);
+                        ImGui.Text("Unk5");
+
+                        ImGui.SameLine();
+                        ImGui.SetCursorPosX(ImGui.GetWindowWidth() - _MountitemWidth * 1 / 12);
+                        ImGui.Text("Unk6");
                     }
                 }
             }
@@ -499,13 +523,31 @@ public sealed class ConfigWindow : Window
                         DrawItem("TiltFlySwim", ref replacement.TiltParam2, i => i.TiltParam2);
 
                         ImGui.SameLine();
-                        DrawItem("TiltParam3", ref replacement.TiltParam3, i => i.TiltParam3);
+                        DrawItem("Tilt3", ref replacement.TiltParam3, i => i.TiltParam3);
 
                         ImGui.SameLine();
-                        DrawItem("TiltParam4", ref replacement.TiltParam4, i => i.TiltParam4);
+                        DrawItem("Tilt4", ref replacement.TiltParam4, i => i.TiltParam4);
 
                         ImGui.SameLine();
                         DrawItem("MountCustomize", ref replacement.MountCustomize, i => i.MountCustomize);
+
+                        ImGui.SameLine();
+                        DrawItem("Unk1", ref replacement.Unk1, i => i.Unk1);
+
+                        ImGui.SameLine();
+                        DrawItem("Unk2", ref replacement.Unk2, i => i.Unk2);
+
+                        ImGui.SameLine();
+                        DrawItem("Unk3", ref replacement.Unk3, i => i.Unk3);
+
+                        ImGui.SameLine();
+                        DrawItem("Unk4", ref replacement.Unk4, i => i.Unk4);
+
+                        ImGui.SameLine();
+                        DrawItem("Unk5", ref replacement.Unk5, i => i.Unk5);
+
+                        ImGui.SameLine();
+                        DrawItem("Unk6", ref replacement.Unk6, i => i.Unk6);
 
                         ImGui.SameLine();
                         _MountitemWidth = ImGui.GetCursorPosX() - startwidth;
@@ -569,7 +611,13 @@ public sealed class ConfigWindow : Window
                                             original.TiltParam2,
                                             original.TiltParam3,
                                             original.TiltParam4,
-                                            original.MountCustomize),
+                                            original.MountCustomize,
+                                            original.Unk1,
+                                            original.Unk2,
+                                            original.Unk3,
+                                            original.Unk4,
+                                            original.Unk5,
+                                            original.Unk6),
                                         false);
                                 Service.Config.Save();
                             }
@@ -588,29 +636,33 @@ public sealed class ConfigWindow : Window
                     if (_TiltitemWidth == 0)
                     {
                         ImGui.SameLine();
-                        ImGui.Text(" TiltRate RotOriginOffset MaxAngle Unknown3 Unknown4");
+                        ImGui.Text("TiltRate RotOriginOffset MaxAngle Unknown3 Unknown4 Unknown5");
                     }
                     else
                     {
                         ImGui.SameLine();
-                        ImGui.SetCursorPosX(ImGui.GetWindowWidth() - _TiltitemWidth * 5 / 5);
+                        ImGui.SetCursorPosX(ImGui.GetWindowWidth() - _TiltitemWidth * 6 / 6);
                         ImGui.Text("TiltRate");
 
                         ImGui.SameLine();
-                        ImGui.SetCursorPosX(ImGui.GetWindowWidth() - _TiltitemWidth * 4 / 5);
+                        ImGui.SetCursorPosX(ImGui.GetWindowWidth() - _TiltitemWidth * 5 / 6);
                         ImGui.Text("RotOriginOffset");
 
                         ImGui.SameLine();
-                        ImGui.SetCursorPosX(ImGui.GetWindowWidth() - _TiltitemWidth * 3 / 5);
+                        ImGui.SetCursorPosX(ImGui.GetWindowWidth() - _TiltitemWidth * 4 / 6);
                         ImGui.Text("MaxAngle");
 
                         ImGui.SameLine();
-                        ImGui.SetCursorPosX(ImGui.GetWindowWidth() - _TiltitemWidth * 2 / 5);
+                        ImGui.SetCursorPosX(ImGui.GetWindowWidth() - _TiltitemWidth * 3 / 6);
                         ImGui.Text("Unknown3");
 
                         ImGui.SameLine();
-                        ImGui.SetCursorPosX(ImGui.GetWindowWidth() - _TiltitemWidth * 1 / 5);
+                        ImGui.SetCursorPosX(ImGui.GetWindowWidth() - _TiltitemWidth * 2 / 6);
                         ImGui.Text("Unknown4");
+
+                        ImGui.SameLine();
+                        ImGui.SetCursorPosX(ImGui.GetWindowWidth() - _TiltitemWidth * 1 / 6);
+                        ImGui.Text("Unknown5");
                     }
                 }
             }
@@ -677,6 +729,9 @@ public sealed class ConfigWindow : Window
                         DrawItemByte("Unknown4", ref replacement.Unknown4, i => i.Unknown4);
 
                         ImGui.SameLine();
+                        DrawItemBool("Unknown5", ref replacement.Unknown5, i => i.Unknown5);
+
+                        ImGui.SameLine();
                         _TiltitemWidth = ImGui.GetCursorPosX() - startwidth;
                         ImGui.NewLine();
                         continue;
@@ -727,6 +782,29 @@ public sealed class ConfigWindow : Window
                                 }
                             }
                         }
+                        void DrawItemBool(string name, ref bool value,
+                            Func<Configurations.TiltReplacement, bool> getDefault)
+                        {
+                            ImGui.SetNextItemWidth(60 * Scale);
+                            bool relayBool = value;
+                            if (ImGui.Checkbox("##" + name + key, ref relayBool))
+                            {
+                                value = relayBool;
+                                Methods.SetupTilt(key);
+                                Service.Config.Save();
+                            }
+
+                            ImGui.SameLine();
+                            using (ImRaii.PushFont(UiBuilder.IconFont))
+                            {
+                                if (ImGui.Button($"{FontAwesomeIcon.Reply.ToIconString()}##{name}{key}"))
+                                {
+                                    value = getDefault(TiltReplacementsManager.GetOriginalReplacement(key));
+                                    Methods.SetupTilt(key);
+                                    Service.Config.Save();
+                                }
+                            }
+                        }
                     }
 
                     const string searchTiltsPopup = "Search tilts";
@@ -760,7 +838,8 @@ public sealed class ConfigWindow : Window
                                             original.Unknown1,
                                             original.Unknown2,
                                             original.Unknown3,
-                                            original.Unknown4),
+                                            original.Unknown4,
+                                            original.Unknown5),
                                         false);
                                 Service.Config.Save();
                             }

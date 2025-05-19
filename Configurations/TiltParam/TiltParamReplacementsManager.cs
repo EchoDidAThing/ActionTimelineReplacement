@@ -55,7 +55,8 @@ public static class TiltReplacementsManager
                 (byte)(act?.Unknown1 ?? 0),
                 (byte)(act?.Unknown2 ?? 0),
                 (byte)(act?.Unknown3 ?? 0),
-                (byte)(act?.Unknown4 ?? 0));
+                (byte)(act?.Unknown4 ?? 0),
+                (bool)(act?.Unknown5 ?? false));
         }
 
         return replacement!;

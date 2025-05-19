@@ -22,4 +22,22 @@ public struct MountData
 
     [FieldOffset(0x4A)]
     public ushort MountCustomize;
+
+    [FieldOffset(0x45)]
+    public ushort Unk1;
+
+    [FieldOffset(0x46)]
+    public ushort Unk2;
+
+    [FieldOffset(0x47)]
+    public ushort Unk3;
+
+    [FieldOffset(0x49)]
+    public ushort Unk4;
+
+    [FieldOffset(0x4F)]
+    public ushort Unk5;
+
+    [FieldOffset(0x50)]
+    public ushort Unk6;
 }
