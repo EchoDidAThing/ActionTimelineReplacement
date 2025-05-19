@@ -24,7 +24,7 @@ public struct MountData
     public ushort MountCustomize;
 
     [FieldOffset(0x45)]
-    public ushort Unk1;
+    public ushort FlyUpDownTilt;
 
     [FieldOffset(0x46)]
     public ushort Unk2;
@@ -39,5 +39,5 @@ public struct MountData
     public ushort Unk5;
 
     [FieldOffset(0x50)]
-    public ushort Unk6;
+    public ushort UnderwaterAnimSpeed;
 }

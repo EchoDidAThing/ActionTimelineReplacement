@@ -21,7 +21,6 @@ public struct TiltData
     [FieldOffset(0x7)]
     public Byte Unknown4;
 
-    //There is a packed boolean but I dunno how to work with them yet
     [FieldOffset(0x8)]
-    public bool Unknown5;
+    public bool MouseReverse;
 }

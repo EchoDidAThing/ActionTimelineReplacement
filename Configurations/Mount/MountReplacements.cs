@@ -22,8 +22,8 @@ public class MountReplacementConfig(MountReplacement replacement, bool enabled)
 
 public class MountReplacement(
     ushort rideBGM,
-    ushort tiltParam1,
-    ushort tiltParam2,
+    ushort tiltGround,
+    ushort tiltFlySwim,
     ushort tiltParam3,
     ushort tiltParam4,
     ushort mountCustomize,
@@ -32,11 +32,11 @@ public class MountReplacement(
     ushort Unk3,
     ushort Unk4,
     ushort Unk5,
-    ushort Unk6)
+    ushort SwimAnimSpeed)
 {
     public ushort RideBGM = rideBGM;
-    public ushort TiltParam1 = tiltParam1;
-    public ushort TiltParam2 = tiltParam2;
+    public ushort TiltParam1 = tiltGround;
+    public ushort TiltParam2 = tiltFlySwim;
     public ushort TiltParam3 = tiltParam3;
     public ushort TiltParam4 = tiltParam4;
     public ushort MountCustomize = mountCustomize;
@@ -45,7 +45,7 @@ public class MountReplacement(
     public ushort Unk3 = Unk3;
     public ushort Unk4 = Unk4;
     public ushort Unk5 = Unk5;
-    public ushort Unk6 = Unk6;
+    public ushort Unk6 = SwimAnimSpeed;
     public unsafe void WriteToPointer(MountData* pointer)
     {
         pointer->RideBGM = RideBGM;
@@ -54,11 +54,11 @@ public class MountReplacement(
         pointer->TiltParam3 = TiltParam3;
         pointer->TiltParam4 = TiltParam4;
         pointer->MountCustomize = MountCustomize;
-        pointer->Unk1 = Unk1;
+        pointer->FlyUpDownTilt = Unk1;
         pointer->Unk2 = Unk2;
         pointer->Unk3 = Unk3;
         pointer->Unk4 = Unk4;
         pointer->Unk5 = Unk5;
-        pointer->Unk6 = Unk6;
+        pointer->UnderwaterAnimSpeed = Unk6;
     }
 }
