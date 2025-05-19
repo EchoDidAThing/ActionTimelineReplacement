@@ -37,8 +37,8 @@ public class MountReplacement(
     public unsafe void WriteToPointer(MountData* pointer)
     {
         pointer->RideBGM = RideBGM;
-        pointer->TiltParam1 = TiltParam1;
-        pointer->TiltParam2 = TiltParam2;
+        pointer->TiltGround = TiltParam1;
+        pointer->TiltFlySwim = TiltParam2;
         pointer->TiltParam3 = TiltParam3;
         pointer->TiltParam4 = TiltParam4;
         pointer->MountCustomize = MountCustomize;

@@ -18,6 +18,11 @@ namespace ActionTimelineReplacement.Windows;
 
 public sealed class ConfigWindow : Window
 {
+    private float _ActionitemWidth;
+    private float _MountitemWidth;
+    private float _TiltitemWidth;
+    private float _BGMitemWidth;
+
     private readonly FileDialogManager _dialogManager = new()
     {
         AddedWindowFlags = ImGuiWindowFlags.NoCollapse | ImGuiWindowFlags.NoDocking,
@@ -140,6 +145,7 @@ public sealed class ConfigWindow : Window
                         Service.Config.Save();
                         Methods.SetupActions(Service.Config.ReplacementSets[i].ActionReplacements.Keys);
                         Methods.SetupMounts(Service.Config.ReplacementSets[i].MountReplacements.Keys);
+                        Methods.SetupTilts(Service.Config.ReplacementSets[i].TiltReplacements.Keys);
                         ImGui.CloseCurrentPopup();
                     }
                 }
@@ -158,7 +164,7 @@ public sealed class ConfigWindow : Window
             if (ImGui.Button("Create", buttonSize))
             {
                 var randomset = new Random().Next(1, 100).ToString();
-                Service.Config.ReplacementSets.Add(new Configuration.ReplacementSet("New Set" + randomset, true, 0, new Dictionary<uint, ActionReplacementConfig>() , new Dictionary<uint, MountReplacementConfig>()));
+                Service.Config.ReplacementSets.Add(new Configuration.ReplacementSet("New Set" + randomset, true, 0, new Dictionary<uint, ActionReplacementConfig>() , new Dictionary<uint, MountReplacementConfig>() , new Dictionary<uint, TiltReplacementConfig>()));
                 Service.Config.Save();
             }
 
@@ -173,7 +179,8 @@ public sealed class ConfigWindow : Window
                         if (Configuration.ReplacementSet.Load(file) is not { } set) continue;
                         Service.Config.ReplacementSets.Add(set);
                         Methods.SetupActions(set.ActionReplacements.Keys);
-                        Methods.SetupActions(set.MountReplacements.Keys);
+                        Methods.SetupMounts(set.MountReplacements.Keys);
+                        Methods.SetupTilts(set.TiltReplacements.Keys);
                     }
 
                     Service.Config.Save();
@@ -208,6 +215,7 @@ public sealed class ConfigWindow : Window
         {
             Methods.SetupActions(_activeSet.ActionReplacements.Keys);
             Methods.SetupMounts(_activeSet.ActionReplacements.Keys);
+            Methods.SetupTilts(_activeSet.TiltReplacements.Keys);
             Service.Config.Save();
         }
 
@@ -217,12 +225,11 @@ public sealed class ConfigWindow : Window
         {
             Methods.SetupActions(_activeSet.ActionReplacements.Keys);
             Methods.SetupMounts(_activeSet.ActionReplacements.Keys);
+            Methods.SetupTilts(_activeSet.TiltReplacements.Keys);
             Service.Config.Save();
         }
     }
     
-    private float _ActionitemWidth;
-    private float _MountitemWidth;
 
     private void DrawBodySheets()
     {
@@ -233,7 +240,7 @@ public sealed class ConfigWindow : Window
 
         ImGui.SetCursorPosY(ImGui.GetCursorPosY() + 10 * Scale);
 
-
+        
         if (ImGui.CollapsingHeader($"Action"))
         {
             using (ImRaii.PushFont(GetFont(18)))
@@ -405,7 +412,7 @@ public sealed class ConfigWindow : Window
                     if (_MountitemWidth == 0)
                     {
                         ImGui.SameLine();
-                        ImGui.Text(" RideBGM TiltParam1 TiltParam2 TiltParam3 TiltParam4 MountCustomize");
+                        ImGui.Text(" RideBGM TiltGround TiltFlySwim TiltParam3 TiltParam4 MountCustomize");
                     }
                     else
                     {
@@ -415,11 +422,11 @@ public sealed class ConfigWindow : Window
 
                         ImGui.SameLine();
                         ImGui.SetCursorPosX(ImGui.GetWindowWidth() - _MountitemWidth * 5 / 6);
-                        ImGui.Text("TiltParam1");
+                        ImGui.Text("TiltGround");
 
                         ImGui.SameLine();
                         ImGui.SetCursorPosX(ImGui.GetWindowWidth() - _MountitemWidth * 4 / 6);
-                        ImGui.Text("TiltParam2");
+                        ImGui.Text("TiltFlySwim");
 
                         ImGui.SameLine();
                         ImGui.SetCursorPosX(ImGui.GetWindowWidth() - _MountitemWidth * 3 / 6);
@@ -427,11 +434,11 @@ public sealed class ConfigWindow : Window
 
                         ImGui.SameLine();
                         ImGui.SetCursorPosX(ImGui.GetWindowWidth() - _MountitemWidth * 2 / 6);
-                        ImGui.Text("TiltParam3");
+                        ImGui.Text("TiltParam4");
 
                         ImGui.SameLine();
                         ImGui.SetCursorPosX(ImGui.GetWindowWidth() - _MountitemWidth * 1 / 6);
-                        ImGui.Text("TiltParam3");
+                        ImGui.Text("MountCustomize");
                     }
                 }
             }
@@ -483,22 +490,22 @@ public sealed class ConfigWindow : Window
                         }
 
                         var startwidth = ImGui.GetCursorPosX();
-                        DrawItem("Cast", ref replacement.RideBGM, i => i.RideBGM);
+                        DrawItem("RideBGM", ref replacement.RideBGM, i => i.RideBGM);
                         ImGui.SameLine();
 
-                        DrawItem("Start", ref replacement.TiltParam1, i => i.TiltParam1);
+                        DrawItem("TiltGround", ref replacement.TiltParam1, i => i.TiltParam1);
 
                         ImGui.SameLine();
-                        DrawItem("Start", ref replacement.TiltParam2, i => i.TiltParam2);
+                        DrawItem("TiltFlySwim", ref replacement.TiltParam2, i => i.TiltParam2);
 
                         ImGui.SameLine();
-                        DrawItem("Start", ref replacement.TiltParam3, i => i.TiltParam3);
+                        DrawItem("TiltParam3", ref replacement.TiltParam3, i => i.TiltParam3);
 
                         ImGui.SameLine();
-                        DrawItem("Start", ref replacement.TiltParam3, i => i.TiltParam4);
+                        DrawItem("TiltParam4", ref replacement.TiltParam4, i => i.TiltParam4);
 
                         ImGui.SameLine();
-                        DrawItem("Start", ref replacement.MountCustomize, i => i.MountCustomize);
+                        DrawItem("MountCustomize", ref replacement.MountCustomize, i => i.MountCustomize);
 
                         ImGui.SameLine();
                         _MountitemWidth = ImGui.GetCursorPosX() - startwidth;
@@ -571,10 +578,202 @@ public sealed class ConfigWindow : Window
                 }
             }
         }
+        if (ImGui.CollapsingHeader($"TiltParam"))
+        {
+            using (ImRaii.PushFont(GetFont(18)))
+            {
+
+                if (Service.Config.AdvancedMode)
+                {
+                    if (_TiltitemWidth == 0)
+                    {
+                        ImGui.SameLine();
+                        ImGui.Text(" TiltRate RotOriginOffset MaxAngle Unknown3 Unknown4");
+                    }
+                    else
+                    {
+                        ImGui.SameLine();
+                        ImGui.SetCursorPosX(ImGui.GetWindowWidth() - _TiltitemWidth * 5 / 5);
+                        ImGui.Text("TiltRate");
+
+                        ImGui.SameLine();
+                        ImGui.SetCursorPosX(ImGui.GetWindowWidth() - _TiltitemWidth * 4 / 5);
+                        ImGui.Text("RotOriginOffset");
+
+                        ImGui.SameLine();
+                        ImGui.SetCursorPosX(ImGui.GetWindowWidth() - _TiltitemWidth * 3 / 5);
+                        ImGui.Text("MaxAngle");
+
+                        ImGui.SameLine();
+                        ImGui.SetCursorPosX(ImGui.GetWindowWidth() - _TiltitemWidth * 2 / 5);
+                        ImGui.Text("Unknown3");
+
+                        ImGui.SameLine();
+                        ImGui.SetCursorPosX(ImGui.GetWindowWidth() - _TiltitemWidth * 1 / 5);
+                        ImGui.Text("Unknown4");
+                    }
+                }
+            }
+
+            using (var subList = ImRaii.Child("TiltSubList", new Vector2(-1f, (float)(_activeSet.TiltReplacements.Count() * 30) + 30), false))
+            {
+                if (subList)
+                {
+                    foreach (var key in _activeSet.TiltReplacements.Keys)
+                    {
+                        var replacement = _activeSet.TiltReplacements[key].Replacement;
+
+                        if (ImGui.Checkbox("##" + key, ref _activeSet.TiltReplacements[key].Enabled))
+                        {
+                            Methods.SetupTilt(key);
+                            Service.Config.Save();
+                        }
+
+                        ImGui.SameLine();
+                        if (ImGui.Button(" - ##" + key))
+                        {
+                            _activeSet.TiltReplacements.Remove(key);
+                        }
+
+                        ImGui.SameLine();
+                        ImGui.Text($"#{key:D5}");
+
+                        ImGui.SameLine();
+                        if (_TiltitemWidth != 0 && Service.Config.AdvancedMode)
+                        {
+                            var widthRest = ImGui.GetWindowWidth() - _TiltitemWidth - ImGui.GetCursorPosX() - 5 * Scale;
+                            ImGui.PushTextWrapPos(Math.Max(widthRest, 60 * Scale) + ImGui.GetCursorPosX());
+                        }
+                        ImGui.TextWrapped(TiltReplacementsManager.GetName(key));
+                        if (_TiltitemWidth != 0 && Service.Config.AdvancedMode)
+                        {
+                            ImGui.PopTextWrapPos();
+                        }
+
+                        if (!Service.Config.AdvancedMode)
+                        {
+                            continue;
+                        }
+
+                        ImGui.SameLine();
+                        if (_TiltitemWidth != 0)
+                        {
+                            ImGui.SetCursorPosX(ImGui.GetWindowWidth() - _TiltitemWidth);
+                        }
+
+                        var startwidth = ImGui.GetCursorPosX();
+                        DrawItem("TiltRate", ref replacement.Unknown0, i => i.Unknown0);
+                        ImGui.SameLine();
+
+                        DrawItemByte("RotationOriginOffset", ref replacement.Unknown1, i => i.Unknown1);
+
+                        ImGui.SameLine();
+                        DrawItemByte("MaxAngle", ref replacement.Unknown2, i => i.Unknown2);
+
+                        ImGui.SameLine();
+                        DrawItemByte("Unknown3", ref replacement.Unknown3, i => i.Unknown3);
+
+                        ImGui.SameLine();
+                        DrawItemByte("Unknown4", ref replacement.Unknown4, i => i.Unknown4);
+
+                        ImGui.SameLine();
+                        _TiltitemWidth = ImGui.GetCursorPosX() - startwidth;
+                        ImGui.NewLine();
+                        continue;
+
+                        void DrawItem(string name, ref ushort value,
+                            Func<Configurations.TiltReplacement, ushort> getDefault)
+                        {
+                            ImGui.SetNextItemWidth(60 * Scale);
+                            int relay = value;
+                            if (ImGui.DragInt("##" + name + key, ref relay))
+                            {
+                                value = (ushort)relay;
+                                Methods.SetupTilt(key);
+                                Service.Config.Save();
+                            }
+
+                            ImGui.SameLine();
+                            using (ImRaii.PushFont(UiBuilder.IconFont))
+                            {
+                                if (ImGui.Button($"{FontAwesomeIcon.Reply.ToIconString()}##{name}{key}"))
+                                {
+                                    value = getDefault(TiltReplacementsManager.GetOriginalReplacement(key));
+                                    Methods.SetupTilt(key);
+                                    Service.Config.Save();
+                                }
+                            }
+                        }
+                        void DrawItemByte(string name, ref byte value,
+                            Func<Configurations.TiltReplacement, byte> getDefault)
+                        {
+                            ImGui.SetNextItemWidth(60 * Scale);
+                            int relay = value;
+                            if (ImGui.DragInt("##" + name + key, ref relay))
+                            {
+                                value = (byte)relay;
+                                Methods.SetupTilt(key);
+                                Service.Config.Save();
+                            }
+
+                            ImGui.SameLine();
+                            using (ImRaii.PushFont(UiBuilder.IconFont))
+                            {
+                                if (ImGui.Button($"{FontAwesomeIcon.Reply.ToIconString()}##{name}{key}"))
+                                {
+                                    value = getDefault(TiltReplacementsManager.GetOriginalReplacement(key));
+                                    Methods.SetupTilt(key);
+                                    Service.Config.Save();
+                                }
+                            }
+                        }
+                    }
+
+                    const string searchTiltsPopup = "Search tilts";
+                    if (ImGui.Button(" + "))
+                    {
+                        ImGui.OpenPopup(searchTiltsPopup);
+                    }
+
+                    using var searchPopup = ImRaii.Popup(searchTiltsPopup);
+                    if (searchPopup)
+                    {
+                        var width = 200 * Scale;
+
+                        ImGui.SetNextItemWidth(width);
+                        ImGui.InputText("##Search Tilt", ref _searchTilt, 256);
+
+                        using var popUpChild = ImRaii.Child(searchTiltsPopup, new Vector2(width, 200 * Scale), true);
+                        foreach (var pair in TiltReplacementsManager.TiltNames.OrderBy(i =>
+                        {
+                            if (string.IsNullOrEmpty(_searchTilt)) return 0;
+                            return Math.Min(ScoreString(i.Value, _searchTilt),
+                                ScoreString(i.Key.ToString(), _searchTilt));
+                        }))
+                        {
+                            if (ImGui.Selectable($"#{pair.Key:D5} {pair.Value}"))
+                            {
+                                var original = TiltReplacementsManager.GetOriginalReplacement(pair.Key);
+                                _activeSet.TiltReplacements[pair.Key] =
+                                    new TiltReplacementConfig(new Configurations.TiltReplacement(
+                                            original.Unknown0,
+                                            original.Unknown1,
+                                            original.Unknown2,
+                                            original.Unknown3,
+                                            original.Unknown4),
+                                        false);
+                                Service.Config.Save();
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 
     private string _searchAction = string.Empty;
     private string _searchMount = string.Empty;
+    private string _searchTilt = string.Empty;
 
     private static int ScoreString(string s1, string search)
     {
@@ -617,7 +816,8 @@ public sealed class ConfigWindow : Window
         if (ImGui.Checkbox("Enable", ref Service.Config.EnableReplacement))
         {
             Methods.SetupActions(ActionReplacementsManager.AllActionIds);
-            Methods.SetupActions(MountReplacementsManager.AllMountIds);
+            Methods.SetupMounts(MountReplacementsManager.AllMountIds);
+            Methods.SetupTilts(TiltReplacementsManager.AllTiltIds);
             Service.Config.Save();
         }
 
@@ -626,7 +826,8 @@ public sealed class ConfigWindow : Window
         if (ImGui.Button("Redraw"))
         {
             Methods.SetupActions(ActionReplacementsManager.AllActionIds);
-            Methods.SetupActions(MountReplacementsManager.AllMountIds);
+            Methods.SetupMounts(MountReplacementsManager.AllMountIds);
+            Methods.SetupTilts(TiltReplacementsManager.AllTiltIds);
         }
 
         ImGui.SameLine();

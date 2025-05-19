@@ -8,14 +8,14 @@ public static unsafe class Methods
 {
     private delegate ActionData* GetActionDataDelegate(uint actionId);
     private delegate MountData* GetMountDataDelegate(uint mountId);
-    private delegate TiltData* GetMountTilt1DataDelegate(uint tiltID);
+    private delegate TiltData* GetTiltDataDelegate(uint tiltID);
     private delegate TiltData* GetMountTilt2DataDelegate(uint tiltID);
     private delegate TiltData* GetMountTilt3DataDelegate(uint tiltID);
     private delegate TiltData* GetMountTilt4DataDelegate(uint tiltID);
 
     private static GetActionDataDelegate? _getActionDataHook;
     private static GetMountDataDelegate? _getMountDataHook;
-    private static GetMountTilt1DataDelegate? _getMountTilt1DataHook;
+    private static GetTiltDataDelegate? _getMountTilt1DataHook;
     private static GetMountTilt2DataDelegate? _getMountTilt2DataHook;
     private static GetMountTilt3DataDelegate? _getMountTilt3DataHook;
     private static GetMountTilt4DataDelegate? _getMountTilt4DataHook;
@@ -34,9 +34,9 @@ public static unsafe class Methods
 
         return _getMountDataHook(mountId);
     }
-    private static TiltData* GetMountTilt1Data(uint tiltId)
+    private static TiltData* GetTiltData(uint tiltId)
     {
-        _getMountTilt1DataHook ??= Marshal.GetDelegateForFunctionPointer<GetMountTilt1DataDelegate>(
+        _getMountTilt1DataHook ??= Marshal.GetDelegateForFunctionPointer<GetTiltDataDelegate>(
                 Service.Scanner.ScanText("E8 ?? ?? ?? ?? 0F B7 4F ?? 48 8B F0 E8 ?? ?? ?? ?? C6 43 "));
 
         return _getMountTilt1DataHook(tiltId);
@@ -104,6 +104,27 @@ public static unsafe class Methods
 
         Service.Log.Info("Set the Mount[{MountID}] with RideBGM[{RideBGM}] TiltParam1[{TiltParam1}] TiltParam2[{TiltParam2}] TiltParam3[{TiltParam3}] TiltParam4[{TiltParam4}] MountCustomize[{MountCustomize}]",
             mountId, replacement.RideBGM, replacement.TiltParam1, replacement.TiltParam2, replacement.TiltParam3, replacement.TiltParam4, replacement.MountCustomize);
+        replacement.WriteToPointer(data);
+    }
+
+
+    public static void SetupTilts(IEnumerable<uint> tiltIds, bool reset = false)
+    {
+        foreach (var tiltId in tiltIds)
+        {
+            SetupTilt(tiltId, reset);
+        }
+    }
+
+    public static void SetupTilt(uint tiltId, bool reset = false)
+    {
+        var data = GetMountTilt3Data(tiltId);
+        var replacement = reset
+            ? TiltReplacementsManager.GetOriginalReplacement(tiltId)
+            : TiltReplacementsManager.GetReplacement(tiltId);
+
+        Service.Log.Info("Set the Tilt[{TiltID}] with Unknown0[{Unknown0}] Unknown1[{Unknown1}] Unknown2[{Unknown2}] Unknown3[{Unknown3}] Unknown4[{Unknown4}]",
+            tiltId, replacement.Unknown0, replacement.Unknown1, replacement.Unknown2, replacement.Unknown3, replacement.Unknown4);
         replacement.WriteToPointer(data);
     }
 }

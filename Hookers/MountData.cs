@@ -9,10 +9,10 @@ public struct MountData
     public ushort RideBGM;
 
     [FieldOffset(0x3A)]
-    public ushort TiltParam1;
+    public ushort TiltGround;
 
     [FieldOffset(0x3C)]
-    public ushort TiltParam2;
+    public ushort TiltFlySwim;
 
     [FieldOffset(0x3E)]
     public ushort TiltParam3;

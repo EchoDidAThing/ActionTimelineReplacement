@@ -7,17 +7,21 @@ namespace ActionTimelineReplacement.Hookers;
 public struct TiltData
 {
     [FieldOffset(0x0)]
-    public Single Unk1;
+    public Single TiltRate;
 
     [FieldOffset(0x4)]
-    public Byte Unk2;
+    public Byte RotationOriginOffset;
 
     [FieldOffset(0x5)]
-    public Byte Unk3;
+    public Byte MaxAngle;
 
     [FieldOffset(0x6)]
-    public Byte Unk4;
+    public Byte Unknown3;
 
     [FieldOffset(0x7)]
-    public Byte Unk5;
+    public Byte Unknown4;
+
+    //There is a packed boolean but I dunno how to work with them yet
+    //[FieldOffset(0x8)]
+    //public Boolean Unknown5;
 }

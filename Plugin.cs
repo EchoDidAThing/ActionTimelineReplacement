@@ -22,7 +22,8 @@ public sealed class Plugin : IDalamudPlugin
         _disposables = [new WindowManager()];
 
         Methods.SetupActions(ActionReplacementsManager.AllActionIds);
-        Methods.SetupActions(MountReplacementsManager.AllMountIds);
+        Methods.SetupMounts(MountReplacementsManager.AllMountIds);
+        Methods.SetupTilts(TiltReplacementsManager.AllTiltIds);
 
     }
 
@@ -30,6 +31,7 @@ public sealed class Plugin : IDalamudPlugin
     {
         Methods.SetupActions(ActionReplacementsManager.AllActionIds, true);
         Methods.SetupMounts(MountReplacementsManager.AllMountIds, true);
+        Methods.SetupTilts(TiltReplacementsManager.AllTiltIds, true);
         Service.Config.Save();
         foreach (var disposable in _disposables)
         {
