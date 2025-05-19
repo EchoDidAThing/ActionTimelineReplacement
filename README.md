@@ -1,3 +1,10 @@
+#Echo's TODO
+-add more sheets
+-add handling for Strings(CHECK NAMINGWAY) and packedbools
+-Add codepath to create custom entries(reference field, edited fields)
+-Redo readme
+
+
 # ActionTimelineReplacement aka.ATR
 
 **Specially Credit to Loskh for the original development, and also very credit to DethiCra for completely rebuilding the plugin as well as creating the graphic interface!!**
