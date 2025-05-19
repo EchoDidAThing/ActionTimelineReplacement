@@ -4,6 +4,10 @@
 -Add codepath to create custom entries(reference field, edited fields)
 -Redo readme
 
+#misc TODO/clarifications
+-how is `FieldOffset(0x??)` interacting with addresses in relation to Lumina data? example: defined 0x4F reads 0x50 instead in the GUI b/c of parsing discrepancy, so which field is it actually changing?
+-use local sheet data instead so it's up-to-date? or get them to modify the source idk
+
 
 # ActionTimelineReplacement aka.ATR
 
