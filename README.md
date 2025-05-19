@@ -1,6 +1,6 @@
 #Echo's TODO
 - add more sheets
-- add handling for Strings(CHECK NAMINGWAY) and packedbools (taco's addendum: might have worked packed bools out, but check my work, please)
+- add handling for Strings(CHECK NAMINGWAY) and packedbools
 - Add codepath to create custom entries(reference field, edited fields)
 - Redo readme
 
