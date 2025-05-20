@@ -1,5 +1,6 @@
 #Echo's TODO
 - add more sheets
+- rework the Code to actually be modular.
 - add handling for Strings(CHECK NAMINGWAY) and packedbools
 - Add codepath to create custom entries(reference field, edited fields)
 - Redo readme
