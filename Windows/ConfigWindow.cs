@@ -163,7 +163,7 @@ public sealed class ConfigWindow : Window
             if (ImGui.Button("Create", buttonSize))
             {
                 var randomset = new Random().Next(1, 100).ToString();
-                Service.Config.ReplacementSets.Add(new Configuration.ReplacementSet("New Set" + randomset, true, 0, new Dictionary<uint, ActionReplacementConfig>() , new Dictionary<uint, MountReplacementConfig>() , new Dictionary<uint, TiltReplacementConfig>()));
+                Service.Config.ReplacementSets.Add(new Configuration.ReplacementSet("New Set" + randomset, true, 0, new Dictionary<uint, ActionReplacementConfig>(), new Dictionary<uint, ActionCastVFXReplacementConfig>(), new Dictionary<uint, MountReplacementConfig>() , new Dictionary<uint, TiltReplacementConfig>()));
                 Service.Config.Save();
             }
 
@@ -411,7 +411,7 @@ public sealed class ConfigWindow : Window
                     if (_MountitemWidth == 0)
                     {
                         ImGui.SameLine();
-                        ImGui.Text(" RideBGM TiltGround TiltFlySwim TiltParam3 TiltParam4 MountCustomize FlyUpDownTilt Unk2 Unk3 Unk4 Unk5 SwimAnimSpeed");
+                        ImGui.Text(" RideBGM TiltGround TiltFlySwim TiltParam3 TiltParam4 FlyUpDownTilt Unk2 Unk3 Unk4 MountCustomize Unk5 SwimAnimSpeed");
                     }
                     else
                     {
@@ -437,23 +437,23 @@ public sealed class ConfigWindow : Window
 
                         ImGui.SameLine();
                         ImGui.SetCursorPosX(ImGui.GetWindowWidth() - _MountitemWidth * 7 / 12);
-                        ImGui.Text("MountCustomize");
-
-                        ImGui.SameLine();
-                        ImGui.SetCursorPosX(ImGui.GetWindowWidth() - _MountitemWidth * 6 / 12);
                         ImGui.Text("FlyUpDownTilt");
 
                         ImGui.SameLine();
-                        ImGui.SetCursorPosX(ImGui.GetWindowWidth() - _MountitemWidth * 5 / 12);
+                        ImGui.SetCursorPosX(ImGui.GetWindowWidth() - _MountitemWidth * 6 / 12);
                         ImGui.Text("Unk2");
 
                         ImGui.SameLine();
-                        ImGui.SetCursorPosX(ImGui.GetWindowWidth() - _MountitemWidth * 4 / 12);
+                        ImGui.SetCursorPosX(ImGui.GetWindowWidth() - _MountitemWidth * 5 / 12);
                         ImGui.Text("Unk3");
 
                         ImGui.SameLine();
-                        ImGui.SetCursorPosX(ImGui.GetWindowWidth() - _MountitemWidth * 3 / 12);
+                        ImGui.SetCursorPosX(ImGui.GetWindowWidth() - _MountitemWidth * 4 / 12);
                         ImGui.Text("Unk4");
+
+                        ImGui.SameLine();
+                        ImGui.SetCursorPosX(ImGui.GetWindowWidth() - _MountitemWidth * 3 / 12);
+                        ImGui.Text("MountCustomize");
 
                         ImGui.SameLine();
                         ImGui.SetCursorPosX(ImGui.GetWindowWidth() - _MountitemWidth * 2 / 12);
@@ -528,9 +528,6 @@ public sealed class ConfigWindow : Window
                         DrawItem("Tilt4", ref replacement.TiltParam4, i => i.TiltParam4);
 
                         ImGui.SameLine();
-                        DrawItem("MountCustomize", ref replacement.MountCustomize, i => i.MountCustomize);
-
-                        ImGui.SameLine();
                         DrawItem("FlyUpDownTilt", ref replacement.Unk1, i => i.Unk1);
 
                         ImGui.SameLine();
@@ -541,6 +538,9 @@ public sealed class ConfigWindow : Window
 
                         ImGui.SameLine();
                         DrawItem("Unk4", ref replacement.Unk4, i => i.Unk4);
+
+                        ImGui.SameLine();
+                        DrawItem("MountCustomize", ref replacement.MountCustomize, i => i.MountCustomize);
 
                         ImGui.SameLine();
                         DrawItem("Unk5", ref replacement.Unk5, i => i.Unk5);
@@ -610,11 +610,11 @@ public sealed class ConfigWindow : Window
                                             original.TiltParam2,
                                             original.TiltParam3,
                                             original.TiltParam4,
-                                            original.MountCustomize,
                                             original.Unk1,
                                             original.Unk2,
                                             original.Unk3,
                                             original.Unk4,
+                                            original.MountCustomize,
                                             original.Unk5,
                                             original.Unk6),
                                         false);
@@ -635,7 +635,7 @@ public sealed class ConfigWindow : Window
                     if (_TiltitemWidth == 0)
                     {
                         ImGui.SameLine();
-                        ImGui.Text("TiltRate RotOriginOffset MaxAngle Unknown3 Unknown4 MouseReverse");
+                        ImGui.Text("TiltRate RotOriginOffset MaxAngle Unknown3 Unknown4 RotReverse");
                     }
                     else
                     {
@@ -661,7 +661,7 @@ public sealed class ConfigWindow : Window
 
                         ImGui.SameLine();
                         ImGui.SetCursorPosX(ImGui.GetWindowWidth() - _TiltitemWidth * 1 / 6);
-                        ImGui.Text("MouseReverse");
+                        ImGui.Text("RotReverse");
                     }
                 }
             }

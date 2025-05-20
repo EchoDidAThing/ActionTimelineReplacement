@@ -56,11 +56,11 @@ public static class MountReplacementsManager
                 (ushort)(act?.Unknown_70_2 ?? 0),
                 (ushort)(act?.Unknown16 ?? 0),
                 (ushort)(act?.Unknown17 ?? 0),
-                (ushort)(act?.MountCustomize.RowId ?? 0),
                 (byte)(act?.Unknown5 ?? 0),
                 (byte)(act?.Unknown6 ?? 0),
                 (byte)(act?.Unknown7 ?? 0),
                 (byte)(act?.Unknown8 ?? 0),
+                (ushort)(act?.MountCustomize.RowId ?? 0),
                 (byte)(act?.Unknown9 ?? 0),
                 (byte)(act?.Unknown10 ?? 0)); //0x50
         }

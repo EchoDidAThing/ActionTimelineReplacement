@@ -13,7 +13,7 @@ namespace ActionTimelineReplacement.Configurations;
 [Serializable]
 public class Configuration : IPluginConfiguration
 {
-    public class ReplacementSet(string name, bool enabled, int priority, Dictionary<uint, ActionReplacementConfig> actionreplacements, Dictionary<uint, MountReplacementConfig> mountreplacements, Dictionary<uint, TiltReplacementConfig> tiltreplacements)
+    public class ReplacementSet(string name, bool enabled, int priority, Dictionary<uint, ActionReplacementConfig> actionreplacements, Dictionary<uint, ActionCastVFXReplacementConfig> actioncastvfxreplacements, Dictionary<uint, MountReplacementConfig> mountreplacements, Dictionary<uint, TiltReplacementConfig> tiltreplacements)
     {
         public string Name = name;
 
@@ -22,6 +22,7 @@ public class Configuration : IPluginConfiguration
         public int Priority = priority;
 
         public Dictionary<uint, ActionReplacementConfig> ActionReplacements { get; set; } = actionreplacements;
+        public Dictionary<uint, ActionCastVFXReplacementConfig> ActionCastVFXReplacements { get; set; } = actioncastvfxreplacements;
         public Dictionary<uint, MountReplacementConfig> MountReplacements { get; set; } = mountreplacements;
         public Dictionary<uint, TiltReplacementConfig> TiltReplacements { get; set; } = tiltreplacements;
 

@@ -1,67 +1,172 @@
 ﻿using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using ActionTimelineReplacement.Configurations;
+using FFXIVClientStructs.FFXIV.Client.Graphics.Vfx;
 
 namespace ActionTimelineReplacement.Hookers;
 
 public static unsafe class Methods
 {
-    private delegate ActionData* GetActionDataDelegate(uint actionId);
-    private delegate MountData* GetMountDataDelegate(uint mountId);
-    private delegate TiltData* GetTiltDataDelegate(uint tiltID);
-    private delegate TiltData* GetMountTilt2DataDelegate(uint tiltID);
-    private delegate TiltData* GetMountTilt3DataDelegate(uint tiltID);
-    private delegate TiltData* GetMountTilt4DataDelegate(uint tiltID);
+    private delegate ActionData* GetActionDataDelegate(uint RowId);
+    private delegate ActionTimelineData* GetActionTimelineDataDelegate(uint RowId);
+    private delegate WeaponTimelineData* GetWeaponTimelineDataDelegate(uint RowId);
+    private delegate ActionCastTimelineData* GetActionCastTimelineDataDelegate(uint RowId);
+    private delegate ActionCastVFXData* GetActionCastVFXDataDelegate(uint RowId);
+    private delegate ActionTransientData* GetActionTransientDataDelegate(uint RowId);
+
+    private delegate StatusData* GetStatusDataDelegate(uint RowId);
+    private delegate StatusHitEffectData* GetStatusHitEffectDataDelegate(uint RowId);
+    private delegate StatusLoopVFXData* GetStatusLoopVFXDataDelegate(uint RowId);
+
+    private delegate VFXData* GetVFXDataDelegate(uint RowId);
+
+
+    private delegate MountData* GetMountDataDelegate(uint RowId);
+    private delegate TiltData* GetTiltDataDelegate(uint RowId);
+    private delegate MountCustomizeData* GetMountCustomizeDataDelegate(uint RowId);
+    private delegate MountTransientData* GetMountTransientDataDelegate(uint RowId);
+
+
+
 
     private static GetActionDataDelegate? _getActionDataHook;
-    private static GetMountDataDelegate? _getMountDataHook;
-    private static GetTiltDataDelegate? _getMountTilt1DataHook;
-    private static GetMountTilt2DataDelegate? _getMountTilt2DataHook;
-    private static GetMountTilt3DataDelegate? _getMountTilt3DataHook;
-    private static GetMountTilt4DataDelegate? _getMountTilt4DataHook;
+    private static GetActionTimelineDataDelegate? _getActionTimelineDataHook;
+    private static GetWeaponTimelineDataDelegate? _getWeaponTimelineDataHook;
+    private static GetActionCastTimelineDataDelegate? _getActionCastTimelineDataHook;
+    private static GetActionCastVFXDataDelegate? _getActionCastVFXDataHook;
+    private static GetActionTransientDataDelegate? _getActionTransientDataHook;
 
-    private static ActionData* GetActionData(uint actionId)
+    private static GetStatusDataDelegate? _getStatusDataHook;
+    private static GetStatusHitEffectDataDelegate? _getStatusHitEffectDataHook;
+    private static GetStatusLoopVFXDataDelegate? _getStatusLoopVFXDataHook;
+
+    private static GetVFXDataDelegate? _getVFXDataHook;
+
+
+    private static GetMountDataDelegate? _getMountDataHook;
+    private static GetTiltDataDelegate? _getMountTiltDataHook;
+    private static GetMountCustomizeDataDelegate? _getMountCustomizeDataHook;
+    private static GetMountTransientDataDelegate? _getMountTransientDataHook;
+
+    private static ActionData* GetActionData(uint RowId)
     {
         _getActionDataHook ??= Marshal.GetDelegateForFunctionPointer<GetActionDataDelegate>(
                 Service.Scanner.ScanText("E8 ?? ?? ?? ?? 80 FB 12"));
 
-        return _getActionDataHook(actionId);
+        return _getActionDataHook(RowId);
     }
-    private static MountData* GetMountData(uint mountId)
+    private static ActionTimelineData* GetActionTimelineData(uint RowId)
+    {
+        _getActionTimelineDataHook ??= Marshal.GetDelegateForFunctionPointer<GetActionTimelineDataDelegate>(
+                Service.Scanner.ScanText("E8 ?? ?? ?? ?? 48 85 C0 74 ?? 80 78 ?? ?? 75 ?? 0F B6 4E"));
+                //ANOTHER BIG MAYBE
+
+        return _getActionTimelineDataHook(RowId);
+    }
+    private static WeaponTimelineData* GetWeaponTimelineData(uint RowId)
+    {
+        _getWeaponTimelineDataHook ??= Marshal.GetDelegateForFunctionPointer<GetWeaponTimelineDataDelegate>(
+                Service.Scanner.ScanText("E8 ?? ?? ?? ?? 48 85 C0 74 ?? F6 40 ?? ?? 74 ?? 83 FE"));
+
+        return _getWeaponTimelineDataHook(RowId);
+    }
+    private static ActionCastTimelineData* GetActionCastTimelineData(uint RowId)
+    {
+        _getActionCastTimelineDataHook ??= Marshal.GetDelegateForFunctionPointer<GetActionCastTimelineDataDelegate>(
+                Service.Scanner.ScanText("E8 ?? ?? ?? ?? 48 85 C0 0F 84 ?? ?? ?? ?? 0F B7 08 66 85 C9"));
+        //inside castaction
+
+        return _getActionCastTimelineDataHook(RowId);
+    }
+    private static ActionCastVFXData* GetActionCastVFXData(uint RowId)
+    {
+        _getActionCastVFXDataHook ??= Marshal.GetDelegateForFunctionPointer<GetActionCastVFXDataDelegate>(
+                Service.Scanner.ScanText(""));
+        //inside castaction
+
+        return _getActionCastVFXDataHook(RowId);
+    }
+    private static ActionTransientData* GetActionTransientData(uint RowId)
+    {
+        _getActionTransientDataHook ??= Marshal.GetDelegateForFunctionPointer<GetActionTransientDataDelegate>(
+                Service.Scanner.ScanText(""));
+        //inside castaction
+
+        return _getActionTransientDataHook(RowId);
+    }
+
+
+    private static StatusData* GetStatusData(uint RowId)
+    {
+        _getStatusDataHook ??= Marshal.GetDelegateForFunctionPointer<GetStatusDataDelegate>(
+                Service.Scanner.ScanText("E8 ?? ?? ?? ?? 48 85 C0 0F 84 ?? ?? ?? ?? 44 0F B7 03"));
+        //inside "E8 ?? ?? ?? ?? 48 85 C0 74 ?? F6 40 ?? ?? 75 ?? 0F B6 48 ?? 84 C9" sttausmanager:playgainvfx
+        //or "E8 ?? ?? ?? ?? 48 89 45 ?? 48 8B D8 48 85 C0 0F 84 ?? ?? ?? ?? F6 40" from ongainstatus? may be needed.
+        // or "E8 ?? ?? ?? ?? 48 85 C0 0F 84 ?? ?? ?? ?? 44 0F B7 03" under actionmanager
+
+        return _getStatusDataHook(RowId);
+    }
+    private static StatusHitEffectData* GetStatusHitEffectData(uint RowId)
+    {
+        _getStatusHitEffectDataHook ??= Marshal.GetDelegateForFunctionPointer<GetStatusHitEffectDataDelegate>(
+                Service.Scanner.ScanText("E8 ?? ?? ?? ?? 48 85 C0 74 ?? 48 8B 1F 0F B7 38"));
+        //inside sttausmanager:playgainvfx
+
+        return _getStatusHitEffectDataHook(RowId);
+    }
+    private static StatusLoopVFXData* GetStatusLoopVFXData(uint RowId)
+    {
+        _getStatusLoopVFXDataHook ??= Marshal.GetDelegateForFunctionPointer<GetStatusLoopVFXDataDelegate>(
+                Service.Scanner.ScanText("E8 ?? ?? ?? ?? 48 8B D8 48 85 C0 74 ?? 66 44 39 30 74 "));
+                //tHIS IS A BIG MAYBE. NOT SURE IF IT ACTUALLY IS.
+
+        return _getStatusLoopVFXDataHook(RowId);
+    }
+
+    private static VFXData* GetVFXData(uint RowId)
+    {
+        _getVFXDataHook ??= Marshal.GetDelegateForFunctionPointer<GetVFXDataDelegate>(
+                Service.Scanner.ScanText("E8 ?? ?? ?? ?? 48 8B D0 48 8B CB E8 ?? ?? ?? ?? 8B 83 ?? ?? ?? ?? 0F 28 B4 24"));
+
+        return _getVFXDataHook(RowId);
+    }
+
+
+    
+
+
+    private static MountData* GetMountData(uint RowId)
     {
         _getMountDataHook ??= Marshal.GetDelegateForFunctionPointer<GetMountDataDelegate>(
                 Service.Scanner.ScanText("E8 ?? ?? ?? ?? 48 8B F8 48 85 C0 0F 84 ?? ?? ?? ?? 0F B7 40 ?? 66 85 C0 75 ?? 66 39 6F"));
 
-        return _getMountDataHook(mountId);
+        return _getMountDataHook(RowId);
     }
-    private static TiltData* GetTiltData(uint tiltId)
+    private static TiltData* GetTiltData(uint RowId)
     {
-        _getMountTilt1DataHook ??= Marshal.GetDelegateForFunctionPointer<GetTiltDataDelegate>(
-                Service.Scanner.ScanText("E8 ?? ?? ?? ?? 0F B7 4F ?? 48 8B F0 E8 ?? ?? ?? ?? C6 43 "));
+        _getMountTiltDataHook ??= Marshal.GetDelegateForFunctionPointer<GetTiltDataDelegate>(
+                Service.Scanner.ScanText("E8 ?? ?? ?? ?? 0F B7 4F ?? 48 8B F0 E8 ?? ?? ?? ?? C6 43"));
 
-        return _getMountTilt1DataHook(tiltId);
+        return _getMountTiltDataHook(RowId);
     }
-    private static TiltData* GetMountTilt2Data(uint tiltId)
+    private static MountTransientData* GetMountTransientData(uint RowId)
     {
-        _getMountTilt2DataHook ??= Marshal.GetDelegateForFunctionPointer<GetMountTilt2DataDelegate>(
-                Service.Scanner.ScanText("E8 ?? ?? ?? ?? C6 43 ?? ?? 4C 8B C0"));
+        _getMountTransientDataHook ??= Marshal.GetDelegateForFunctionPointer<GetMountTransientDataDelegate>(
+                Service.Scanner.ScanText("E8 ?? ?? ?? ?? 48 8B F8 48 85 F6 74 ?? 48 85 C0 74 ?? 41 B9 ?? ?? ?? ?? 8B D3 45 8D 41"));
+        // OR "E8 ?? ?? ?? ?? 48 8B F8 4D 85 F6 0F 84 ?? ?? ?? ?? 48 85 C0 0F 84 ?? ?? ?? ?? 41 B9 ?? ?? ?? ?? 8B D3 45 8D 41"
 
-        return _getMountTilt2DataHook(tiltId);
+        return _getMountTransientDataHook(RowId);
     }
-    private static TiltData* GetMountTilt3Data(uint tiltId)
+    private static MountCustomizeData* GetMountCustomizeData(uint RowId)
     {
-        _getMountTilt3DataHook ??= Marshal.GetDelegateForFunctionPointer<GetMountTilt3DataDelegate>(
-                Service.Scanner.ScanText("E8 ?? ?? ?? ?? 0F B7 4F ?? 48 8B F0 E8 ?? ?? ?? ?? 33 D2"));
+        _getMountCustomizeDataHook ??= Marshal.GetDelegateForFunctionPointer<GetMountCustomizeDataDelegate>(
+                Service.Scanner.ScanText("E8 ?? ?? ?? ?? F3 0F 10 35 ?? ?? ?? ?? 48 8B F8"));
 
-        return _getMountTilt3DataHook(tiltId);
+        return _getMountCustomizeDataHook(RowId);
     }
-    private static TiltData* GetMountTilt4Data(uint tiltId)
-    {
-        _getMountTilt4DataHook ??= Marshal.GetDelegateForFunctionPointer<GetMountTilt4DataDelegate>(
-                Service.Scanner.ScanText("E8 ?? ?? ?? ?? 33 D2 4C 8B C0 48 85 F6"));
 
-        return _getMountTilt4DataHook(tiltId);
-    }
+
+
 
 
 
@@ -118,7 +223,7 @@ public static unsafe class Methods
 
     public static void SetupTilt(uint tiltId, bool reset = false)
     {
-        var data = GetMountTilt3Data(tiltId);
+        var data = GetTiltData(tiltId);
         var replacement = reset
             ? TiltReplacementsManager.GetOriginalReplacement(tiltId)
             : TiltReplacementsManager.GetReplacement(tiltId);

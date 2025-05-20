@@ -3,7 +3,7 @@
 namespace ActionTimelineReplacement.Hookers;
 
 [StructLayout(LayoutKind.Explicit)]
-public struct ActionCastTimelineData
+public struct ActionData
 {
     [FieldOffset(0xA)]
     public ushort CastVfx;

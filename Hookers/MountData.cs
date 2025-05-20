@@ -5,6 +5,16 @@ namespace ActionTimelineReplacement.Hookers;
 [StructLayout(LayoutKind.Explicit)]
 public struct MountData
 {
+    //THESE NEED SESTRING HANDLING
+    //[FieldOffset(0x10)]
+    //public ushort WhistlePath;
+
+    //[FieldOffset(0x14)]
+    //public ushort WhistleOnlyPath;
+
+    //[FieldOffset(0x18)]
+    //public ushort ByePath;
+
     [FieldOffset(0x32)]
     public ushort RideBGM;
 
@@ -20,9 +30,6 @@ public struct MountData
     [FieldOffset(0x40)]
     public ushort TiltParam4;
 
-    [FieldOffset(0x4A)]
-    public ushort MountCustomize;
-
     [FieldOffset(0x45)]
     public ushort FlyUpDownTilt;
 
@@ -34,6 +41,9 @@ public struct MountData
 
     [FieldOffset(0x49)]
     public ushort Unk4;
+
+    [FieldOffset(0x4A)]
+    public ushort MountCustomize;
 
     [FieldOffset(0x4F)]
     public ushort Unk5;
