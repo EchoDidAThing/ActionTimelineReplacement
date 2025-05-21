@@ -8,12 +8,6 @@ using Newtonsoft.Json;
 
 namespace ActionTimelineReplacement.Configurations;
 
-public class TiltReplacementSet(
-    Dictionary<uint, TiltReplacementConfig> replacements)
-{
-    public Dictionary<uint, TiltReplacementConfig> Replacements { get; } = replacements;
-}
-
 public class TiltReplacementConfig(TiltReplacement replacement, bool enabled)
 {
     public bool Enabled = enabled;

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 
-namespace ActionTimelineReplacement.Hookers;
+namespace ActionTimelineReplacement.Hookers.HookersData;
 
 [StructLayout(LayoutKind.Explicit)]
 public struct StatusData

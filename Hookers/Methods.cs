@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using ActionTimelineReplacement.Configurations;
+using ActionTimelineReplacement.Hookers.HookersData;
 using FFXIVClientStructs.FFXIV.Client.Graphics.Vfx;
 
 namespace ActionTimelineReplacement.Hookers;
