@@ -139,9 +139,7 @@ public sealed class ConfigWindow : Window
                         if (_activeSet == Service.Config.ReplacementSets[i]) _activeSet = null;
                         Service.Config.ReplacementSets.Remove(set);
                         Service.Config.Save();
-                        Methods.SetupActions(Service.Config.ReplacementSets[i].ActionReplacements.Keys);
-                        Methods.SetupMounts(Service.Config.ReplacementSets[i].MountReplacements.Keys);
-                        Methods.SetupTilts(Service.Config.ReplacementSets[i].TiltReplacements.Keys);
+                        Methods.SetupAll();
                         ImGui.CloseCurrentPopup();
                     }
                 }
@@ -174,9 +172,7 @@ public sealed class ConfigWindow : Window
                     {
                         if (Configuration.ReplacementSet.Load(file) is not { } set) continue;
                         Service.Config.ReplacementSets.Add(set);
-                        Methods.SetupActions(set.ActionReplacements.Keys);
-                        Methods.SetupMounts(set.MountReplacements.Keys);
-                        Methods.SetupTilts(set.TiltReplacements.Keys);
+                        Methods.SetupAll();
                     }
 
                     Service.Config.Save();
@@ -209,9 +205,7 @@ public sealed class ConfigWindow : Window
 
         if (ImGui.Checkbox("Enable", ref _activeSet.Enabled))
         {
-            Methods.SetupActions(_activeSet.ActionReplacements.Keys);
-            Methods.SetupMounts(_activeSet.ActionReplacements.Keys);
-            Methods.SetupTilts(_activeSet.TiltReplacements.Keys);
+            Methods.SetupAll();
             Service.Config.Save();
         }
 
@@ -219,9 +213,7 @@ public sealed class ConfigWindow : Window
         ImGui.SetNextItemWidth(50 * Scale);
         if (ImGui.DragInt("Priority", ref _activeSet.Priority))
         {
-            Methods.SetupActions(_activeSet.ActionReplacements.Keys);
-            Methods.SetupMounts(_activeSet.ActionReplacements.Keys);
-            Methods.SetupTilts(_activeSet.TiltReplacements.Keys);
+            Methods.SetupAll();
             Service.Config.Save();
         }
     }
@@ -241,8 +233,8 @@ public sealed class ConfigWindow : Window
         {
             //TOSETUP: Add new headers here
             _AllHeaders.Add("Action", ["Cast Vfx", "Start timeline", "End timeline", "Hit timeline"]);
-            //_AllHeaders.Add("Mount", ["RideBGM", "TiltGround", "TiltFlySwim", "TiltParam3", "TiltParam4", "FlyUpDownTilt", "Unk2", "Unk3", "Unk4", "MountCustomize", "Unk5", "SwimAnimSpeed"]);
-            //_AllHeaders.Add("TiltParam", ["TiltRate", "RotOriginOffset", "MaxAngle", "Unknown3", "Unknown4", "RotReverse"]);
+            _AllHeaders.Add("Mount", ["RideBGM", "TiltGround", "TiltFlySwim", "TiltParam3", "TiltParam4", "FlyUpDownTilt", "Unk2", "Unk3", "Unk4", "MountCustomize", "Unk5", "SwimAnimSpeed"]);
+            _AllHeaders.Add("TiltParam", ["TiltRate", "RotOriginOffset", "MaxAngle", "Unknown3", "Unknown4", "RotReverse"]);
             foreach (var headerkey in _AllHeaders.Keys)
             {
                 _AllItemWidths.Add(headerkey, 0f);
@@ -288,7 +280,13 @@ public sealed class ConfigWindow : Window
                 {
                     //TOSETUP: Add new case here to call the subsheet
                     case "Action":
-                        ActionSubSheet.Draw(mainkey, ref _activeSet, ref _AllItemWidths, _searchAction);
+                        ActionSubSheet.Draw(mainkey, ref _activeSet, ref _AllItemWidths, ref _searchAction);
+                        break;
+                    case "Mount":
+                        MountSubSheet.Draw(mainkey, ref _activeSet, ref _AllItemWidths, ref _searchMount);
+                        break;
+                    case "TiltParam":
+                        TiltSubSheet.Draw(mainkey, ref _activeSet, ref _AllItemWidths, ref _searchTiltParam);
                         break;
                 }
 
@@ -338,9 +336,7 @@ public sealed class ConfigWindow : Window
         if (ImGui.Checkbox("Enable", ref Service.Config.EnableReplacement))
         {
             //SETUP ALL PROCESSING
-            Methods.SetupActions(ActionReplacementsManager.AllActionIds);
-            Methods.SetupMounts(MountReplacementsManager.AllMountIds);
-            Methods.SetupTilts(TiltReplacementsManager.AllTiltIds);
+            Methods.SetupAll();
             Service.Config.Save();
         }
 
@@ -349,9 +345,7 @@ public sealed class ConfigWindow : Window
         if (ImGui.Button("Redraw"))
         {
             //SETUP ALL PROCESSING
-            Methods.SetupActions(ActionReplacementsManager.AllActionIds);
-            Methods.SetupMounts(MountReplacementsManager.AllMountIds);
-            Methods.SetupTilts(TiltReplacementsManager.AllTiltIds);
+            Methods.SetupAll();
         }
 
         ImGui.SameLine();
