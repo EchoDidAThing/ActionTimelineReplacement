@@ -1,9 +1,10 @@
 #Echo's TODO
 - add more sheets
-- rework the Code to actually be modular.
+- rework the Code to actually be more modular as needed.
 - add handling for Strings(CHECK NAMINGWAY) and packedbools
 - Add codepath to create custom entries(reference field, edited fields)
 - Redo readme
+- Automatically generate/update mod to enable default paths for stuff.
 
 taco's clarification for self: `FieldOffset(0x??)` is the actual address being updated. Lumina sheets are just used for pulling base data. so, technically, if the column doesn't exist in the source data, a dummy field can be supplied, although that does make things slightly obtuse.
 

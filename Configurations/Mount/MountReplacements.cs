@@ -8,12 +8,6 @@ using Newtonsoft.Json;
 
 namespace ActionTimelineReplacement.Configurations;
 
-public class MountReplacementSet(
-    Dictionary<uint, MountReplacementConfig> replacements)
-{
-    public Dictionary<uint, MountReplacementConfig> Replacements { get; } = replacements;
-}
-
 public class MountReplacementConfig(MountReplacement replacement, bool enabled)
 {
     public bool Enabled = enabled;

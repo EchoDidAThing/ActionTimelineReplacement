@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
+using System.Diagnostics;
 using System.Runtime.InteropServices;
 using ActionTimelineReplacement.Configurations;
+using ActionTimelineReplacement.Hookers.HookersData;
 using FFXIVClientStructs.FFXIV.Client.Graphics.Vfx;
 
 namespace ActionTimelineReplacement.Hookers;
@@ -166,6 +168,14 @@ public static unsafe class Methods
     }
 
 
+
+    public static void SetupAll(bool reset = false)
+    {
+        //add setup here
+        Methods.SetupActions(ActionReplacementsManager.AllActionIds);
+        Methods.SetupMounts(MountReplacementsManager.AllMountIds);
+        Methods.SetupTilts(TiltReplacementsManager.AllTiltIds);
+    }
 
 
 
