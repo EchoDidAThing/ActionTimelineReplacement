@@ -1,12 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using Dalamud.Configuration;
-using FFXIVClientStructs;
-using Lumina.Excel.Sheets;
 using Newtonsoft.Json;
-using static ActionTimelineReplacement.Configurations.Configuration;
 
 namespace ActionTimelineReplacement.Configurations;
 
@@ -14,7 +10,7 @@ namespace ActionTimelineReplacement.Configurations;
 [Serializable]
 public class Configuration : IPluginConfiguration
 {
-    public class ReplacementSet (string name, bool enabled, int priority, Dictionary<uint, ActionReplacementConfig> actionreplacements, Dictionary<uint, ActionCastVFXReplacementConfig> actioncastvfxreplacements, Dictionary<uint, MountReplacementConfig> mountreplacements, Dictionary<uint, TiltReplacementConfig> tiltreplacements)
+    public class ReplacementSet (string name, bool enabled, int priority, Dictionary<uint, ActionReplacementConfig> actionreplacements, Dictionary<uint, ActionCastVFXReplacementConfig> actioncastvfxreplacements, Dictionary<uint, MountReplacementConfig> mountreplacements, Dictionary<uint, TiltReplacementConfig> tiltreplacements, Dictionary<uint, PlaceNameReplacementConfig> placenamereplacements, Dictionary<uint, PetMirageReplacementConfig> petmiragereplacements)
     {
         public string Name = name;
 
@@ -26,6 +22,8 @@ public class Configuration : IPluginConfiguration
         public Dictionary<uint, ActionCastVFXReplacementConfig> ActionCastVFXReplacements { get; set; } = actioncastvfxreplacements;
         public Dictionary<uint, MountReplacementConfig> MountReplacements { get; set; } = mountreplacements;
         public Dictionary<uint, TiltReplacementConfig> TiltReplacements { get; set; } = tiltreplacements;
+        public Dictionary<uint, PlaceNameReplacementConfig> PlaceNameReplacements { get; set; } = placenamereplacements;
+        public Dictionary<uint, PetMirageReplacementConfig> PetMirageReplacements { get; set; } = petmiragereplacements;
 
 
 
@@ -34,7 +32,7 @@ public class Configuration : IPluginConfiguration
             try
             {
                 ReplacementSet? replacements =
-                    JsonConvert.DeserializeObject<Configuration.ReplacementSet>(
+                    JsonConvert.DeserializeObject<ReplacementSet>(
                         File.ReadAllText(jsonFile));
 
                 if (replacements == null) return null;

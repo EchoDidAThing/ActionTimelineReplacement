@@ -1,12 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Numerics;
 using System.Runtime.InteropServices;
 using ActionTimelineReplacement.Configurations;
 using ActionTimelineReplacement.Hookers;
 using ActionTimelineReplacement.Windows.SubSheets;
-using Dalamud.Interface;
 using Dalamud.Interface.Colors;
 using Dalamud.Interface.GameFonts;
 using Dalamud.Interface.ImGuiFileDialog;
@@ -158,7 +156,7 @@ public sealed class ConfigWindow : Window
             if (ImGui.Button("Create", buttonSize))
             {
                 var randomset = new Random().Next(1, 100).ToString();
-                Service.Config.ReplacementSets.Add(new Configuration.ReplacementSet("New Set" + randomset, true, 0, new Dictionary<uint, ActionReplacementConfig>(), new Dictionary<uint, ActionCastVFXReplacementConfig>(), new Dictionary<uint, MountReplacementConfig>() , new Dictionary<uint, TiltReplacementConfig>()));
+                Service.Config.ReplacementSets.Add(new Configuration.ReplacementSet("New Set" + randomset, true, 0, [], [], [], [], [], []));
                 Service.Config.Save();
             }
 
@@ -225,6 +223,8 @@ public sealed class ConfigWindow : Window
     private string _searchAction = string.Empty;
     private string _searchMount = string.Empty;
     private string _searchTiltParam = string.Empty;
+    private string _searchPlaceName = string.Empty;
+    private string _searchPetMirage = string.Empty;
 
 
     private void DrawBodySheets()
@@ -235,6 +235,8 @@ public sealed class ConfigWindow : Window
             _AllHeaders.Add("Action", ["Cast Vfx", "Start timeline", "End timeline", "Hit timeline"]);
             _AllHeaders.Add("Mount", ["RideBGM", "TiltGround", "TiltFlySwim", "TiltParam3", "TiltParam4", "FlyUpDownTilt", "Unk2", "Unk3", "Unk4", "MountCustomize", "Unk5", "SwimAnimSpeed"]);
             _AllHeaders.Add("TiltParam", ["TiltRate", "RotOriginOffset", "MaxAngle", "Unknown3", "Unknown4", "RotReverse"]);
+            _AllHeaders.Add("PlaceName", ["Unk1", "Unk2", "Unk3", "Unk4", "Unk5", "Unk6", "Unk7", "Unk8"]);
+            _AllHeaders.Add("PetMirage", ["Unk0", "Unk1", "Unk2", "Unk3", "Unk4", "Unk5", "Unk6", "Unk7", "Scale"]);
             foreach (var headerkey in _AllHeaders.Keys)
             {
                 _AllItemWidths.Add(headerkey, 0f);
@@ -287,6 +289,12 @@ public sealed class ConfigWindow : Window
                         break;
                     case "TiltParam":
                         TiltSubSheet.Draw(mainkey, ref _activeSet, ref _AllItemWidths, ref _searchTiltParam);
+                        break;
+                    case "PlaceName":
+                        PlaceNameSubSheet.Draw(mainkey, ref _activeSet, ref _AllItemWidths, ref _searchPlaceName);
+                        break;
+                    case "PetMirage":
+                        PetMirageSubSheet.Draw(mainkey, ref _activeSet, ref _AllItemWidths, ref _searchPetMirage);
                         break;
                 }
 
