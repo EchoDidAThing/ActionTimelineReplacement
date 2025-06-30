@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices;
-using ActionTimelineReplacement.Hookers;
-using Newtonsoft.Json;
+﻿using ActionTimelineReplacement.Hookers;
 
 namespace ActionTimelineReplacement.Configurations;
 

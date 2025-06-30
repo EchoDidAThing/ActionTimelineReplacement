@@ -5,7 +5,7 @@ namespace ActionTimelineReplacement.Windows;
 
 public sealed class WindowManager : IDisposable
 {
-    private readonly WindowSystem _windowSystem = new("ActionTimeline");
+    private readonly WindowSystem _windowSystem = new("Custom ATR");
     private readonly ConfigWindow _configWindow = new();
 
     public WindowManager()

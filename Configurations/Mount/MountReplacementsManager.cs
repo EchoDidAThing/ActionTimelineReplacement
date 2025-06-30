@@ -50,21 +50,20 @@ public static class MountReplacementsManager
         if (!exists)
         {
             var act = Service.DataManager.GetExcelSheet<Mount>()?.GetRow(mountId);
-            replacement = new Configurations.MountReplacement(
+            replacement = new MountReplacement(
                 (ushort)(act?.RideBGM.RowId ?? 0),
-                (ushort)(act?.Unknown_70_1 ?? 0),
-                (ushort)(act?.Unknown_70_2 ?? 0),
-                (ushort)(act?.Unknown16 ?? 0),
-                (ushort)(act?.Unknown17 ?? 0),
-                (byte)(act?.Unknown5 ?? 0),
-                (byte)(act?.Unknown6 ?? 0),
-                (byte)(act?.Unknown7 ?? 0),
-                (byte)(act?.Unknown8 ?? 0),
+                act?.Unknown_70_1 ?? 0,
+                act?.Unknown_70_2 ?? 0,
+                act?.Unknown16 ?? 0,
+                act?.Unknown17 ?? 0,
+                act?.Unknown5 ?? 0,
+                act?.Unknown6 ?? 0,
+                act?.Unknown7 ?? 0,
+                act?.Unknown8 ?? 0,
                 (ushort)(act?.MountCustomize.RowId ?? 0),
-                (byte)(act?.Unknown9 ?? 0),
-                (byte)(act?.Unknown10 ?? 0)); //0x50
+                act?.Unknown9 ?? 0,
+                act?.Unknown10 ?? 0); //0x50
         }
-
         return replacement!;
     }
 }

@@ -1,85 +1,88 @@
 ﻿using System.Collections.Generic;
-using System.Diagnostics;
 using System.Runtime.InteropServices;
 using ActionTimelineReplacement.Configurations;
 using ActionTimelineReplacement.Hookers.HookersData;
-using FFXIVClientStructs.FFXIV.Client.Graphics.Vfx;
 
 namespace ActionTimelineReplacement.Hookers;
 
 public static unsafe class Methods
 {
+    #region delegates
     private delegate ActionData* GetActionDataDelegate(uint RowId);
-    private delegate ActionTimelineData* GetActionTimelineDataDelegate(uint RowId);
-    private delegate WeaponTimelineData* GetWeaponTimelineDataDelegate(uint RowId);
-    private delegate ActionCastTimelineData* GetActionCastTimelineDataDelegate(uint RowId);
-    private delegate ActionCastVFXData* GetActionCastVFXDataDelegate(uint RowId);
-    private delegate ActionTransientData* GetActionTransientDataDelegate(uint RowId);
-
+    //private delegate ActionTimelineData* GetActionTimelineDataDelegate(uint RowId);
+    //private delegate WeaponTimelineData* GetWeaponTimelineDataDelegate(uint RowId);
+    //private delegate ActionCastTimelineData* GetActionCastTimelineDataDelegate(uint RowId);
+    //private delegate ActionCastVFXData* GetActionCastVFXDataDelegate(uint RowId);
+    //private delegate ActionTransientData* GetActionTransientDataDelegate(uint RowId);
     private delegate StatusData* GetStatusDataDelegate(uint RowId);
-    private delegate StatusHitEffectData* GetStatusHitEffectDataDelegate(uint RowId);
-    private delegate StatusLoopVFXData* GetStatusLoopVFXDataDelegate(uint RowId);
-
-    private delegate VFXData* GetVFXDataDelegate(uint RowId);
-
-
+    //private delegate StatusHitEffectData* GetStatusHitEffectDataDelegate(uint RowId);
+    //private delegate StatusLoopVFXData* GetStatusLoopVFXDataDelegate(uint RowId);
+    //private delegate VFXData* GetVFXDataDelegate(uint RowId);
     private delegate MountData* GetMountDataDelegate(uint RowId);
     private delegate TiltData* GetTiltDataDelegate(uint RowId);
-    private delegate MountCustomizeData* GetMountCustomizeDataDelegate(uint RowId);
-    private delegate MountTransientData* GetMountTransientDataDelegate(uint RowId);
+    //private delegate MountCustomizeData* GetMountCustomizeDataDelegate(uint RowId);
+    //private delegate MountTransientData* GetMountTransientDataDelegate(uint RowId);
+    private delegate GlassesData* GetGlassesDataDelegate(uint RowId);
+    private delegate PlaceNameData* GetPlaceNameDataDelegate(uint RowId);
 
+    #endregion
 
-
-
+    #region hooks
     private static GetActionDataDelegate? _getActionDataHook;
-    private static GetActionTimelineDataDelegate? _getActionTimelineDataHook;
-    private static GetWeaponTimelineDataDelegate? _getWeaponTimelineDataHook;
-    private static GetActionCastTimelineDataDelegate? _getActionCastTimelineDataHook;
-    private static GetActionCastVFXDataDelegate? _getActionCastVFXDataHook;
-    private static GetActionTransientDataDelegate? _getActionTransientDataHook;
-
+    //private static GetActionTimelineDataDelegate? _getActionTimelineDataHook;
+    //private static GetWeaponTimelineDataDelegate? _getWeaponTimelineDataHook;
+    //private static GetActionCastTimelineDataDelegate? _getActionCastTimelineDataHook;
+    //private static GetActionCastVFXDataDelegate? _getActionCastVFXDataHook;
+    //private static GetActionTransientDataDelegate? _getActionTransientDataHook;
     private static GetStatusDataDelegate? _getStatusDataHook;
-    private static GetStatusHitEffectDataDelegate? _getStatusHitEffectDataHook;
-    private static GetStatusLoopVFXDataDelegate? _getStatusLoopVFXDataHook;
-
-    private static GetVFXDataDelegate? _getVFXDataHook;
-
-
+    //private static GetStatusHitEffectDataDelegate? _getStatusHitEffectDataHook;
+    //private static GetStatusLoopVFXDataDelegate? _getStatusLoopVFXDataHook;
+    //private static GetVFXDataDelegate? _getVFXDataHook;
     private static GetMountDataDelegate? _getMountDataHook;
     private static GetTiltDataDelegate? _getMountTiltDataHook;
-    private static GetMountCustomizeDataDelegate? _getMountCustomizeDataHook;
-    private static GetMountTransientDataDelegate? _getMountTransientDataHook;
+    //private static GetMountCustomizeDataDelegate? _getMountCustomizeDataHook;
+    //private static GetMountTransientDataDelegate? _getMountTransientDataHook;
+    private static GetGlassesDataDelegate? _getGlassesDataHook;
+    private static GetPlaceNameDataDelegate? _getPlaceNameDataHook;
 
+    #endregion
+
+    #region sigs
     private static ActionData* GetActionData(uint RowId)
     {
-        _getActionDataHook ??= Marshal.GetDelegateForFunctionPointer<GetActionDataDelegate>(
-                Service.Scanner.ScanText("E8 ?? ?? ?? ?? 80 FB 12"));
+        _getActionDataHook ??= Marshal.GetDelegateForFunctionPointer<GetActionDataDelegate>
+        (Service.Scanner.ScanText(
+            "E8 ?? ?? ?? ?? 80 FB 12"));
 
         return _getActionDataHook(RowId);
     }
-    private static ActionTimelineData* GetActionTimelineData(uint RowId)
+
+    /*private static ActionTimelineData* GetActionTimelineData(uint RowId)
     {
-        _getActionTimelineDataHook ??= Marshal.GetDelegateForFunctionPointer<GetActionTimelineDataDelegate>(
-                Service.Scanner.ScanText("E8 ?? ?? ?? ?? 48 85 C0 74 ?? 80 78 ?? ?? 75 ?? 0F B6 4E"));
-                //ANOTHER BIG MAYBE
+        _getActionTimelineDataHook ??= Marshal.GetDelegateForFunctionPointer<GetActionTimelineDataDelegate>(Service.Scanner.ScanText(
+            "E8 ?? ?? ?? ?? 48 85 C0 74 ?? 80 78 ?? ?? 75 ?? 0F B6 4E" ));
+        //ANOTHER BIG MAYBE
 
         return _getActionTimelineDataHook(RowId);
     }
+
     private static WeaponTimelineData* GetWeaponTimelineData(uint RowId)
     {
-        _getWeaponTimelineDataHook ??= Marshal.GetDelegateForFunctionPointer<GetWeaponTimelineDataDelegate>(
-                Service.Scanner.ScanText("E8 ?? ?? ?? ?? 48 85 C0 74 ?? F6 40 ?? ?? 74 ?? 83 FE"));
+        _getWeaponTimelineDataHook ??= Marshal.GetDelegateForFunctionPointer<GetWeaponTimelineDataDelegate>(Service.Scanner.ScanText(
+            "E8 ?? ?? ?? ?? 48 85 C0 74 ?? F6 40 ?? ?? 74 ?? 83 FE" ));
 
         return _getWeaponTimelineDataHook(RowId);
     }
+
     private static ActionCastTimelineData* GetActionCastTimelineData(uint RowId)
     {
-        _getActionCastTimelineDataHook ??= Marshal.GetDelegateForFunctionPointer<GetActionCastTimelineDataDelegate>(
-                Service.Scanner.ScanText("E8 ?? ?? ?? ?? 48 85 C0 0F 84 ?? ?? ?? ?? 0F B7 08 66 85 C9"));
+        _getActionCastTimelineDataHook ??= Marshal.GetDelegateForFunctionPointer<GetActionCastTimelineDataDelegate>(Service.Scanner.ScanText(
+            "E8 ?? ?? ?? ?? 48 85 C0 0F 84 ?? ?? ?? ?? 0F B7 08 66 85 C9" ));
         //inside castaction
 
         return _getActionCastTimelineDataHook(RowId);
     }
+
     private static ActionCastVFXData* GetActionCastVFXData(uint RowId)
     {
         _getActionCastVFXDataHook ??= Marshal.GetDelegateForFunctionPointer<GetActionCastVFXDataDelegate>(
@@ -96,89 +99,106 @@ public static unsafe class Methods
 
         return _getActionTransientDataHook(RowId);
     }
-
+    */
 
     private static StatusData* GetStatusData(uint RowId)
     {
-        _getStatusDataHook ??= Marshal.GetDelegateForFunctionPointer<GetStatusDataDelegate>(
-                Service.Scanner.ScanText("E8 ?? ?? ?? ?? 48 85 C0 0F 84 ?? ?? ?? ?? 44 0F B7 03"));
+        _getStatusDataHook ??= Marshal.GetDelegateForFunctionPointer<GetStatusDataDelegate>(Service.Scanner.ScanText(
+            "E8 ?? ?? ?? ?? 48 85 C0 0F 84 ?? ?? ?? ?? 44 0F B7 03"));
         //inside "E8 ?? ?? ?? ?? 48 85 C0 74 ?? F6 40 ?? ?? 75 ?? 0F B6 48 ?? 84 C9" sttausmanager:playgainvfx
         //or "E8 ?? ?? ?? ?? 48 89 45 ?? 48 8B D8 48 85 C0 0F 84 ?? ?? ?? ?? F6 40" from ongainstatus? may be needed.
         // or "E8 ?? ?? ?? ?? 48 85 C0 0F 84 ?? ?? ?? ?? 44 0F B7 03" under actionmanager
 
         return _getStatusDataHook(RowId);
     }
-    private static StatusHitEffectData* GetStatusHitEffectData(uint RowId)
+    /*private static StatusHitEffectData* GetStatusHitEffectData(uint RowId)
     {
-        _getStatusHitEffectDataHook ??= Marshal.GetDelegateForFunctionPointer<GetStatusHitEffectDataDelegate>(
-                Service.Scanner.ScanText("E8 ?? ?? ?? ?? 48 85 C0 74 ?? 48 8B 1F 0F B7 38"));
+        _getStatusHitEffectDataHook ??= Marshal.GetDelegateForFunctionPointer<GetStatusHitEffectDataDelegate>(Service.Scanner.ScanText(
+            "E8 ?? ?? ?? ?? 48 85 C0 74 ?? 48 8B 1F 0F B7 38" ));
         //inside sttausmanager:playgainvfx
 
         return _getStatusHitEffectDataHook(RowId);
     }
     private static StatusLoopVFXData* GetStatusLoopVFXData(uint RowId)
     {
-        _getStatusLoopVFXDataHook ??= Marshal.GetDelegateForFunctionPointer<GetStatusLoopVFXDataDelegate>(
-                Service.Scanner.ScanText("E8 ?? ?? ?? ?? 48 8B D8 48 85 C0 74 ?? 66 44 39 30 74 "));
-                //tHIS IS A BIG MAYBE. NOT SURE IF IT ACTUALLY IS.
+        _getStatusLoopVFXDataHook ??= Marshal.GetDelegateForFunctionPointer<GetStatusLoopVFXDataDelegate>(Service.Scanner.ScanText(
+            "E8 ?? ?? ?? ?? 48 8B D8 48 85 C0 74 ?? 66 44 39 30 74" ));
+        //THIS IS A BIG MAYBE. NOT SURE IF IT ACTUALLY IS.
 
         return _getStatusLoopVFXDataHook(RowId);
     }
 
     private static VFXData* GetVFXData(uint RowId)
     {
-        _getVFXDataHook ??= Marshal.GetDelegateForFunctionPointer<GetVFXDataDelegate>(
-                Service.Scanner.ScanText("E8 ?? ?? ?? ?? 48 8B D0 48 8B CB E8 ?? ?? ?? ?? 8B 83 ?? ?? ?? ?? 0F 28 B4 24"));
+        _getVFXDataHook ??= Marshal.GetDelegateForFunctionPointer<GetVFXDataDelegate>(Service.Scanner.ScanText(
+            "E8 ?? ?? ?? ?? 48 8B D0 48 8B CB E8 ?? ?? ?? ?? 8B 83 ?? ?? ?? ?? 0F 28 B4 24" ));
 
         return _getVFXDataHook(RowId);
     }
-
-
-    
-
+    */
 
     private static MountData* GetMountData(uint RowId)
     {
-        _getMountDataHook ??= Marshal.GetDelegateForFunctionPointer<GetMountDataDelegate>(
-                Service.Scanner.ScanText("E8 ?? ?? ?? ?? 48 8B F8 48 85 C0 0F 84 ?? ?? ?? ?? 0F B7 40 ?? 66 85 C0 75 ?? 66 39 6F"));
+        _getMountDataHook ??= Marshal.GetDelegateForFunctionPointer<GetMountDataDelegate>(Service.Scanner.ScanText(
+            "E8 ?? ?? ?? ?? 48 8B F8 48 85 C0 0F 84 ?? ?? ?? ?? 0F B7 40 ?? 66 85 C0 75 ?? 66 39 6F"));
 
         return _getMountDataHook(RowId);
     }
     private static TiltData* GetTiltData(uint RowId)
     {
-        _getMountTiltDataHook ??= Marshal.GetDelegateForFunctionPointer<GetTiltDataDelegate>(
-                Service.Scanner.ScanText("E8 ?? ?? ?? ?? 0F B7 4F ?? 48 8B F0 E8 ?? ?? ?? ?? C6 43"));
+        _getMountTiltDataHook ??= Marshal.GetDelegateForFunctionPointer<GetTiltDataDelegate>(Service.Scanner.ScanText(
+            "E8 ?? ?? ?? ?? 0F B7 4F ?? 48 8B F0 E8 ?? ?? ?? ?? C6 43"));
 
         return _getMountTiltDataHook(RowId);
     }
-    private static MountTransientData* GetMountTransientData(uint RowId)
+    /*private static MountTransientData* GetMountTransientData(uint RowId)
     {
-        _getMountTransientDataHook ??= Marshal.GetDelegateForFunctionPointer<GetMountTransientDataDelegate>(
-                Service.Scanner.ScanText("E8 ?? ?? ?? ?? 48 8B F8 48 85 F6 74 ?? 48 85 C0 74 ?? 41 B9 ?? ?? ?? ?? 8B D3 45 8D 41"));
+        _getMountTransientDataHook ??= Marshal.GetDelegateForFunctionPointer<GetMountTransientDataDelegate>(Service.Scanner.ScanText(
+            "E8 ?? ?? ?? ?? 48 8B F8 48 85 F6 74 ?? 48 85 C0 74 ?? 41 B9 ?? ?? ?? ?? 8B D3 45 8D 41" ));
         // OR "E8 ?? ?? ?? ?? 48 8B F8 4D 85 F6 0F 84 ?? ?? ?? ?? 48 85 C0 0F 84 ?? ?? ?? ?? 41 B9 ?? ?? ?? ?? 8B D3 45 8D 41"
 
         return _getMountTransientDataHook(RowId);
     }
     private static MountCustomizeData* GetMountCustomizeData(uint RowId)
     {
-        _getMountCustomizeDataHook ??= Marshal.GetDelegateForFunctionPointer<GetMountCustomizeDataDelegate>(
-                Service.Scanner.ScanText("E8 ?? ?? ?? ?? F3 0F 10 35 ?? ?? ?? ?? 48 8B F8"));
+        _getMountCustomizeDataHook ??= Marshal.GetDelegateForFunctionPointer<GetMountCustomizeDataDelegate>(Service.Scanner.ScanText(
+            "E8 ?? ?? ?? ?? F3 0F 10 35 ?? ?? ?? ?? 48 8B F8" ));
 
         return _getMountCustomizeDataHook(RowId);
     }
+    */
 
-
-
-    public static void SetupAll(bool reset = false)
+    private static GlassesData* GetGlassesData(uint RowId)
     {
-        //add setup here
-        Methods.SetupActions(ActionReplacementsManager.AllActionIds);
-        Methods.SetupMounts(MountReplacementsManager.AllMountIds);
-        Methods.SetupTilts(TiltReplacementsManager.AllTiltIds);
+        _getGlassesDataHook ??= Marshal.GetDelegateForFunctionPointer<GetGlassesDataDelegate>(Service.Scanner.ScanText(
+            "E8 ?? ?? ?? ?? 48 85 C0 74 ?? 66 44 39 78 ?? 7C"));
+
+        return _getGlassesDataHook(RowId);
     }
 
+    private static PlaceNameData* GetPlaceNameData(uint RowId)
+    {
+        _getPlaceNameDataHook ??= Marshal.GetDelegateForFunctionPointer<GetPlaceNameDataDelegate>(Service.Scanner.ScanText(
+            "E8 ?? ?? ?? ?? 48 85 C0 74 ?? 0F B6 48 ?? E8 ?? ?? ?? ?? 84 C0 74 ?? 8B CB"));
+        //E8 ?? ?? ?? ?? 48 85 C0 74 ?? 48 8B C8 48 83 C4 ?? 5B E9 ?? ?? ?? ?? 48 8B 0D
+        //there are, like, 30 calls, so just picking one to test
 
+        return _getPlaceNameDataHook(RowId);
+    }
 
+    #endregion
+
+    #region setups
+    public static void SetupAll(bool reset = false)
+    {
+        //TOSETUP: add setup here
+        SetupActions(ActionReplacementsManager.AllActionIds);
+        SetupMounts(MountReplacementsManager.AllMountIds);
+        SetupTilts(TiltReplacementsManager.AllTiltIds);
+        SetupPlaceNames(PlaceNameReplacementsManager.AllPlaceNameIds);
+        SetupStatuses(StatusReplacementsManager.AllStatusIds);
+        SetupGlassesS(GlassesReplacementsManager.AllGlassesIds);
+    }
 
     public static void SetupActions(IEnumerable<uint> actionIds, bool reset = false)
     {
@@ -195,12 +215,30 @@ public static unsafe class Methods
             ? ActionReplacementsManager.GetOriginalReplacement(actionId)
             : ActionReplacementsManager.GetReplacement(actionId);
 
-        Service.Log.Info("Set the Action[{ActionID}] with Start[{Start}] End[{End}] Hit[{Hit}] Vfc[{Vfx}]",
-            actionId, replacement.AnimationStart, replacement.AnimationEnd, replacement.ActionTimelineHit, replacement.CastVfx);
+        Service.Log.Info("Set the Action[{ActionID}] with Start[{Start}] End[{End}] Hit[{Hit}] Vfx[{Vfx}] Unknown1[{Unknown1}] Unknown2[{Unknown2}] Unknown4[{Unknown4}] Unknown_70[{Unknown_70}]",
+            actionId, replacement.AnimationStart, replacement.AnimationEnd, replacement.ActionTimelineHit, replacement.CastVfx, replacement.Unknown1, replacement.Unknown2, replacement.Unknown4, replacement.Unknown_70);
         replacement.WriteToPointer(data);
     }
 
+    public static void SetupStatuses(IEnumerable<uint> statusIds, bool reset = false)
+    {
+        foreach (var statusId in statusIds)
+        {
+            SetupStatus(statusId, reset);
+        }
+    }
 
+    public static void SetupStatus(uint statusId, bool reset = false)
+    {
+        var data = GetStatusData(statusId);
+        var replacement = reset
+            ? StatusReplacementsManager.GetOriginalReplacement(statusId)
+            : StatusReplacementsManager.GetReplacement(statusId);
+
+        Service.Log.Info("Set the Status[{ActionID}] with ParamModifier[{ParamModifier}] Unknown0[{Unknown0}] StatusCategory[{StatusCategory}] TargetType[{TargetType}] Flags[{Flags}] Flag2[{Flag2}] Unknown_70_1[{Unknown_70_1}] Unknown2[{Unknown2}]",
+            statusId, replacement.ParamModifier, replacement.Unknown0, replacement.StatusCategory, replacement.TargetType, replacement.Flags, replacement.Flag2, replacement.Unknown_70_1, replacement.Unknown2);
+        replacement.WriteToPointer(data);
+    }
 
     public static void SetupMounts(IEnumerable<uint> mountIds, bool reset = false)
     {
@@ -222,7 +260,6 @@ public static unsafe class Methods
         replacement.WriteToPointer(data);
     }
 
-
     public static void SetupTilts(IEnumerable<uint> tiltIds, bool reset = false)
     {
         foreach (var tiltId in tiltIds)
@@ -242,4 +279,49 @@ public static unsafe class Methods
             tiltId, replacement.Unknown0, replacement.Unknown1, replacement.Unknown2, replacement.Unknown3, replacement.Unknown4);
         replacement.WriteToPointer(data);
     }
+
+    public static void SetupGlassesS(IEnumerable<uint> glassesIds, bool reset = false)
+    {
+        foreach (var glassesId in glassesIds)
+        {
+            SetupGlasses(glassesId, reset);
+        }
+    }
+
+    public static void SetupGlasses(uint glassesId, bool reset = false)
+    {
+        var data = GetGlassesData(glassesId);
+        var replacement = reset
+            ? GlassesReplacementsManager.GetOriginalReplacement(glassesId)
+            : GlassesReplacementsManager.GetReplacement(glassesId);
+
+        Service.Log.Info("Set the glasses[{glassesID}] with Unknown70_1[{Unknown70_1}] Unknown70_2[{Unknown70_2}] Unknown70_3[{Unknown70_3}] Unknown70_4[{Unknown70_4}] Unknown70_5[{Unknown70_5} Unknown70_6[{Unknown70_6} Unknown70_7[{Unknown70_7} Unknown70_8[{Unknown70_8}]",
+            glassesId, replacement.Unknown70_1, replacement.Unknown70_2, replacement.Unknown70_3, replacement.Unknown70_4, replacement.Unknown70_5, replacement.Unknown70_6, replacement.Unknown70_7, replacement.Unknown70_8);
+        replacement.WriteToPointer(data);
+    }
+
+    public static void SetupPlaceNames(IEnumerable<uint> placeNameIds, bool reset = false)
+    {
+        foreach (var placeNameId in placeNameIds)
+        {
+            SetupPlaceName(placeNameId, reset);
+        }
+    }
+
+    public static void SetupPlaceName(uint placeNameId, bool reset = false)
+    {
+        var data = GetPlaceNameData(placeNameId);
+        var replacement = reset
+            ? PlaceNameReplacementsManager.GetOriginalReplacement(placeNameId)
+            : PlaceNameReplacementsManager.GetReplacement(placeNameId);
+
+
+        Service.Log.Info("Set the place name[{placeNameId}] with Unk1[{placeNameUnk1}] Unk2[{placeNameUnk2}] Unk3[{placeNameUnk3}] Unk4[{placeNameUnk4}] Unk5[{placeNameUnk5}] Unk6[{placeNameUnk6}] Unk7[{placeNameUnk7}] Unk8[{placeNameUnk8}]",
+            placeNameId, replacement.placeNameUnk1, replacement.placeNameUnk2, replacement.placeNameUnk3, replacement.placeNameUnk4, replacement.placeNameUnk5, replacement.placeNameUnk6, replacement.placeNameUnk7, replacement.placeNameUnk8);
+
+        replacement.WriteToPointer(data);
+    }
+
+    #endregion
+
 }

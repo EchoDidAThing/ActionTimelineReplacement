@@ -40,7 +40,6 @@ public static class TiltReplacementsManager
                 return replacement.Value.Replacement;
             }
         }
-
         return null;
     }
 
@@ -50,13 +49,13 @@ public static class TiltReplacementsManager
         if (!exists)
         {
             var act = Service.DataManager.GetExcelSheet<TiltParam>()?.GetRow(tiltId);
-            replacement = new Configurations.TiltReplacement(
+            replacement = new TiltReplacement(
                 (ushort)(act?.Unknown0 ?? 0),
-                (byte)(act?.Unknown1 ?? 0),
-                (byte)(act?.Unknown2 ?? 0),
-                (byte)(act?.Unknown3 ?? 0),
-                (byte)(act?.Unknown4 ?? 0),
-                (bool)(act?.Unknown5 ?? false));
+                act?.Unknown1 ?? 0,
+                act?.Unknown2 ?? 0,
+                act?.Unknown3 ?? 0,
+                act?.Unknown4 ?? 0,
+                act?.Unknown5 ?? false);
         }
 
         return replacement!;

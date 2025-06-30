@@ -15,7 +15,6 @@ public static class ActionReplacementsManager
         ??= Service.DataManager.GetExcelSheet<Action>()
             .Where(i => !string.IsNullOrEmpty(i.Name.ToString()))
             .ToDictionary(i => i.RowId, i => i.Name.ToString());
-
     
     public static IEnumerable<uint> AllActionIds =>
         Service.Config.ReplacementSets.SelectMany(i => i.ActionReplacements.Keys);
@@ -41,7 +40,6 @@ public static class ActionReplacementsManager
                 return replacement.Value.Replacement;
             }
         }
-
         return null;
     }
 
@@ -51,11 +49,16 @@ public static class ActionReplacementsManager
         if (!exists)
         {
             var act = Service.DataManager.GetExcelSheet<Action>()?.GetRow(actionId);
-            replacement = new Configurations.ActionReplacement(
+            replacement = new ActionReplacement(
                 (ushort)(act?.AnimationStart.RowId ?? 0),
                 (ushort)(act?.AnimationEnd.RowId ?? 0),
                 (ushort)(act?.ActionTimelineHit.RowId ?? 0),
-                (ushort)(act?.VFX.RowId ?? 0));
+                (ushort)(act?.VFX.RowId ?? 0),
+                act?.Unknown1 ?? 0,
+                act?.Unknown2 ?? 0,
+                act?.Unknown4 ?? 0,
+                act?.Unknown_70 ?? 0
+                );
         }
 
         return replacement!;

@@ -1,5 +1,4 @@
-﻿using System;
-using System.Runtime.InteropServices;
+﻿using System.Runtime.InteropServices;
 
 namespace ActionTimelineReplacement.Hookers;
 
@@ -7,19 +6,19 @@ namespace ActionTimelineReplacement.Hookers;
 public struct TiltData
 {
     [FieldOffset(0x0)]
-    public Single TiltRate;
+    public float TiltRate;
 
     [FieldOffset(0x4)]
-    public Byte RotationOriginOffset;
+    public byte RotationOriginOffset;
 
     [FieldOffset(0x5)]
-    public Byte MaxAngle;
+    public byte MaxAngle;
 
     [FieldOffset(0x6)]
-    public Byte Unknown3;
+    public byte Unknown3;
 
     [FieldOffset(0x7)]
-    public Byte Unknown4;
+    public byte Unknown4;
 
     [FieldOffset(0x8)]
     public bool MouseReverse;

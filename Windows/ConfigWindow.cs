@@ -1,12 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Numerics;
 using System.Runtime.InteropServices;
 using ActionTimelineReplacement.Configurations;
 using ActionTimelineReplacement.Hookers;
 using ActionTimelineReplacement.Windows.SubSheets;
-using Dalamud.Interface;
 using Dalamud.Interface.Colors;
 using Dalamud.Interface.GameFonts;
 using Dalamud.Interface.ImGuiFileDialog;
@@ -45,10 +43,10 @@ public sealed class ConfigWindow : Window
     {
         DrawHeader();
 
-        using var table = ImRaii.Table("Main Table", 2, ImGuiTableFlags.Resizable);
+        using var table = ImRaii.Table("Main table", 2, ImGuiTableFlags.Resizable);
         if (!table) return;
 
-        ImGui.TableSetupColumn("Rotation Config Side Bar", ImGuiTableColumnFlags.WidthFixed, 100 * Scale);
+        ImGui.TableSetupColumn("Sidebar", ImGuiTableColumnFlags.WidthFixed, 100 * Scale);
         ImGui.TableNextColumn();
 
         try
@@ -58,9 +56,8 @@ public sealed class ConfigWindow : Window
         }
         catch (Exception ex)
         {
-            Service.Log.Warning(ex, "Something wrong with sideBar");
+            Service.Log.Warning(ex, "Sidebar error");
         }
-
         ImGui.TableNextColumn();
 
         try
@@ -69,7 +66,7 @@ public sealed class ConfigWindow : Window
         }
         catch (Exception ex)
         {
-            Service.Log.Warning(ex, "Something wrong with bodymain");
+            Service.Log.Warning(ex, "Main body error");
         }
 
         try
@@ -78,7 +75,7 @@ public sealed class ConfigWindow : Window
         }
         catch (Exception ex)
         {
-            Service.Log.Warning(ex, "Something wrong with bodySheets");
+            Service.Log.Warning(ex, "Sheets error");
         }
 
         _dialogManager.Draw();
@@ -88,16 +85,13 @@ public sealed class ConfigWindow : Window
     {
         using var windowPadding = ImRaii.PushStyle(ImGuiStyleVar.WindowPadding, Vector2.Zero);
 
-        using var child = ImRaii.Child("Side bar", -Vector2.One, true);
+        using var child = ImRaii.Child("Sidebar", -Vector2.One, true);
         if (!child) return;
 
         var itemHeight = ImGui.CalcTextSize("C").Y + ImGui.GetStyle().FramePadding.Y * 2 +
                          ImGui.GetStyle().WindowPadding.Y;
 
-        using (ImRaii.Child("Items",
-                   new Vector2(-1,
-                       ImGui.GetWindowSize().Y - ImGui.GetCursorPosY() - itemHeight - ImGui.GetStyle().WindowPadding.Y),
-                   false))
+        using (ImRaii.Child("Items", new Vector2(-1, ImGui.GetWindowSize().Y - ImGui.GetCursorPosY() - itemHeight - ImGui.GetStyle().WindowPadding.Y), false))
         {
             var span = CollectionsMarshal.AsSpan(Service.Config.ReplacementSets);
             for (var i = 0; i < span.Length; i++)
@@ -158,7 +152,8 @@ public sealed class ConfigWindow : Window
             if (ImGui.Button("Create", buttonSize))
             {
                 var randomset = new Random().Next(1, 100).ToString();
-                Service.Config.ReplacementSets.Add(new Configuration.ReplacementSet("New Set" + randomset, true, 0, new Dictionary<uint, ActionReplacementConfig>(), new Dictionary<uint, ActionCastVFXReplacementConfig>(), new Dictionary<uint, MountReplacementConfig>() , new Dictionary<uint, TiltReplacementConfig>()));
+                //TOSETUP: add new config bracket set here
+                Service.Config.ReplacementSets.Add(new Configuration.ReplacementSet("New Set" + randomset, true, 0, [], [], [], [], [], [], []));
                 Service.Config.Save();
             }
 
@@ -186,7 +181,7 @@ public sealed class ConfigWindow : Window
 
     private void DrawBodyMain()
     {
-        using var child = ImRaii.Child("BodyMain", new Vector2(-1f,60f), false);
+        using var child = ImRaii.Child("Main body", new Vector2(-1f, 60f), false);
         if (!child) return;
         if (_activeSet is null) return;
 
@@ -225,6 +220,9 @@ public sealed class ConfigWindow : Window
     private string _searchAction = string.Empty;
     private string _searchMount = string.Empty;
     private string _searchTiltParam = string.Empty;
+    private string _searchStatus = string.Empty;
+    private string _searchGlasses = string.Empty;
+    private string _searchPlaceName = string.Empty;
 
 
     private void DrawBodySheets()
@@ -232,16 +230,19 @@ public sealed class ConfigWindow : Window
         if (!_AllItemWidths.ContainsKey("Action"))
         {
             //TOSETUP: Add new headers here
-            _AllHeaders.Add("Action", ["Cast Vfx", "Start timeline", "End timeline", "Hit timeline"]);
-            _AllHeaders.Add("Mount", ["RideBGM", "TiltGround", "TiltFlySwim", "TiltParam3", "TiltParam4", "FlyUpDownTilt", "Unk2", "Unk3", "Unk4", "MountCustomize", "Unk5", "SwimAnimSpeed"]);
-            _AllHeaders.Add("TiltParam", ["TiltRate", "RotOriginOffset", "MaxAngle", "Unknown3", "Unknown4", "RotReverse"]);
+            _AllHeaders.Add("Action", []);
+            _AllHeaders.Add("Mount", []);
+            _AllHeaders.Add("TiltParam", []);
+            _AllHeaders.Add("Status", []);
+            _AllHeaders.Add("Glasses", []);
+            _AllHeaders.Add("PlaceName", []);
             foreach (var headerkey in _AllHeaders.Keys)
             {
                 _AllItemWidths.Add(headerkey, 0f);
             }
 
         }
-        using var child = ImRaii.Child("BodySheets", new Vector2(-1f, -1f), false);
+        using var child = ImRaii.Child("Sheets", new Vector2(-1f, -1f), false);
         if (!child) return;
         if (_activeSet is null) return;
 
@@ -280,13 +281,22 @@ public sealed class ConfigWindow : Window
                 {
                     //TOSETUP: Add new case here to call the subsheet
                     case "Action":
-                        ActionSubSheet.Draw(mainkey, ref _activeSet, ref _AllItemWidths, ref _searchAction);
+                        ActionSubSheet.Draw(mainkey, ref _activeSet, ref _searchAction);
                         break;
                     case "Mount":
-                        MountSubSheet.Draw(mainkey, ref _activeSet, ref _AllItemWidths, ref _searchMount);
+                        MountSubSheet.Draw(mainkey, ref _activeSet, ref _searchMount);
                         break;
                     case "TiltParam":
-                        TiltSubSheet.Draw(mainkey, ref _activeSet, ref _AllItemWidths, ref _searchTiltParam);
+                        TiltSubSheet.Draw(mainkey, ref _activeSet, ref _searchTiltParam);
+                        break;
+                    case "Status":
+                        StatusSubSheet.Draw(mainkey, ref _activeSet, ref _searchStatus);
+                        break;
+                    case "Glasses":
+                        GlassesSubSheet.Draw(mainkey, ref _activeSet, ref _searchGlasses);
+                        break;
+                    case "PlaceName":
+                        PlaceNameSubSheet.Draw(mainkey, ref _activeSet, ref _searchPlaceName);
                         break;
                 }
 
