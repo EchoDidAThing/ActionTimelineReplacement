@@ -7,6 +7,7 @@ using System.Linq;
 using Dalamud.Interface.Utility;
 using ActionTimelineReplacement.Base.Setups;
 using ActionTimelineReplacement.Windows;
+using Lumina.Excel.Sheets;
 
 namespace ActionTimelineReplacement.Sheets;
 
@@ -68,6 +69,9 @@ public class StatusMain
                 ImGui.TextUnformatted("Status Hit Effect ID");
                 DrawByte("StatusHitEffect", ref replace.StatusHitEffect, i => i.StatusHitEffect);
 
+                ImGui.TextUnformatted("Parameter Effect");
+                DrawByte("ParamEffect", ref replace.ParamEffect, i => i.ParamEffect);
+
                 ImGui.TextUnformatted("Target Type");
                 DrawByte("TargetType", ref replace.TargetType, i => i.TargetType);
 
@@ -80,7 +84,7 @@ public class StatusMain
                 ImGui.TextUnformatted("Unknown 70_1");
                 DrawByte("Unknown_70_1", ref replace.Unknown_70_1, i => i.Unknown_70_1);
 
-                ImGui.TextUnformatted("Show Attack Type");
+                ImGui.TextUnformatted("(related to attack type)");
                 DrawSByte("AtkType", ref replace.Unknown2, i => i.Unknown2);
 
                 ImGui.NewLine();
@@ -223,6 +227,7 @@ public class StatusMain
                                     original.Unknown0,
                                     original.StatusCategory,
                                     original.StatusHitEffect,
+                                    original.ParamEffect,
                                     original.TargetType,
                                     original.Flags,
                                     original.Flag2,

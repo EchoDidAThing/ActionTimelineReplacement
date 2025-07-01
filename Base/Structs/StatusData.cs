@@ -29,10 +29,15 @@ public struct StatusData
     public byte StatusHitEffect;
 
     [FieldOffset(0x1C)]
+    public byte ParamEffect;
+
+    [FieldOffset(0x1C)]
     public byte TargetType;
 
     [FieldOffset(0x1D)]
     public byte Flags;
+    //affects animation in some way
+    //example: Hidden for NIN when changed from 2 will change it from walk to standard run
 
     [FieldOffset(0x1E)]
     public byte Flag2;
@@ -41,5 +46,7 @@ public struct StatusData
     public byte Unknown_70_1;
 
     [FieldOffset(0x20)]
-    public sbyte Unknown2; //type icon on flytext
+    public sbyte Unknown2;
+    //affects if type shows on flytext, but also what type sometimes
+    //0 is don't show, 1-5 shows its assigned type, 6 changes it to unaspected
 }

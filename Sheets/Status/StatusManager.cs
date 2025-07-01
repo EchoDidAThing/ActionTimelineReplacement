@@ -54,6 +54,7 @@ public static class StatusManager
                 act?.Unknown0 ?? 0,
                 act?.StatusCategory ?? 0,
                 (byte)(act?.HitEffect.RowId ?? 0),
+                act?.ParamEffect ?? 0,
                 act?.TargetType ?? 0,
                 act?.Flags ?? 0,
                 act?.Flag2 ?? 0,

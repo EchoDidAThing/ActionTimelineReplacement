@@ -45,6 +45,7 @@ public class ActionMain
                     _activeSet.ActionWriter.Remove(key);
                 }
 
+                //to do: show values as strings from their subsheets
                 ImGui.SameLine();
                 ImGui.Text($"#{key:D5}");
 

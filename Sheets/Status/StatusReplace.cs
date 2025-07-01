@@ -14,6 +14,7 @@ public class StatusReplace(
     byte unknown0,
     byte statusCategory,
     byte statusHitEffect,
+    byte paramEffect,
     byte targetType,
     byte flags,
     byte flag2,
@@ -25,6 +26,7 @@ public class StatusReplace(
     public byte Unknown0 = unknown0;
     public byte StatusCategory = statusCategory;
     public byte StatusHitEffect = statusHitEffect;
+    public byte ParamEffect = paramEffect;
     public byte TargetType = targetType;
     public byte Flags = flags;
     public byte Flag2 = flag2;
@@ -37,6 +39,7 @@ public class StatusReplace(
         ptr->Unknown0 = Unknown0;
         ptr->StatusCategory = StatusCategory;
         ptr->StatusHitEffect = StatusHitEffect;
+        ptr->ParamEffect = ParamEffect;
         ptr->TargetType = TargetType;
         ptr->Flags = Flags;
         ptr->Flag2 = Flag2;
