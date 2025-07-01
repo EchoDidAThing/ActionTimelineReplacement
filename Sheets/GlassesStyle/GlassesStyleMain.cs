@@ -68,7 +68,7 @@ public class GlassesStyleMain
                 ImGui.TextUnformatted("Unknown70_6");
                 DrawSByte("Unknown70_6", ref replace.Unknown70_6, i => i.Unknown70_6);
 
-                ImGui.TextUnformatted("Unknown70_7");
+                ImGui.TextUnformatted("Disable in UI");
                 DrawShort("Unknown70_7", ref replace.Unknown70_7, i => i.Unknown70_7);
 
                 ImGui.NewLine();

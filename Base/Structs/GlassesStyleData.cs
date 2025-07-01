@@ -24,5 +24,5 @@ public struct GlassesStyleData
     public sbyte Unknown70_6;
 
     [FieldOffset(0x32)]
-    public short Unknown70_7;
+    public short Unknown70_7; //enable selection in UI
 }
