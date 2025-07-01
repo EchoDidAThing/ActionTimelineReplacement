@@ -267,9 +267,9 @@ public sealed class ConfigWindow : Window
             _AllHeaders.Add("Action", []);
             _AllHeaders.Add("Mount", []);
             _AllHeaders.Add("Status", []);
-            _AllHeaders.Add("Tilt Param", []);
+            _AllHeaders.Add("TiltParam", []);
             _AllHeaders.Add("Glasses", []);
-            _AllHeaders.Add("Glasses Style", []);
+            _AllHeaders.Add("GlassesStyle", []);
             _AllHeaders.Add("PlaceName", []);
             foreach (var headerkey in _AllHeaders.Keys)
             {
@@ -288,34 +288,29 @@ public sealed class ConfigWindow : Window
         {
             if (ImGui.CollapsingHeader(mainkey))
             {
-                /*
                 using (ImRaii.PushFont(GetFont(18)))
                 {
-                    if (Service.Config.AdvancedMode)
+                    if (_AllItemWidths[mainkey] != 0)
                     {
-                        if (_AllItemWidths[mainkey] == 0)
+                        for (int i = 0; i < _AllHeaders[mainkey].Count; i++)
                         {
                             ImGui.SameLine();
-                            var headerstring = " ";
-                            for (int i = 0; i < _AllHeaders[mainkey].Count; i++)
-                            {
-                                if (i > 0) headerstring += " ";
-                                headerstring += _AllHeaders[mainkey][i];
-                            }
-                            ImGui.Text(headerstring);
-                        }
-                        else
-                        {
-                            for (int i = 0; i < _AllHeaders[mainkey].Count; i++)
-                            {
-                                ImGui.SameLine();
-                                ImGui.SetCursorPosX(ImGui.GetWindowWidth() - _AllItemWidths[mainkey] * (_AllHeaders[mainkey].Count - i) / _AllHeaders[mainkey].Count);
-                                ImGui.Text(_AllHeaders[mainkey][i]);
-                            }
+                            ImGui.SetCursorPosX(ImGui.GetWindowWidth() - _AllItemWidths[mainkey] * (_AllHeaders[mainkey].Count - i) / _AllHeaders[mainkey].Count);
+                            ImGui.Text(_AllHeaders[mainkey][i]);
                         }
                     }
+                    else
+                    {
+                        ImGui.SameLine();
+                        var headerstring = " ";
+                        for (int i = 0; i < _AllHeaders[mainkey].Count; i++)
+                        {
+                            if (i > 0) headerstring += " ";
+                            headerstring += _AllHeaders[mainkey][i];
+                        }
+                        ImGui.Text(headerstring);
+                    }
                 }
-                */
                 switch (mainkey)
                 {
                     //TOSETUP: Add new case here to call the subsheet
