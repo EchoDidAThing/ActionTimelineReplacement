@@ -10,7 +10,7 @@ namespace ActionTimelineReplacement.Sheets;
 public class Configuration : IPluginConfiguration
 {
     //TOSETUP: add new dictionary here
-    public class ReplacementSet(string name, bool enabled, int priority, Dictionary<uint, ActionConfig> actionwriter, Dictionary<uint, ActionCastVFXConfig> actioncastvfxwriter, Dictionary<uint, MountConfig> mountwriter, Dictionary<uint, StatusConfig> statuswriter, Dictionary<uint, TiltParamConfig> tiltparamwriter, Dictionary<uint, GlassesConfig> glasseswriter, Dictionary<uint, PlaceNameConfig> placenamewriter)
+    public class ReplacementSet(string name, bool enabled, int priority, Dictionary<uint, ActionConfig> actionwriter, Dictionary<uint, ActionCastVFXConfig> actioncastvfxwriter, Dictionary<uint, MountConfig> mountwriter, Dictionary<uint, StatusConfig> statuswriter, Dictionary<uint, TiltParamConfig> tiltparamwriter, Dictionary<uint, GlassesConfig> glasseswriter, Dictionary<uint, GlassesStyleConfig> glassesstylewriter, Dictionary<uint, PlaceNameConfig> placenamewriter)
     {
         public string Name = name;
 
@@ -25,6 +25,7 @@ public class Configuration : IPluginConfiguration
         public Dictionary<uint, TiltParamConfig> TiltParamWriter { get; set; } = tiltparamwriter;
         public Dictionary<uint, StatusConfig> StatusWriter { get; set; } = statuswriter;
         public Dictionary<uint, GlassesConfig> GlassesWriter { get; set; } = glasseswriter;
+        public Dictionary<uint, GlassesStyleConfig> GlassesStyleWriter { get; set; } = glassesstylewriter;
         public Dictionary<uint, PlaceNameConfig> PlaceNameWriter { get; set; } = placenamewriter;
 
         public static ReplacementSet? Load(string jsonFile)

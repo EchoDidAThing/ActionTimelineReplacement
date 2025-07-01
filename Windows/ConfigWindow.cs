@@ -136,7 +136,7 @@ public sealed class ConfigWindow : Window
                     _activeSet = Service.Config.ReplacementSets[i];
                 }
 
-                var popupId = $"Set {i} Popup";
+                var popupId = $"Set{i}Popup";
                 if (ImGui.IsItemClicked(ImGuiMouseButton.Right))
                 {
                     ImGui.OpenPopup(popupId);
@@ -183,7 +183,7 @@ public sealed class ConfigWindow : Window
             {
                 var randomset = new Random().Next(1, 100).ToString();
                 //TOSETUP: add new config bracket set here
-                Service.Config.ReplacementSets.Add(new Configuration.ReplacementSet("Set " + randomset, true, 0, [], [], [], [], [], [], []));
+                Service.Config.ReplacementSets.Add(new Configuration.ReplacementSet("Set " + randomset, true, 0, [], [], [], [], [], [], [], []));
                 Service.Config.Save();
             }
             ImGui.SameLine();
@@ -256,6 +256,7 @@ public sealed class ConfigWindow : Window
     private string _searchTiltParam = string.Empty;
     private string _searchStatus = string.Empty;
     private string _searchGlasses = string.Empty;
+    private string _searchGlassesStyle = string.Empty;
     private string _searchPlaceName = string.Empty;
 
     private void DrawSheets()
@@ -268,6 +269,7 @@ public sealed class ConfigWindow : Window
             _AllHeaders.Add("Status", []);
             _AllHeaders.Add("Tilt Param", []);
             _AllHeaders.Add("Glasses", []);
+            _AllHeaders.Add("Glasses Style", []);
             _AllHeaders.Add("PlaceName", []);
             foreach (var headerkey in _AllHeaders.Keys)
             {
@@ -331,6 +333,9 @@ public sealed class ConfigWindow : Window
                         break;
                     case "Glasses":
                         GlassesMain.Draw(mainkey, ref _activeSet, ref _searchGlasses);
+                        break;
+                    case "GlassesStyle":
+                        GlassesStyleMain.Draw(mainkey, ref _activeSet, ref _searchGlassesStyle);
                         break;
                     case "PlaceName":
                         PlaceNameMain.Draw(mainkey, ref _activeSet, ref _searchPlaceName);

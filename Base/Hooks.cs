@@ -11,6 +11,7 @@ public static unsafe class Hooks
     private delegate MountData* GetMountDataDelegate(uint RowId);
     private delegate TiltParamData* GetTiltParamDataDelegate(uint RowId);
     private delegate GlassesData* GetGlassesDataDelegate(uint RowId);
+    private delegate GlassesStyleData* GetGlassesStyleDataDelegate(uint RowId);
     private delegate PlaceNameData* GetPlaceNameDataDelegate(uint RowId);
 
     //private delegate ActionTimelineData* GetActionTimelineDataDelegate(uint RowId);
@@ -32,6 +33,7 @@ public static unsafe class Hooks
     private static GetMountDataDelegate? _getMountDataHook;
     private static GetTiltParamDataDelegate? _getTiltParamDataHook;
     private static GetGlassesDataDelegate? _getGlassesDataHook;
+    private static GetGlassesStyleDataDelegate? _getGlassesStyleDataHook;
     private static GetPlaceNameDataDelegate? _getPlaceNameDataHook;
 
     //private static GetActionTimelineDataDelegate? _getActionTimelineDataHook;
@@ -85,6 +87,13 @@ public static unsafe class Hooks
         _getGlassesDataHook ??= Marshal.GetDelegateForFunctionPointer<GetGlassesDataDelegate>(Service.Scanner.ScanText(
             "E8 ?? ?? ?? ?? 48 85 C0 74 ?? 66 44 39 78 ?? 7C"));
         return _getGlassesDataHook(RowId);
+    }
+
+    public static GlassesStyleData* GetGlassesStyleData(uint RowId)
+    {
+        _getGlassesStyleDataHook ??= Marshal.GetDelegateForFunctionPointer<GetGlassesStyleDataDelegate>(Service.Scanner.ScanText(
+            "E8 ?? ?? ?? ?? 48 85 C0 74 ?? 0F B7 CE"));
+        return _getGlassesStyleDataHook(RowId);
     }
 
     public static PlaceNameData* GetPlaceNameData(uint RowId)

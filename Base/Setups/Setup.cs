@@ -13,5 +13,6 @@ public static unsafe partial class Setup
         LoadTiltParam(TiltParamManager.AllTiltParamIds);
         LoadPlaceName(PlaceNameManager.AllPlaceNameIds);
         LoadGlasses(GlassesManager.AllGlassesIds);
+        LoadGlassesStyle(GlassesStyleManager.AllGlassesStyleIds);
     }
 }
