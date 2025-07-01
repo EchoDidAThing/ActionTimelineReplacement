@@ -1,4 +1,4 @@
-using ActionTimelineReplacement.Configurations;
+using ActionTimelineReplacement.Sheets;
 using Dalamud.Game;
 using Dalamud.IoC;
 using Dalamud.Plugin;

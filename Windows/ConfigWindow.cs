@@ -2,9 +2,8 @@
 using System.Collections.Generic;
 using System.Numerics;
 using System.Runtime.InteropServices;
-using ActionTimelineReplacement.Configurations;
-using ActionTimelineReplacement.Hookers;
-using ActionTimelineReplacement.Windows.SubSheets;
+using ActionTimelineReplacement.Base.Setups;
+using ActionTimelineReplacement.Sheets;
 using Dalamud.Interface.Colors;
 using Dalamud.Interface.GameFonts;
 using Dalamud.Interface.ImGuiFileDialog;
@@ -17,6 +16,7 @@ namespace ActionTimelineReplacement.Windows;
 
 public sealed class ConfigWindow : Window
 {
+    #region Initial
 
     private readonly FileDialogManager _dialogManager = new()
     {
@@ -24,11 +24,10 @@ public sealed class ConfigWindow : Window
     };
 
     private static float Scale => ImGuiHelpers.GlobalScale;
-
     private Configuration.ReplacementSet? _activeSet;
 
     public ConfigWindow()
-        : base("ActionTimeline Replacement v" + typeof(ConfigWindow).Assembly.GetName().Version)
+        : base("Replacement" + typeof(ConfigWindow).Assembly.GetName().Version)
     {
         SizeCondition = ImGuiCond.FirstUseEver;
         Size = new Vector2(960, 540);
@@ -38,6 +37,9 @@ public sealed class ConfigWindow : Window
             MaximumSize = new Vector2(5000, 5000),
         };
     }
+
+    #endregion
+    #region Draw all
 
     public override void Draw()
     {
@@ -52,7 +54,7 @@ public sealed class ConfigWindow : Window
         try
         {
             using var style = ImRaii.PushStyle(ImGuiStyleVar.SelectableTextAlign, new Vector2(0.5f, 0.5f));
-            DrawSideBar();
+            DrawSidebar();
         }
         catch (Exception ex)
         {
@@ -71,7 +73,7 @@ public sealed class ConfigWindow : Window
 
         try
         {
-            DrawBodySheets();
+            DrawSheets();
         }
         catch (Exception ex)
         {
@@ -81,7 +83,36 @@ public sealed class ConfigWindow : Window
         _dialogManager.Draw();
     }
 
-    private void DrawSideBar()
+    #endregion
+    #region Header
+    private static void DrawHeader()
+    {
+        if (ImGui.Checkbox("Enable", ref Service.Config.EnableReplacement))
+        {
+            //SETUP ALL PROCESSING
+            Setup.SetupAll();
+            Service.Config.Save();
+        }
+        ImGui.SameLine();
+
+        if (ImGui.Button("Redraw"))
+        {
+            //SETUP ALL PROCESSING
+            Setup.SetupAll();
+        }
+        /*
+        ImGui.SameLine();
+        if (ImGui.Button(Service.Config.AdvancedMode ? "To Simple Mode" : "To Advanced Mode"))
+        {
+            Service.Config.AdvancedMode = !Service.Config.AdvancedMode;
+            Service.Config.Save();
+        }
+        */
+    }
+
+    #endregion
+    #region Sidebar
+    private void DrawSidebar()
     {
         using var windowPadding = ImRaii.PushStyle(ImGuiStyleVar.WindowPadding, Vector2.Zero);
 
@@ -105,16 +136,16 @@ public sealed class ConfigWindow : Window
                     _activeSet = Service.Config.ReplacementSets[i];
                 }
 
-                var popUpId = $"Set{i}PopUp";
+                var popupId = $"Set {i} Popup";
                 if (ImGui.IsItemClicked(ImGuiMouseButton.Right))
                 {
-                    ImGui.OpenPopup(popUpId);
+                    ImGui.OpenPopup(popupId);
                 }
 
-                using var popup = ImRaii.Popup(popUpId);
+                using var popup = ImRaii.Popup(popupId);
                 if (popup)
                 {
-                    using var popUpChild = ImRaii.Child("PopUp" + popUpId,
+                    using var popupChild = ImRaii.Child("Popup" + popupId,
                         new Vector2(80 * Scale, 60 * Scale),
                         true);
 
@@ -133,13 +164,12 @@ public sealed class ConfigWindow : Window
                         if (_activeSet == Service.Config.ReplacementSets[i]) _activeSet = null;
                         Service.Config.ReplacementSets.Remove(set);
                         Service.Config.Save();
-                        Methods.SetupAll();
+                        Setup.SetupAll();
                         ImGui.CloseCurrentPopup();
                     }
                 }
             }
         }
-
         ImGui.SetCursorPosY(ImGui.GetWindowSize().Y - itemHeight);
 
         using (ImRaii.PushStyle(ImGuiStyleVar.ItemSpacing, new Vector2(0, 0)))
@@ -153,11 +183,11 @@ public sealed class ConfigWindow : Window
             {
                 var randomset = new Random().Next(1, 100).ToString();
                 //TOSETUP: add new config bracket set here
-                Service.Config.ReplacementSets.Add(new Configuration.ReplacementSet("New Set" + randomset, true, 0, [], [], [], [], [], [], []));
+                Service.Config.ReplacementSets.Add(new Configuration.ReplacementSet("Set " + randomset, true, 0, [], [], [], [], [], [], []));
                 Service.Config.Save();
             }
-
             ImGui.SameLine();
+
             if (ImGui.Button("Import", buttonSize))
             {
                 _dialogManager.OpenFileDialog("Import", ".json", (b, files) =>
@@ -167,9 +197,8 @@ public sealed class ConfigWindow : Window
                     {
                         if (Configuration.ReplacementSet.Load(file) is not { } set) continue;
                         Service.Config.ReplacementSets.Add(set);
-                        Methods.SetupAll();
+                        Setup.SetupAll();
                     }
-
                     Service.Config.Save();
                 }, 10, ".");
             }
@@ -177,7 +206,8 @@ public sealed class ConfigWindow : Window
         }
     }
 
-    
+    #endregion
+    #region Main
 
     private void DrawBodyMain()
     {
@@ -189,9 +219,10 @@ public sealed class ConfigWindow : Window
         {
             var width = ImGui.CalcTextSize(_activeSet.Name).X + ImGui.GetStyle().FramePadding.X * 2;
             var x = ImGui.GetWindowWidth() / 2 - width / 2;
-            ImGui.SetCursorPosX(x);
 
+            ImGui.SetCursorPosX(x);
             ImGui.SetNextItemWidth(width);
+
             if (ImGui.InputText("##Name", ref _activeSet.Name, 256))
             {
                 Service.Config.Save();
@@ -200,18 +231,21 @@ public sealed class ConfigWindow : Window
 
         if (ImGui.Checkbox("Enable", ref _activeSet.Enabled))
         {
-            Methods.SetupAll();
+            Setup.SetupAll();
             Service.Config.Save();
         }
-
         ImGui.SameLine();
         ImGui.SetNextItemWidth(50 * Scale);
+
         if (ImGui.DragInt("Priority", ref _activeSet.Priority))
         {
-            Methods.SetupAll();
+            Setup.SetupAll();
             Service.Config.Save();
         }
     }
+
+    #endregion
+    #region Sheets
 
     private Dictionary<string, List<string>> _AllHeaders = [];
     private Dictionary<string, float> _AllItemWidths = [];
@@ -224,16 +258,15 @@ public sealed class ConfigWindow : Window
     private string _searchGlasses = string.Empty;
     private string _searchPlaceName = string.Empty;
 
-
-    private void DrawBodySheets()
+    private void DrawSheets()
     {
         if (!_AllItemWidths.ContainsKey("Action"))
         {
             //TOSETUP: Add new headers here
             _AllHeaders.Add("Action", []);
             _AllHeaders.Add("Mount", []);
-            _AllHeaders.Add("TiltParam", []);
             _AllHeaders.Add("Status", []);
+            _AllHeaders.Add("Tilt Param", []);
             _AllHeaders.Add("Glasses", []);
             _AllHeaders.Add("PlaceName", []);
             foreach (var headerkey in _AllHeaders.Keys)
@@ -242,15 +275,18 @@ public sealed class ConfigWindow : Window
             }
 
         }
+
         using var child = ImRaii.Child("Sheets", new Vector2(-1f, -1f), false);
         if (!child) return;
         if (_activeSet is null) return;
 
         ImGui.SetCursorPosY(ImGui.GetCursorPosY() + 10 * Scale);
+
         foreach (var mainkey in _AllHeaders.Keys)
         {
             if (ImGui.CollapsingHeader(mainkey))
             {
+                /*
                 using (ImRaii.PushFont(GetFont(18)))
                 {
                     if (Service.Config.AdvancedMode)
@@ -277,26 +313,27 @@ public sealed class ConfigWindow : Window
                         }
                     }
                 }
+                */
                 switch (mainkey)
                 {
                     //TOSETUP: Add new case here to call the subsheet
                     case "Action":
-                        ActionSubSheet.Draw(mainkey, ref _activeSet, ref _searchAction);
+                        ActionMain.Draw(mainkey, ref _activeSet, ref _searchAction);
                         break;
                     case "Mount":
-                        MountSubSheet.Draw(mainkey, ref _activeSet, ref _searchMount);
-                        break;
-                    case "TiltParam":
-                        TiltSubSheet.Draw(mainkey, ref _activeSet, ref _searchTiltParam);
+                        MountMain.Draw(mainkey, ref _activeSet, ref _searchMount);
                         break;
                     case "Status":
-                        StatusSubSheet.Draw(mainkey, ref _activeSet, ref _searchStatus);
+                        StatusMain.Draw(mainkey, ref _activeSet, ref _searchStatus);
+                        break;
+                    case "TiltParam":
+                        TiltParamMain.Draw(mainkey, ref _activeSet, ref _searchTiltParam);
                         break;
                     case "Glasses":
-                        GlassesSubSheet.Draw(mainkey, ref _activeSet, ref _searchGlasses);
+                        GlassesMain.Draw(mainkey, ref _activeSet, ref _searchGlasses);
                         break;
                     case "PlaceName":
-                        PlaceNameSubSheet.Draw(mainkey, ref _activeSet, ref _searchPlaceName);
+                        PlaceNameMain.Draw(mainkey, ref _activeSet, ref _searchPlaceName);
                         break;
                 }
 
@@ -305,13 +342,15 @@ public sealed class ConfigWindow : Window
 
     }
 
+    #endregion
+    #region Scaling and font
+
     public static int ScoreString(string s1, string search)
     {
         if (s1.Contains(search, StringComparison.OrdinalIgnoreCase))
         {
             return s1.Length - search.Length;
         }
-
         return LevenshteinDistance(s1, search) + 20;
     }
 
@@ -341,31 +380,6 @@ public sealed class ConfigWindow : Window
         return dp[len1, len2];
     }
 
-    private static void DrawHeader()
-    {
-        if (ImGui.Checkbox("Enable", ref Service.Config.EnableReplacement))
-        {
-            //SETUP ALL PROCESSING
-            Methods.SetupAll();
-            Service.Config.Save();
-        }
-
-        ImGui.SameLine();
-
-        if (ImGui.Button("Redraw"))
-        {
-            //SETUP ALL PROCESSING
-            Methods.SetupAll();
-        }
-
-        ImGui.SameLine();
-        if (ImGui.Button(Service.Config.AdvancedMode ? "To Simple Mode" : "To Advanced Mode"))
-        {
-            Service.Config.AdvancedMode = !Service.Config.AdvancedMode;
-            Service.Config.Save();
-        }
-    }
-
     private static unsafe ImFontPtr GetFont(float size, GameFontFamily fontFamily = GameFontFamily.Axis)
     {
         var style = new GameFontStyle(GameFontStyle.GetRecommendedFamilyAndSize(fontFamily, size));
@@ -388,4 +402,5 @@ public sealed class ConfigWindow : Window
             return ImGui.GetFont();
         }
     }
+    #endregion
 }

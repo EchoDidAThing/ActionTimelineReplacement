@@ -1,0 +1,57 @@
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Runtime.InteropServices;
+using Lumina.Excel.Sheets;
+
+namespace ActionTimelineReplacement.Sheets;
+public static class ActionCastVFXReplacementsManager
+{
+    private static Dictionary<uint, string>? _Names;
+
+    private static readonly Dictionary<uint, ActionCastVFXReplace> old = [];
+
+    public static Dictionary<uint, string> Names => _Names
+        ??= Service.DataManager.GetExcelSheet<Action>()
+            .Where(i => !string.IsNullOrEmpty(i.Name.ToString()))
+            .ToDictionary(i => i.RowId, i => i.Name.ToString());
+
+
+    public static IEnumerable<uint> AllCastVFXActionIds =>
+        Service.Config.ReplacementSets.SelectMany(i => i.ActionCastVFXWriter.Keys);
+
+    public static string GetName(uint id)
+    {
+        return Names.GetValueOrDefault(id, "Unknown");
+    }
+
+    public static ActionCastVFXReplace GetReplacement(uint idx)
+        => GetConfig(idx) ?? GetOriginal(idx);
+
+    private static ActionCastVFXReplace? GetConfig(uint idx)
+    {
+        if (!Service.Config.EnableReplacement) return null;
+
+        foreach (var item in Service.Config.ReplacementSets)
+        {
+            foreach (var replacement in item.ActionCastVFXWriter
+                         .Where(r => item.Enabled)
+                         .OrderByDescending(r => item.Priority))
+            {
+                return replacement.Value.Replacement;
+            }
+        }
+        return null;
+    }
+
+    public static ActionCastVFXReplace GetOriginal(uint idx)
+    {
+        ref var replacement = ref CollectionsMarshal.GetValueRefOrAddDefault(old, idx, out var exists);
+        if (!exists)
+        {
+            var act = Service.DataManager.GetExcelSheet<ActionCastVFX>()?.GetRow(idx);
+            replacement = new ActionCastVFXReplace(
+                (ushort)(act?.VFX.RowId ?? 0));
+        }
+        return replacement!;
+    }
+}
