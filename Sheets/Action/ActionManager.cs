@@ -54,6 +54,7 @@ public static class ActionManager
                 (ushort)(act?.AnimationEnd.RowId ?? 0),
                 (ushort)(act?.ActionTimelineHit.RowId ?? 0),
                 (ushort)(act?.VFX.RowId ?? 0),
+                (ushort)(act?.ActionCategory.RowId ?? 0),
                 act?.Unknown1 ?? 0,
                 act?.Unknown2 ?? 0,
                 act?.Unknown4 ?? 0,

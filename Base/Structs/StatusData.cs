@@ -48,5 +48,5 @@ public struct StatusData
     [FieldOffset(0x20)]
     public sbyte Unknown2;
     //affects if type shows on flytext, but also what type sometimes
-    //0 is don't show, 1-5 shows its assigned type, 6 changes it to unaspected
+    //0 is don't show, 1-5 shows its assigned type, 6 changes it to unaspected (all the time?)
 }

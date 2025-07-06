@@ -14,11 +14,14 @@ public struct ActionData
     [FieldOffset(0x20)]
     public ushort AnimationEnd;
 
-    [FieldOffset(0x24)]
-    public ushort AnimationStart;
+    [FieldOffset(0x22)]
+    public ushort ActionCategory;
 
     [FieldOffset(0x23)]
     public byte Unknown1;
+
+    [FieldOffset(0x24)]
+    public ushort AnimationStart;
 
     [FieldOffset(0x25)]
     public byte Unknown2;

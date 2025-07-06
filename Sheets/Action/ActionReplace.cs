@@ -13,6 +13,7 @@ public class ActionReplace(
     ushort animationEnd,
     ushort actionTimelineHit,
     ushort castVfx,
+    ushort actionCategory,
     byte unknown1,
     byte unknown2,
     byte unknown4,
@@ -22,6 +23,7 @@ public class ActionReplace(
     public ushort AnimationEnd = animationEnd;
     public ushort ActionTimelineHit = actionTimelineHit;
     public ushort CastVfx = castVfx;
+    public ushort ActionCategory = actionCategory;
     public byte Unknown1 = unknown1;
     public byte Unknown2 = unknown2;
     public byte Unknown4 = unknown4;
@@ -32,6 +34,7 @@ public class ActionReplace(
         ptr->AnimationStart = AnimationStart;
         ptr->AnimationEnd = AnimationEnd;
         ptr->ActionTimelineHit = ActionTimelineHit;
+        ptr->ActionCategory = ActionCategory;
         ptr->Unknown1 = Unknown1;
         ptr->Unknown2 = Unknown2;
         ptr->Unknown4 = Unknown4;

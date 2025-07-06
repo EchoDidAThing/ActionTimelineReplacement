@@ -14,5 +14,10 @@ public static unsafe partial class Setup
         LoadPlaceName(PlaceNameManager.AllPlaceNameIds);
         LoadGlasses(GlassesManager.AllGlassesIds);
         LoadGlassesStyle(GlassesStyleManager.AllGlassesStyleIds);
+        LoadOrnament(OrnamentManager.AllOrnamentIds);
+        LoadOrnamentCustomize(OrnamentCustomizeManager.AllOrnamentCustomizeIds);
+        //LoadOrnamentCustomizeGroup(OrnamentCustomizeGroupManager.AllOrnamentCustomizeGroupIds);
+        //LoadActionTimeline(ActionTimelineManager.AllActionTimelineIds); //find sigs
+        //LoadPointMenuChoice(PointMenuChoiceManager.AllPointMenuChoiceIds); //find sigs
     }
 }

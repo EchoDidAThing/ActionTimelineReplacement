@@ -13,8 +13,13 @@ public static unsafe class Hooks
     private delegate GlassesData* GetGlassesDataDelegate(uint RowId);
     private delegate GlassesStyleData* GetGlassesStyleDataDelegate(uint RowId);
     private delegate PlaceNameData* GetPlaceNameDataDelegate(uint RowId);
+    private delegate ActionTimelineData* GetActionTimelineDataDelegate(uint RowId);
+    private delegate OrnamentData* GetOrnamentDataDelegate(uint RowId);
+    private delegate OrnamentCustomizeData* GetOrnamentCustomizeDataDelegate(uint RowId);
+    private delegate OrnamentCustomizeGroupData* GetOrnamentCustomizeGroupDataDelegate(uint RowId);
 
-    //private delegate ActionTimelineData* GetActionTimelineDataDelegate(uint RowId);
+    //private delegate MotionTimelineData* GetMotionTimelineDataDelegate(uint RowId);
+    //private delegate PointMenuChoiceData* GetPointMenuChoiceDataDelegate(float RowId);
     //private delegate WeaponTimelineData* GetWeaponTimelineDataDelegate(uint RowId);
     //private delegate ActionCastTimelineData* GetActionCastTimelineDataDelegate(uint RowId);
     //private delegate ActionCastVFXData* GetActionCastVFXDataDelegate(uint RowId);
@@ -35,8 +40,12 @@ public static unsafe class Hooks
     private static GetGlassesDataDelegate? _getGlassesDataHook;
     private static GetGlassesStyleDataDelegate? _getGlassesStyleDataHook;
     private static GetPlaceNameDataDelegate? _getPlaceNameDataHook;
+    private static GetActionTimelineDataDelegate? _getActionTimelineDataHook;
+    private static GetOrnamentDataDelegate? _getOrnamentDataHook;
+    private static GetOrnamentCustomizeDataDelegate? _getOrnamentCustomizeDataHook;
+    private static GetOrnamentCustomizeGroupDataDelegate? _getOrnamentCustomizeGroupDataHook;
 
-    //private static GetActionTimelineDataDelegate? _getActionTimelineDataHook;
+    //private static GetPointMenuChoiceDataDelegate? _getPointMenuChoiceDataHook;
     //private static GetWeaponTimelineDataDelegate? _getWeaponTimelineDataHook;
     //private static GetActionCastTimelineDataDelegate? _getActionCastTimelineDataHook;
     //private static GetActionCastVFXDataDelegate? _getActionCastVFXDataHook;
@@ -49,7 +58,7 @@ public static unsafe class Hooks
 
     #endregion
     #region sigs
-    
+
     public static ActionData* GetActionData(uint RowId)
     {
         _getActionDataHook ??= Marshal.GetDelegateForFunctionPointer<GetActionDataDelegate>
@@ -103,14 +112,44 @@ public static unsafe class Hooks
         return _getPlaceNameDataHook(RowId);
     }
 
-    /*
-    private static ActionTimelineData* GetActionTimelineData(uint RowId)
+    public static ActionTimelineData* GetActionTimelineData(uint RowId)
     {
         _getActionTimelineDataHook ??= Marshal.GetDelegateForFunctionPointer<GetActionTimelineDataDelegate>(Service.Scanner.ScanText(
-            "E8 ?? ?? ?? ?? 48 85 C0 74 ?? 80 78 ?? ?? 75 ?? 0F B6 4E" ));
-        //ANOTHER BIG MAYBE
+            "")); //sigs don't match yet
+        //E8 ?? ?? ?? ?? 48 85 C0 74 ?? F6 40 ?? ?? 74 ?? 8B CB E8 ?? ?? ?? ?? 48 8B 0D ?? ?? ?? ?? 48 8D 54 24 ?? 48 89 44 24 ?? 89 5C 24 ?? E8 ?? ?? ?? ?? FF C3 3B DE 72 ?? E8 ?? ?? ?? ?? 48 8B 74 24
+        //E8 ?? ?? ?? ?? 48 85 C0 74 ?? 80 78 ?? ?? 75 ?? 0F B6 4E
 
         return _getActionTimelineDataHook(RowId);
+    }
+
+    public static OrnamentData* GetOrnamentData(uint RowId)
+    {
+        _getOrnamentDataHook ??= Marshal.GetDelegateForFunctionPointer<GetOrnamentDataDelegate>(Service.Scanner.ScanText(
+            "E8 ?? ?? ?? ?? 48 85 C0 74 ?? 0F B6 40 ?? FE C8 3C ?? 77 ?? 48 8B 45"));
+        return _getOrnamentDataHook(RowId);
+    }
+
+    public static OrnamentCustomizeData* GetOrnamentCustomizeData(uint RowId)
+    {
+        _getOrnamentCustomizeDataHook ??= Marshal.GetDelegateForFunctionPointer<GetOrnamentCustomizeDataDelegate>(Service.Scanner.ScanText(
+            "E8 ?? ?? ?? ?? 48 8B D8 48 85 C0 0F 84 ?? ?? ?? ?? 0F B7 08 0F BF 40"));
+        return _getOrnamentCustomizeDataHook(RowId);
+    }
+    
+    public static OrnamentCustomizeGroupData* GetOrnamentCustomizeGroupData(uint RowId)
+    {
+        _getOrnamentCustomizeGroupDataHook ??= Marshal.GetDelegateForFunctionPointer<GetOrnamentCustomizeGroupDataDelegate>(Service.Scanner.ScanText(
+            "E8 ?? ?? ?? ?? 4C 8B E8 48 85 C0 0F 84 ?? ?? ?? ?? 49 8B 16 49 8B CE 41 0F B6 9E"));
+        return _getOrnamentCustomizeGroupDataHook(RowId);
+    }
+
+    /*
+    public static PointMenuChoiceData* GetPointMenuChoiceData(float RowId)
+    {
+        _getPointMenuChoiceDataHook ??= Marshal.GetDelegateForFunctionPointer<GetPointMenuChoiceDataDelegate>(Service.Scanner.ScanText(
+            "E8 ?? ?? ?? ?? 4D 89 66 ?? 48 89 5C 24"));
+            //this is a massive guess since the actual struct isn't defined yet, only its agent helper
+        return _getPointMenuChoiceDataHook(RowId);
     }
 
     private static WeaponTimelineData* GetWeaponTimelineData(uint RowId)

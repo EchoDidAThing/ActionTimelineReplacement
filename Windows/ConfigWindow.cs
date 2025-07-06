@@ -183,7 +183,7 @@ public sealed class ConfigWindow : Window
             {
                 var randomset = new Random().Next(1, 100).ToString();
                 //TOSETUP: add new config bracket set here
-                Service.Config.ReplacementSets.Add(new Configuration.ReplacementSet("Set " + randomset, true, 0, [], [], [], [], [], [], [], []));
+                Service.Config.ReplacementSets.Add(new Configuration.ReplacementSet("Set " + randomset, true, 0, [], [], [], [], [], [], [], [], [], [], []));
                 Service.Config.Save();
             }
             ImGui.SameLine();
@@ -258,6 +258,10 @@ public sealed class ConfigWindow : Window
     private string _searchGlasses = string.Empty;
     private string _searchGlassesStyle = string.Empty;
     private string _searchPlaceName = string.Empty;
+    private string _searchActionTimeline = string.Empty;
+    private string _searchOrnament = string.Empty;
+    private string _searchOrnamentCustomize = string.Empty;
+    //private string _searchPointMenuChoice = string.Empty;
 
     private void DrawSheets()
     {
@@ -271,6 +275,10 @@ public sealed class ConfigWindow : Window
             _AllHeaders.Add("Glasses", []);
             _AllHeaders.Add("GlassesStyle", []);
             _AllHeaders.Add("PlaceName", []);
+            _AllHeaders.Add("ActionTimeline", []);
+            _AllHeaders.Add("Ornament", []);
+            _AllHeaders.Add("OrnamentCustomize", []);
+            //_AllHeaders.Add("PointMenuChoice", []);
             foreach (var headerkey in _AllHeaders.Keys)
             {
                 _AllItemWidths.Add(headerkey, 0f);
@@ -335,6 +343,21 @@ public sealed class ConfigWindow : Window
                     case "PlaceName":
                         PlaceNameMain.Draw(mainkey, ref _activeSet, ref _searchPlaceName);
                         break;
+                    case "ActionTimeline":
+                        ActionTimelineMain.Draw(mainkey, ref _activeSet, ref _searchActionTimeline);
+                        break;
+                    case "Ornament":
+                        OrnamentMain.Draw(mainkey, ref _activeSet, ref _searchOrnament);
+                        break;
+                    case "OrnamentCustomize":
+                        OrnamentCustomizeMain.Draw(mainkey, ref _activeSet, ref _searchOrnamentCustomize);
+                        break;
+                    //case "OrnamentCustomizeGroup":
+                    //    OrnamentCustomizeGroupMain.Draw(mainkey, ref _activeSet, ref _searchOrnamentCustomizeGroup);
+                    //    break;
+                    //case "PointMenuChoice":
+                    //    PointMenuChoiceMain.Draw(mainkey, ref _activeSet, ref _searchPointMenuChoice);
+                    //    break;
                 }
 
             }
