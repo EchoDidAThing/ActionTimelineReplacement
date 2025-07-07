@@ -1,32 +1,25 @@
 ﻿using Dalamud.Interface.Utility.Raii;
 using Dalamud.Interface;
-using System.Numerics;
 using ImGuiNET;
 using System;
 using System.Linq;
-using Dalamud.Interface.Utility;
 using ActionTimelineReplacement.Base.Setups;
 using ActionTimelineReplacement.Windows;
+using ActionTimelineReplacement.Base.Items.Global;
+#pragma warning disable CA1416 // Validate platform compatibility
 
 namespace ActionTimelineReplacement.Sheets;
 
 #region Main
 public class OrnamentMain
 {
-    private static float Scale => ImGuiHelpers.GlobalScale;
     public static void Draw(string mainkey, ref Configuration.ReplacementSet _activeSet, ref string search)
     {
-        var itemHeight = ImGui.CalcTextSize("").Y + ImGui.GetStyle().FramePadding.Y * 2 + ImGui.GetStyle().WindowPadding.Y;
-
-        //to fix: scale height according to item count
-        using var subList = ImRaii.Child(mainkey, new Vector2(-1, ImGui.GetWindowSize().Y - ImGui.GetCursorPosY() - itemHeight - ImGui.GetStyle().WindowPadding.Y), false);
+        using var subList = ImRaii.Child(mainkey, CalcGlobals.BodyScale(), false);
         if (subList)
         {
             const string searchPopup = "Search ornament data";
-            if (ImGui.Button(" + "))
-            {
-                ImGui.OpenPopup(searchPopup);
-            }
+            UiGlobals.DrawAddItem(searchPopup);
 
             foreach (var key in _activeSet.OrnamentWriter.Keys)
             {
@@ -49,43 +42,34 @@ public class OrnamentMain
                 ImGui.SameLine();
                 ImGui.TextWrapped(OrnamentManager.GetName(key));
 
-                //to do: streamline this
-                ImGui.TextUnformatted("Unknown 0");
-                DrawSByte("Unknown0", ref replace.Unknown0, i => i.Unknown0);
+                DrawSByte("Unknown0", "Unknown0", ref replace.Unknown0, i => i.Unknown0);
 
-                ImGui.TextUnformatted("Model ID");
-                DrawUShort("Model", ref replace.Model, i => i.Model);
+                DrawUShort("Model", "Model", ref replace.Model, i => i.Model);
 
-                ImGui.TextUnformatted("Action Row ID");
-                DrawUShort("Action", ref replace.Action, i => i.Action);
+                DrawUShort("Action", "Action Row ID", ref replace.Action, i => i.Action);
 
-                ImGui.TextUnformatted("Transient [unknown]");
-                DrawUShort("Transient", ref replace.Transient, i => i.Transient);
+                DrawUShort("Transient", "Transient [unknown]", ref replace.Transient, i => i.Transient);
 
-                ImGui.TextUnformatted("Attachment Point");
-                DrawByte("AttachmentPoint", ref replace.AttachmentPoint, i => i.AttachmentPoint);
+                DrawByte("AttachmentPoint", "Attachment Point", ref replace.AttachmentPoint, i => i.AttachmentPoint);
 
-                ImGui.TextUnformatted("Ornament Hide State");
-                DrawByte("Unknown3", ref replace.Unknown3, i => i.Unknown3);
+                DrawByte("Unknown3", "Ornament Hide State", ref replace.Unknown3, i => i.Unknown3);
 
-                ImGui.TextUnformatted("Unknown 4");
-                DrawByte("Unknown4", ref replace.Unknown4, i => i.Unknown4);
+                DrawByte("Unknown4", "Idle Pose Group", ref replace.Unknown4, i => i.Unknown4);
 
-                ImGui.NewLine();
-                ImGui.Separator();
-                ImGui.NewLine();
+                UiGlobals.DrawItemSeparator();
                 continue;
 
                 #endregion
                 #region Items
                 
-                void DrawSByte(string name, ref sbyte value,
+                void DrawSByte(string refname, string text, ref sbyte value,
                     Func<OrnamentReplace, sbyte> getDefault)
                 {
+                    ImGui.TextUnformatted(text);
                     ImGui.SetCursorPosX(ImGui.GetCursorPosX() + 15);
-                    ImGui.SetNextItemWidth(110 * Scale);
+                    ImGui.SetNextItemWidth(110 * CalcGlobals.GlobalScale());
                     int relay = value;
-                    if (ImGui.InputInt("##" + name + key, ref relay))
+                    if (ImGui.InputInt("##" + refname + key, ref relay))
                     {
                         value = (sbyte)relay;
                         Setup.SetOrnament(key);
@@ -95,7 +79,7 @@ public class OrnamentMain
 
                     using (ImRaii.PushFont(UiBuilder.IconFont))
                     {
-                        if (ImGui.Button($"{FontAwesomeIcon.Reply.ToIconString()}##{name}{key}"))
+                        if (ImGui.Button($"{FontAwesomeIcon.Reply.ToIconString()}##{refname}{key}"))
                         {
                             value = getDefault(OrnamentManager.GetOriginal(key));
                             Setup.SetOrnament(key);
@@ -104,13 +88,14 @@ public class OrnamentMain
                     }
                 }
 
-                void DrawByte(string name, ref byte value,
+                void DrawByte(string refname, string text, ref byte value,
                     Func<OrnamentReplace, byte> getDefault)
                 {
+                    ImGui.TextUnformatted(text);
                     ImGui.SetCursorPosX(ImGui.GetCursorPosX() + 15);
-                    ImGui.SetNextItemWidth(110 * Scale);
+                    ImGui.SetNextItemWidth(110 * CalcGlobals.GlobalScale());
                     int relay = value;
-                    if (ImGui.InputInt("##" + name + key, ref relay))
+                    if (ImGui.InputInt("##" + refname + key, ref relay))
                     {
                         value = (byte)relay;
                         Setup.SetOrnament(key);
@@ -120,7 +105,7 @@ public class OrnamentMain
 
                     using (ImRaii.PushFont(UiBuilder.IconFont))
                     {
-                        if (ImGui.Button($"{FontAwesomeIcon.Reply.ToIconString()}##{name}{key}"))
+                        if (ImGui.Button($"{FontAwesomeIcon.Reply.ToIconString()}##{refname}{key}"))
                         {
                             value = getDefault(OrnamentManager.GetOriginal(key));
                             Setup.SetOrnament(key);
@@ -129,13 +114,14 @@ public class OrnamentMain
                     }
                 }
 
-                void DrawUShort(string name, ref ushort value,
+                void DrawUShort(string refname, string text, ref ushort value,
                     Func<OrnamentReplace, ushort> getDefault)
                 {
+                    ImGui.TextUnformatted(text);
                     ImGui.SetCursorPosX(ImGui.GetCursorPosX() + 15);
-                    ImGui.SetNextItemWidth(110 * Scale);
+                    ImGui.SetNextItemWidth(110 * CalcGlobals.GlobalScale());
                     int relay = value;
-                    if (ImGui.InputInt("##" + name + key, ref relay))
+                    if (ImGui.InputInt("##" + refname + key, ref relay))
                     {
                         value = (ushort)relay;
                         Setup.SetOrnament(key);
@@ -145,7 +131,7 @@ public class OrnamentMain
 
                     using (ImRaii.PushFont(UiBuilder.IconFont))
                     {
-                        if (ImGui.Button($"{FontAwesomeIcon.Reply.ToIconString()}##{name}{key}"))
+                        if (ImGui.Button($"{FontAwesomeIcon.Reply.ToIconString()}##{refname}{key}"))
                         {
                             value = getDefault(OrnamentManager.GetOriginal(key));
                             Setup.SetOrnament(key);
@@ -161,14 +147,11 @@ public class OrnamentMain
             using var searchOrnament = ImRaii.Popup(searchPopup);
             if (searchOrnament)
             {
-                var width = 200 * Scale;
-                var height = 200 * Scale;
-
-                ImGui.SetNextItemWidth(width);
+                ImGui.SetNextItemWidth(CalcGlobals.XY());
                 ImGui.InputText("##Search ornament data", ref search, 256);
                 var localsearch = search;
 
-                using var popupChild = ImRaii.Child(searchPopup, new Vector2(width, height), true);
+                using var popupChild = ImRaii.Child(searchPopup, CalcGlobals.SearchPopScale(), true);
                 foreach (var pair in OrnamentManager.Names.OrderBy(i =>
                 {
                     if (string.IsNullOrEmpty(localsearch)) return 0;

@@ -1,33 +1,25 @@
 ﻿using Dalamud.Interface.Utility.Raii;
 using Dalamud.Interface;
-using System.Numerics;
 using ImGuiNET;
 using System;
 using System.Linq;
-using Dalamud.Interface.Utility;
 using ActionTimelineReplacement.Base.Setups;
 using ActionTimelineReplacement.Windows;
+using ActionTimelineReplacement.Base.Items.Global;
+#pragma warning disable CA1416 // Validate platform compatibility
 
 namespace ActionTimelineReplacement.Sheets;
 
 #region Main
 public class ActionMain
 {
-    private static float Scale => ImGuiHelpers.GlobalScale;
     public static void Draw(string mainkey, ref Configuration.ReplacementSet _activeSet, ref string search)
     {
-        var itemHeight = ImGui.CalcTextSize("").Y + ImGui.GetStyle().FramePadding.Y * 2 + ImGui.GetStyle().WindowPadding.Y;
-
-        //to fix: scale height according to item count
-        using var subList = ImRaii.Child(mainkey, new Vector2(-1, ImGui.GetWindowSize().Y - ImGui.GetCursorPosY() - itemHeight - ImGui.GetStyle().WindowPadding.Y), false);
-
+        using var subList = ImRaii.Child(mainkey, CalcGlobals.BodyScale(), false);
         if (subList)
         {
             const string searchPopup = "Search actions";
-            if (ImGui.Button(" + "))
-            {
-                ImGui.OpenPopup(searchPopup);
-            }
+            UiGlobals.DrawAddItem(searchPopup);
 
             foreach (var key in _activeSet.ActionWriter.Keys)
             {
@@ -52,48 +44,38 @@ public class ActionMain
                 ImGui.SameLine();
                 ImGui.TextWrapped(ActionManager.GetName(key));
 
-                ImGui.TextUnformatted("Cast");
-                DrawUShort("Cast", ref replace.CastVfx, i => i.CastVfx);
+                DrawUShort("Cast", "Cast", ref replace.CastVfx, i => i.CastVfx);
 
-                ImGui.TextUnformatted("Start");
-                DrawUShort("Start", ref replace.AnimationStart, i => i.AnimationStart);
+                DrawUShort("Start", "Start", ref replace.AnimationStart, i => i.AnimationStart);
 
-                ImGui.TextUnformatted("End");
-                DrawUShort("End", ref replace.AnimationEnd, i => i.AnimationEnd);
+                DrawUShort("End", "End", ref replace.AnimationEnd, i => i.AnimationEnd);
 
-                ImGui.TextUnformatted("Hit");
-                DrawUShort("Hit", ref replace.ActionTimelineHit, i => i.ActionTimelineHit);
+                DrawUShort("Hit", "Hit", ref replace.ActionTimelineHit, i => i.ActionTimelineHit);
 
-                ImGui.TextUnformatted("Action Category ID");
-                DrawUShort("ActionCategory", ref replace.ActionCategory, i => i.ActionCategory);
+                DrawUShort("ActionCategory", "Action Category ID", ref replace.ActionCategory, i => i.ActionCategory);
 
-                ImGui.TextUnformatted("Unknown1");
-                DrawByte("Unknown1", ref replace.Unknown1, i => i.Unknown1);
+                DrawByte("Unknown1", "Unknown 1", ref replace.Unknown1, i => i.Unknown1);
 
-                ImGui.TextUnformatted("Unknown2");
-                DrawByte("Unknown2", ref replace.Unknown2, i => i.Unknown2);
+                DrawByte("Unknown2", "Unknown 2", ref replace.Unknown2, i => i.Unknown2);
 
-                ImGui.TextUnformatted("Unknown4");
-                DrawByte("Unknown4", ref replace.Unknown4, i => i.Unknown4);
+                DrawByte("Unknown4", "Unknown 4", ref replace.Unknown4, i => i.Unknown4);
 
-                ImGui.TextUnformatted("Unknown_70");
-                DrawByte("Unknown_70", ref replace.Unknown_70, i => i.Unknown_70);
+                DrawByte("Unknown_70", "Unknown_70", ref replace.Unknown_70, i => i.Unknown_70);
 
-                ImGui.NewLine();
-                ImGui.Separator();
-                ImGui.NewLine();
+                UiGlobals.DrawItemSeparator();
                 continue;
 
                 #endregion
                 #region Items
 
-                void DrawUShort(string name, ref ushort value,
+                void DrawUShort(string refname, string text, ref ushort value,
                     Func<ActionReplace, ushort> getDefault)
                 {
+                    ImGui.TextUnformatted(text);
                     ImGui.SetCursorPosX(ImGui.GetCursorPosX() + 15);
-                    ImGui.SetNextItemWidth(110 * Scale);
+                    ImGui.SetNextItemWidth(110 * CalcGlobals.GlobalScale());
                     int relay = value;
-                    if (ImGui.InputInt("##" + name + key, ref relay))
+                    if (ImGui.InputInt("##" + refname + key, ref relay))
                     {
                         value = (ushort)relay;
                         Setup.SetAction(key);
@@ -103,7 +85,7 @@ public class ActionMain
 
                     using (ImRaii.PushFont(UiBuilder.IconFont))
                     {
-                        if (ImGui.Button($"{FontAwesomeIcon.Reply.ToIconString()}##{name}{key}"))
+                        if (ImGui.Button($"{FontAwesomeIcon.Reply.ToIconString()}##{refname}{key}"))
                         {
                             value = getDefault(ActionManager.GetOriginal(key));
                             Setup.SetAction(key);
@@ -112,14 +94,15 @@ public class ActionMain
                     }
                 }
 
-                void DrawByte(string name, ref byte value,
+                void DrawByte(string refname, string text, ref byte value,
                     Func<ActionReplace, byte> getDefault)
                 {
+                    ImGui.TextUnformatted(text);
                     ImGui.SetCursorPosX(ImGui.GetCursorPosX() + 15);
-                    ImGui.SetNextItemWidth(110 * Scale);
+                    ImGui.SetNextItemWidth(110 * CalcGlobals.GlobalScale());
                     int relay = value;
-                    if (ImGui.InputInt("##" + name + key, ref relay))
-                    { 
+                    if (ImGui.InputInt("##" + refname + key, ref relay))
+                    {
                         value = (byte)relay;
                         Setup.SetAction(key);
                         Service.Config.Save();
@@ -128,7 +111,7 @@ public class ActionMain
 
                     using (ImRaii.PushFont(UiBuilder.IconFont))
                     {
-                        if (ImGui.Button($"{FontAwesomeIcon.Reply.ToIconString()}##{name}{key}"))
+                        if (ImGui.Button($"{FontAwesomeIcon.Reply.ToIconString()}##{refname}{key}"))
                         {
                             value = getDefault(ActionManager.GetOriginal(key));
                             Setup.SetAction(key);
@@ -144,14 +127,11 @@ public class ActionMain
             using var searchAction = ImRaii.Popup(searchPopup);
             if (searchAction)
             {
-                var width = 200 * Scale;
-                var height = 200 * Scale;
-
-                ImGui.SetNextItemWidth(width);
+                ImGui.SetNextItemWidth(CalcGlobals.XY());
                 ImGui.InputText("##Search actions", ref search, 256);
                 var localsearch = search;
 
-                using var popupChild = ImRaii.Child(searchPopup, new Vector2(width, height), true);
+                using var popupChild = ImRaii.Child(searchPopup, CalcGlobals.SearchPopScale(), true);
                 foreach (var pair in ActionManager.Names.OrderBy(i =>
                 {
                     if (string.IsNullOrEmpty(localsearch)) return 0;

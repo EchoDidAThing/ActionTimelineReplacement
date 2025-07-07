@@ -1,4 +1,8 @@
-﻿using System.Runtime.InteropServices;
+﻿using System.Dynamic;
+using System.Runtime.InteropServices;
+using System.Threading;
+using FFXIVClientStructs;
+using Lumina.Excel.Sheets;
 
 namespace ActionTimelineReplacement.Base.Structs;
 
@@ -34,20 +38,23 @@ public struct MountData
     public ushort FlyUpDownTilt;
 
     [FieldOffset(0x46)]
-    public ushort Unk2;
+    public ushort Unknown6;
 
     [FieldOffset(0x47)]
-    public ushort Unk3;
+    public ushort Unknown7;
 
     [FieldOffset(0x49)]
-    public ushort Unk4;
+    public ushort Unknown8;
 
     [FieldOffset(0x4A)]
     public ushort MountCustomize;
 
     [FieldOffset(0x4F)]
-    public ushort Unk5;
+    public ushort Unknown9;
 
     [FieldOffset(0x50)]
     public ushort UnderwaterAnimSpeed;
+
+    //[FieldOffset(0x50)]
+    //public byte MountBoolSet1;
 }

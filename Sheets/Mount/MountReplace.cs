@@ -14,26 +14,28 @@ public class MountReplace(
     ushort tiltFlySwim,
     ushort tiltParam3,
     ushort tiltParam4,
-    ushort unk1,
-    ushort unk2,
-    ushort unk3,
-    ushort unk4,
+    ushort flyUpDownTilt,
+    ushort unknown6,
+    ushort unknown7,
+    ushort unknown8,
     ushort mountCustomize,
-    ushort unk5,
+    ushort unknown9,
     ushort swimAnimSpeed)
+    //byte mountBoolSet1
 {
     public ushort RideBGM = rideBGM;
     public ushort TiltParam1 = tiltGround;
     public ushort TiltParam2 = tiltFlySwim;
     public ushort TiltParam3 = tiltParam3;
     public ushort TiltParam4 = tiltParam4;
-    public ushort Unk1 = unk1;
-    public ushort Unk2 = unk2;
-    public ushort Unk3 = unk3;
-    public ushort Unk4 = unk4;
+    public ushort FlyUpDownTilt = flyUpDownTilt;
+    public ushort Unknown6 = unknown6;
+    public ushort Unknown7 = unknown7;
+    public ushort Unknown8 = unknown8;
     public ushort MountCustomize = mountCustomize;
-    public ushort Unk5 = unk5;
-    public ushort Unk6 = swimAnimSpeed;
+    public ushort Unknown9 = unknown9;
+    public ushort SwimAnimSpeed = swimAnimSpeed;
+    //public byte MountBoolSet1 = mountBoolSet1;
     public unsafe void WriteToPointer(MountData* ptr)
     {
         ptr->RideBGM = RideBGM;
@@ -41,12 +43,13 @@ public class MountReplace(
         ptr->TiltFlySwim = TiltParam2;
         ptr->TiltParam3 = TiltParam3;
         ptr->TiltParam4 = TiltParam4;
-        ptr->FlyUpDownTilt = Unk1;
-        ptr->Unk2 = Unk2;
-        ptr->Unk3 = Unk3;
-        ptr->Unk4 = Unk4;
+        ptr->FlyUpDownTilt = FlyUpDownTilt;
+        ptr->Unknown6 = Unknown6;
+        ptr->Unknown7 = Unknown7;
+        ptr->Unknown8 = Unknown8;
         ptr->MountCustomize = MountCustomize;
-        ptr->Unk5 = Unk5;
-        ptr->UnderwaterAnimSpeed = Unk6;
+        ptr->Unknown9 = Unknown9;
+        ptr->UnderwaterAnimSpeed = SwimAnimSpeed;
+        //ptr->MountBoolSet1 = MountBoolSet1;
     }
 }

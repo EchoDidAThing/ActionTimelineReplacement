@@ -11,9 +11,9 @@ public static class ActionCastVFXReplacementsManager
     private static readonly Dictionary<uint, ActionCastVFXReplace> old = [];
 
     public static Dictionary<uint, string> Names => _Names
-        ??= Service.DataManager.GetExcelSheet<Action>()
-            .Where(i => !string.IsNullOrEmpty(i.Name.ToString()))
-            .ToDictionary(i => i.RowId, i => i.Name.ToString());
+        ??= Service.DataManager.GetExcelSheet<ActionCastVFX>()
+            .Where(i => !string.IsNullOrEmpty(i.RowId.ToString()))
+            .ToDictionary(i => i.RowId, i => i.RowId.ToString());
 
 
     public static IEnumerable<uint> AllCastVFXActionIds =>

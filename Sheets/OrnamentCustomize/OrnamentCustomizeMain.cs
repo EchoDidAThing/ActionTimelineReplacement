@@ -1,32 +1,25 @@
 ﻿using Dalamud.Interface.Utility.Raii;
 using Dalamud.Interface;
-using System.Numerics;
 using ImGuiNET;
 using System;
 using System.Linq;
-using Dalamud.Interface.Utility;
 using ActionTimelineReplacement.Base.Setups;
 using ActionTimelineReplacement.Windows;
+using ActionTimelineReplacement.Base.Items.Global;
+#pragma warning disable CA1416 // Validate platform compatibility
 
 namespace ActionTimelineReplacement.Sheets;
 
 #region Main
 public class OrnamentCustomizeMain
 {
-    private static float Scale => ImGuiHelpers.GlobalScale;
     public static void Draw(string mainkey, ref Configuration.ReplacementSet _activeSet, ref string search)
     {
-        var itemHeight = ImGui.CalcTextSize("").Y + ImGui.GetStyle().FramePadding.Y * 2 + ImGui.GetStyle().WindowPadding.Y;
-
-        //to fix: scale height according to item count
-        using var subList = ImRaii.Child(mainkey, new Vector2(-1, ImGui.GetWindowSize().Y - ImGui.GetCursorPosY() - itemHeight - ImGui.GetStyle().WindowPadding.Y), false);
+        using var subList = ImRaii.Child(mainkey, CalcGlobals.BodyScale(), false);
         if (subList)
         {
             const string searchPopup = "Search ornament customizable data";
-            if (ImGui.Button(" + "))
-            {
-                ImGui.OpenPopup(searchPopup);
-            }
+            UiGlobals.DrawAddItem(searchPopup);
 
             foreach (var key in _activeSet.OrnamentCustomizeWriter.Keys)
             {
@@ -49,43 +42,34 @@ public class OrnamentCustomizeMain
                 ImGui.SameLine();
                 ImGui.TextWrapped(OrnamentCustomizeManager.GetName(key));
 
-                //to do: streamline this
-                ImGui.TextUnformatted("Unknown 0");
-                DrawUShort("Unknown0", ref replace.Unknown0, i => i.Unknown0);
+                DrawUShort("Unknown0","Unknown 0", ref replace.Unknown0, i => i.Unknown0);
 
-                ImGui.TextUnformatted("Unknown 1");
-                DrawShort("Unknown1", ref replace.Unknown1, i => i.Unknown1);
+                DrawShort("Unknown1", "Unknown 1", ref replace.Unknown1, i => i.Unknown1);
 
-                ImGui.TextUnformatted("Unknown 2");
-                DrawShort("Unknown2", ref replace.Unknown2, i => i.Unknown2);
+                DrawShort("Unknown2", "Unknown 2", ref replace.Unknown2, i => i.Unknown2);
 
-                ImGui.TextUnformatted("Unknown 3");
-                DrawShort("Unknown3", ref replace.Unknown3, i => i.Unknown3);
+                DrawShort("Unknown3", "Unknown 3", ref replace.Unknown3, i => i.Unknown3);
 
-                ImGui.TextUnformatted("Unknown 4");
-                DrawShort("Unknown4", ref replace.Unknown4, i => i.Unknown4);
+                DrawShort("Unknown4", "Unknown 4", ref replace.Unknown4, i => i.Unknown4);
 
-                ImGui.TextUnformatted("Unknown 5");
-                DrawShort("Unknown5", ref replace.Unknown5, i => i.Unknown5);
+                DrawShort("Unknown5", "Unknown 5", ref replace.Unknown5, i => i.Unknown5);
 
-                ImGui.TextUnformatted("Unknown 6");
-                DrawShort("Unknown6", ref replace.Unknown6, i => i.Unknown6);
+                DrawShort("Unknown6", "Unknown 6", ref replace.Unknown6, i => i.Unknown6);
 
-                ImGui.NewLine();
-                ImGui.Separator();
-                ImGui.NewLine();
+                UiGlobals.DrawItemSeparator();
                 continue;
 
                 #endregion
                 #region Items
                 
-                void DrawShort(string name, ref short value,
+                void DrawShort(string refname, string text, ref short value,
                     Func<OrnamentCustomizeReplace, short> getDefault)
                 {
+                    ImGui.TextUnformatted(text);
                     ImGui.SetCursorPosX(ImGui.GetCursorPosX() + 15);
-                    ImGui.SetNextItemWidth(110 * Scale);
+                    ImGui.SetNextItemWidth(110 * CalcGlobals.GlobalScale());
                     int relay = value;
-                    if (ImGui.InputInt("##" + name + key, ref relay))
+                    if (ImGui.InputInt("##" + refname + key, ref relay))
                     {
                         value = (short)relay;
                         Setup.SetOrnamentCustomize(key);
@@ -95,7 +79,7 @@ public class OrnamentCustomizeMain
 
                     using (ImRaii.PushFont(UiBuilder.IconFont))
                     {
-                        if (ImGui.Button($"{FontAwesomeIcon.Reply.ToIconString()}##{name}{key}"))
+                        if (ImGui.Button($"{FontAwesomeIcon.Reply.ToIconString()}##{refname}{key}"))
                         {
                             value = getDefault(OrnamentCustomizeManager.GetOriginal(key));
                             Setup.SetOrnamentCustomize(key);
@@ -104,13 +88,14 @@ public class OrnamentCustomizeMain
                     }
                 }
 
-                void DrawUShort(string name, ref ushort value,
+                void DrawUShort(string refname, string text, ref ushort value,
                     Func<OrnamentCustomizeReplace, ushort> getDefault)
                 {
+                    ImGui.TextUnformatted(text);
                     ImGui.SetCursorPosX(ImGui.GetCursorPosX() + 15);
-                    ImGui.SetNextItemWidth(110 * Scale);
+                    ImGui.SetNextItemWidth(110 * CalcGlobals.GlobalScale());
                     int relay = value;
-                    if (ImGui.InputInt("##" + name + key, ref relay))
+                    if (ImGui.InputInt("##" + refname + key, ref relay))
                     {
                         value = (ushort)relay;
                         Setup.SetOrnamentCustomize(key);
@@ -120,7 +105,7 @@ public class OrnamentCustomizeMain
 
                     using (ImRaii.PushFont(UiBuilder.IconFont))
                     {
-                        if (ImGui.Button($"{FontAwesomeIcon.Reply.ToIconString()}##{name}{key}"))
+                        if (ImGui.Button($"{FontAwesomeIcon.Reply.ToIconString()}##{refname}{key}"))
                         {
                             value = getDefault(OrnamentCustomizeManager.GetOriginal(key));
                             Setup.SetOrnamentCustomize(key);
@@ -136,14 +121,11 @@ public class OrnamentCustomizeMain
             using var searchOrnamentCustomize = ImRaii.Popup(searchPopup);
             if (searchOrnamentCustomize)
             {
-                var width = 200 * Scale;
-                var height = 200 * Scale;
-
-                ImGui.SetNextItemWidth(width);
+                ImGui.SetNextItemWidth(CalcGlobals.XY());
                 ImGui.InputText("##Search ornament customize data", ref search, 256);
                 var localsearch = search;
 
-                using var popupChild = ImRaii.Child(searchPopup, new Vector2(width, height), true);
+                using var popupChild = ImRaii.Child(searchPopup, CalcGlobals.SearchPopScale(), true);
                 foreach (var pair in OrnamentCustomizeManager.Names.OrderBy(i =>
                 {
                     if (string.IsNullOrEmpty(localsearch)) return 0;

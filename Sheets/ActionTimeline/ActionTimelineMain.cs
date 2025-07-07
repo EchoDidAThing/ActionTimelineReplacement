@@ -1,34 +1,25 @@
 ﻿using Dalamud.Interface.Utility.Raii;
 using Dalamud.Interface;
-using System.Numerics;
 using ImGuiNET;
 using System;
 using System.Linq;
-using Dalamud.Interface.Utility;
 using ActionTimelineReplacement.Base.Setups;
 using ActionTimelineReplacement.Windows;
-using Lumina.Excel.Sheets;
+using ActionTimelineReplacement.Base.Items.Global;
+#pragma warning disable CA1416 // Validate platform compatibility
 
 namespace ActionTimelineReplacement.Sheets;
 
 #region Main
 public class ActionTimelineMain
 {
-    private static float Scale => ImGuiHelpers.GlobalScale;
     public static void Draw(string mainkey, ref Configuration.ReplacementSet _activeSet, ref string search)
     {
-        var itemHeight = ImGui.CalcTextSize("").Y + ImGui.GetStyle().FramePadding.Y * 2 + ImGui.GetStyle().WindowPadding.Y;
-
-        //to fix: scale height according to item count
-        using var subList = ImRaii.Child(mainkey, new Vector2(-1, ImGui.GetWindowSize().Y - ImGui.GetCursorPosY() - itemHeight - ImGui.GetStyle().WindowPadding.Y), false);
-
+        using var subList = ImRaii.Child(mainkey, CalcGlobals.BodyScale(), false);
         if (subList)
         {
             const string searchPopup = "Search action timelines";
-            if (ImGui.Button(" + "))
-            {
-                ImGui.OpenPopup(searchPopup);
-            }
+            UiGlobals.DrawAddItem(searchPopup);
 
             foreach (var key in _activeSet.ActionTimelineWriter.Keys)
             {
@@ -52,58 +43,44 @@ public class ActionTimelineMain
                 ImGui.SameLine();
                 ImGui.TextWrapped(ActionTimelineManager.GetName(key));
 
-                //to do: streamline this
-                ImGui.TextUnformatted("Type");
-                DrawByte("Type", ref replace.Type, i => i.Type);
+                DrawByte("Type", "Type", ref replace.Type, i => i.Type);
 
-                ImGui.TextUnformatted("Priority");
-                DrawByte("Priority", ref replace.Priority, i => i.Priority);
+                DrawByte("Priority", "Priority", ref replace.Priority, i => i.Priority);
 
-                ImGui.TextUnformatted("Stance");
-                DrawByte("Stance", ref replace.Stance, i => i.Stance);
+                DrawByte("Stance", "Stance", ref replace.Stance, i => i.Stance);
 
-                ImGui.TextUnformatted("Slot");
-                DrawByte("Slot", ref replace.Slot, i => i.Slot);
+                DrawByte("Slot", "Slot", ref replace.Slot, i => i.Slot);
 
-                ImGui.TextUnformatted("Look-At Mode");
-                DrawByte("LookAtMode", ref replace.LookAtMode, i => i.LookAtMode);                
+                DrawByte("LookAtMode", "Look-At Mode", ref replace.LookAtMode, i => i.LookAtMode);                
 
-                ImGui.TextUnformatted("Action Timeline ID Mode");
-                DrawByte("ActionTimelineIDMode", ref replace.ActionTimelineIDMode, i => i.ActionTimelineIDMode);
+                DrawByte("ActionTimelineIDMode", "Action Timeline ID Mode", ref replace.ActionTimelineIDMode, i => i.ActionTimelineIDMode);
 
-                ImGui.TextUnformatted("Load Type");
-                DrawByte("LoadType", ref replace.LoadType, i => i.LoadType);
+                DrawByte("LoadType", "Load Type", ref replace.LoadType, i => i.LoadType);
 
-                ImGui.TextUnformatted("Start Attach");
-                DrawByte("StartAttach", ref replace.StartAttach, i => i.StartAttach);
+                DrawByte("StartAttach", "Start Attach", ref replace.StartAttach, i => i.StartAttach);
 
-                ImGui.TextUnformatted("Resident PAP");
-                DrawByte("ResidentPap", ref replace.ResidentPap, i => i.ResidentPap);
+                DrawByte("ResidentPap", "Resident PAP", ref replace.ResidentPap, i => i.ResidentPap);
 
-                ImGui.TextUnformatted("PAP Type");
-                DrawByte("Unknown6", ref replace.Unknown6, i => i.Unknown6);
+                DrawByte("Unknown6", "PAP Type", ref replace.Unknown6, i => i.Unknown6);
 
-                ImGui.TextUnformatted("Unknown 1");
-                DrawByte("Unknown1", ref replace.Unknown1, i => i.Unknown1);
+                DrawByte("Unknown1", "Unknown 1", ref replace.Unknown1, i => i.Unknown1);
 
-                ImGui.TextUnformatted("VPR Blade State [uses fake original]");
-                DrawByte("VPRBladeState", ref replace.VPRBladeState, i => i.VPRBladeState);
+                DrawByte("VPRBladeState", "VPR Blade State [uses fake original]", ref replace.VPRBladeState, i => i.VPRBladeState);
 
-                ImGui.NewLine();
-                ImGui.Separator();
-                ImGui.NewLine();
+                UiGlobals.DrawItemSeparator();
                 continue;
 
                 #endregion
                 #region Items
 
-                void DrawByte(string name, ref byte value,
-                     Func<ActionTimelineReplace, byte> getDefault)
+                void DrawByte(string refname, string text, ref byte value,
+                    Func<ActionTimelineReplace, byte> getDefault)
                 {
+                    ImGui.TextUnformatted(text);
                     ImGui.SetCursorPosX(ImGui.GetCursorPosX() + 15);
-                    ImGui.SetNextItemWidth(110 * Scale);
+                    ImGui.SetNextItemWidth(110 * CalcGlobals.GlobalScale());
                     int relay = value;
-                    if (ImGui.InputInt("##" + name + key, ref relay))
+                    if (ImGui.InputInt("##" + refname + key, ref relay))
                     {
                         value = (byte)relay;
                         Setup.SetActionTimeline(key);
@@ -113,7 +90,7 @@ public class ActionTimelineMain
 
                     using (ImRaii.PushFont(UiBuilder.IconFont))
                     {
-                        if (ImGui.Button($"{FontAwesomeIcon.Reply.ToIconString()}##{name}{key}"))
+                        if (ImGui.Button($"{FontAwesomeIcon.Reply.ToIconString()}##{refname}{key}"))
                         {
                             value = getDefault(ActionTimelineManager.GetOriginal(key));
                             Setup.SetActionTimeline(key);
@@ -129,14 +106,12 @@ public class ActionTimelineMain
             using var searchActionTimeline = ImRaii.Popup(searchPopup);
             if (searchActionTimeline)
             {
-                var width = 420 * Scale;
-                var height = 300 * Scale;
 
-                ImGui.SetNextItemWidth(width);
+                ImGui.SetNextItemWidth(CalcGlobals.XY());
                 ImGui.InputText("##Search action timelines", ref search, 256);
                 var localsearch = search;
 
-                using var popupChild = ImRaii.Child(searchPopup, new Vector2(width, height), true);
+                using var popupChild = ImRaii.Child(searchPopup, CalcGlobals.SearchPopScale(), true);
                 foreach (var pair in ActionTimelineManager.Names.OrderBy(i =>
                 {
                     if (string.IsNullOrEmpty(localsearch)) return 0;

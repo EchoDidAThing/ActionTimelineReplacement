@@ -1,32 +1,25 @@
 ﻿using Dalamud.Interface.Utility.Raii;
 using Dalamud.Interface;
-using System.Numerics;
 using ImGuiNET;
 using System;
 using System.Linq;
-using Dalamud.Interface.Utility;
 using ActionTimelineReplacement.Base.Setups;
 using ActionTimelineReplacement.Windows;
+using ActionTimelineReplacement.Base.Items.Global;
+#pragma warning disable CA1416 // Validate platform compatibility
 
 namespace ActionTimelineReplacement.Sheets;
 
 #region Main
 public class MountMain
 {
-    private static float Scale => ImGuiHelpers.GlobalScale;
     public static void Draw(string mainkey, ref Configuration.ReplacementSet _activeSet, ref string search)
     {
-        var itemHeight = ImGui.CalcTextSize("").Y + ImGui.GetStyle().FramePadding.Y * 2 + ImGui.GetStyle().WindowPadding.Y;
-
-        //to fix: scale height according to item count
-        using var subList = ImRaii.Child(mainkey, new Vector2(-1, ImGui.GetWindowSize().Y - ImGui.GetCursorPosY() - itemHeight - ImGui.GetStyle().WindowPadding.Y), false);
+        using var subList = ImRaii.Child(mainkey, CalcGlobals.BodyScale(), false);
         if (subList)
         {
             const string searchPopup = "Search mounts";
-            if (ImGui.Button(" + "))
-            {
-                ImGui.OpenPopup(searchPopup);
-            }
+            UiGlobals.DrawAddItem(searchPopup);
 
             foreach (var key in _activeSet.MountWriter.Keys)
             {
@@ -50,58 +43,47 @@ public class MountMain
                 ImGui.SameLine();
                 ImGui.TextWrapped(MountManager.GetName(key));
 
-                //to do: streamline this
-                ImGui.TextUnformatted("Ride BGM ID");
-                DrawUShort("RideBGM", ref replace.RideBGM, i => i.RideBGM);
+                DrawUShort("RideBGM", "Ride BGM ID", ref replace.RideBGM, i => i.RideBGM);
 
-                ImGui.TextUnformatted("Ground Tilt ID");
-                DrawUShort("GroundTilt", ref replace.TiltParam1, i => i.TiltParam1);
+                DrawUShort("GroundTilt", "Ground Tilt ID", ref replace.TiltParam1, i => i.TiltParam1);
 
-                ImGui.TextUnformatted("Fly/Swim Tilt ID");
-                DrawUShort("FlySwimTilt", ref replace.TiltParam2, i => i.TiltParam2);
+                DrawUShort("FlySwimTilt", "Fly/Swim Tilt ID", ref replace.TiltParam2, i => i.TiltParam2);
 
-                ImGui.TextUnformatted("Unknown Tilt3 ID");
-                DrawUShort("Tilt3", ref replace.TiltParam3, i => i.TiltParam3);
+                DrawUShort("Tilt3", "Unknown Tilt3 ID", ref replace.TiltParam3, i => i.TiltParam3);
 
-                ImGui.TextUnformatted("Unknown Tilt4 ID");
-                DrawUShort("Tilt4", ref replace.TiltParam4, i => i.TiltParam4);
+                DrawUShort("Tilt4", "Unknown Tilt4 ID", ref replace.TiltParam4, i => i.TiltParam4);
 
-                ImGui.TextUnformatted("Fly Up/Down Tilt");
-                DrawUShort("FlyUpDownTilt", ref replace.Unk1, i => i.Unk1);
+                DrawUShort("FlyUpDownTilt", "Fly Up/Down Tilt", ref replace.FlyUpDownTilt, i => i.FlyUpDownTilt);
 
-                ImGui.TextUnformatted("Unknown 2");
-                DrawUShort("Unknown 2", ref replace.Unk2, i => i.Unk2);
+                DrawUShort("Unknown6", "Unknown 6", ref replace.Unknown6, i => i.Unknown6);
 
-                ImGui.TextUnformatted("Unknown 3");
-                DrawUShort("Unknown3", ref replace.Unk3, i => i.Unk3);
+                DrawUShort("Unknown7", "Unknown 7", ref replace.Unknown7, i => i.Unknown7);
 
-                ImGui.TextUnformatted("Unknown 4");
-                DrawUShort("Unknown4", ref replace.Unk4, i => i.Unk4);
+                DrawUShort("Unknown8", "Unknown 8", ref replace.Unknown8, i => i.Unknown8);
 
-                ImGui.TextUnformatted("Mount Customize ID");
-                DrawUShort("MountCustomize", ref replace.MountCustomize, i => i.MountCustomize);
+                DrawUShort("MountCustomize", "Mount Customize ID", ref replace.MountCustomize, i => i.MountCustomize);
 
-                ImGui.TextUnformatted("Unknown 5");
-                DrawUShort("Unknown5", ref replace.Unk5, i => i.Unk5);
+                DrawUShort("Unknown9", "Unknown 9", ref replace.Unknown9, i => i.Unknown9);
 
-                ImGui.TextUnformatted("Swim Animation Speed");
-                DrawUShort("SwimAnimSpeed", ref replace.Unk6, i => i.Unk6);
+                DrawUShort("SwimAnimSpeed", "Swim Animation Speed", ref replace.SwimAnimSpeed, i => i.SwimAnimSpeed);
 
-                ImGui.NewLine();
-                ImGui.Separator();
-                ImGui.NewLine();
+                //DrawByte("MountBoolSet1", "Mount Bools 1 [raw]", ref replace.MountBoolSet1, i => i.MountBoolSet1);
+
+                UiGlobals.DrawItemSeparator();
                 continue;
 
                 #endregion
                 #region Items
 
-                void DrawUShort(string name, ref ushort value,
+                //to do: streamline items
+                void DrawUShort(string refname, string text, ref ushort value,
                     Func<MountReplace, ushort> getDefault)
                 {
+                    ImGui.TextUnformatted(text);
                     ImGui.SetCursorPosX(ImGui.GetCursorPosX() + 15);
-                    ImGui.SetNextItemWidth(110 * Scale);
+                    ImGui.SetNextItemWidth(110 * CalcGlobals.GlobalScale());
                     int relay = value;
-                    if (ImGui.InputInt("##" + name + key, ref relay))
+                    if (ImGui.InputInt("##" + refname + key, ref relay))
                     {
                         value = (ushort)relay;
                         Setup.SetMount(key);
@@ -111,7 +93,33 @@ public class MountMain
 
                     using (ImRaii.PushFont(UiBuilder.IconFont))
                     {
-                        if (ImGui.Button($"{FontAwesomeIcon.Reply.ToIconString()}##{name}{key}"))
+                        if (ImGui.Button($"{FontAwesomeIcon.Reply.ToIconString()}##{refname}{key}"))
+                        {
+                            value = getDefault(MountManager.GetOriginal(key));
+                            Setup.SetMount(key);
+                            Service.Config.Save();
+                        }
+                    }
+                }
+
+                void DrawByte(string refname, string text, ref byte value,
+                    Func<MountReplace, byte> getDefault)
+                {
+                    ImGui.TextUnformatted(text);
+                    ImGui.SetCursorPosX(ImGui.GetCursorPosX() + 15);
+                    ImGui.SetNextItemWidth(110 * CalcGlobals.GlobalScale());
+                    int relay = value;
+                    if (ImGui.InputInt("##" + refname + key, ref relay))
+                    {
+                        value = (byte)relay;
+                        Setup.SetMount(key);
+                        Service.Config.Save();
+                    }
+                    ImGui.SameLine();
+
+                    using (ImRaii.PushFont(UiBuilder.IconFont))
+                    {
+                        if (ImGui.Button($"{FontAwesomeIcon.Reply.ToIconString()}##{refname}{key}"))
                         {
                             value = getDefault(MountManager.GetOriginal(key));
                             Setup.SetMount(key);
@@ -127,14 +135,11 @@ public class MountMain
             using var searchMount = ImRaii.Popup(searchPopup);
             if (searchMount)
             {
-                var width = 200 * Scale;
-                var height = 200 * Scale;
-
-                ImGui.SetNextItemWidth(width);
+                ImGui.SetNextItemWidth(CalcGlobals.XY());
                 ImGui.InputText("##Search mounts", ref search, 256);
                 var localsearch = search;
 
-                using var popUpChild = ImRaii.Child(searchPopup, new Vector2(width, height), true);
+                using var popupChild = ImRaii.Child(searchPopup, CalcGlobals.SearchPopScale(), true);
                 foreach (var pair in MountManager.Names.OrderBy(i =>
                 {
                     if (string.IsNullOrEmpty(localsearch)) return 0;
@@ -152,13 +157,13 @@ public class MountMain
                                     original.TiltParam2,
                                     original.TiltParam3,
                                     original.TiltParam4,
-                                    original.Unk1,
-                                    original.Unk2,
-                                    original.Unk3,
-                                    original.Unk4,
+                                    original.FlyUpDownTilt,
+                                    original.Unknown6,
+                                    original.Unknown7,
+                                    original.Unknown8,
                                     original.MountCustomize,
-                                    original.Unk5,
-                                    original.Unk6),
+                                    original.Unknown9,
+                                    original.SwimAnimSpeed),
                                 false);
                         Service.Config.Save();
                     }

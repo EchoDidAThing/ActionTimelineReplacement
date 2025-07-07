@@ -4,29 +4,23 @@ using System.Numerics;
 using ImGuiNET;
 using System;
 using System.Linq;
-using Dalamud.Interface.Utility;
 using ActionTimelineReplacement.Base.Setups;
 using ActionTimelineReplacement.Windows;
+using ActionTimelineReplacement.Base.Items.Global;
+#pragma warning disable CA1416 // Validate platform compatibility
 
 namespace ActionTimelineReplacement.Sheets;
 
 #region Main
 public class GlassesStyleMain
 {
-    private static float Scale => ImGuiHelpers.GlobalScale;
     public static void Draw(string mainkey, ref Configuration.ReplacementSet _activeSet, ref string search)
     {
-        var itemHeight = ImGui.CalcTextSize("").Y + ImGui.GetStyle().FramePadding.Y * 2 + ImGui.GetStyle().WindowPadding.Y;
-
-        //to fix: scale height according to item count
-        using var subList = ImRaii.Child(mainkey, new Vector2(-1, ImGui.GetWindowSize().Y - ImGui.GetCursorPosY() - itemHeight - ImGui.GetStyle().WindowPadding.Y), false);
+        using var subList = ImRaii.Child(mainkey, CalcGlobals.BodyScale(), false);
         if (subList)
         {
             const string searchPopup = "Search glasses styles";
-            if (ImGui.Button(" + "))
-            {
-                ImGui.OpenPopup(searchPopup);
-            }
+            UiGlobals.DrawAddItem(searchPopup);
 
             foreach (var key in _activeSet.GlassesStyleWriter.Keys)
             {
@@ -49,43 +43,34 @@ public class GlassesStyleMain
                 ImGui.SameLine();
                 ImGui.TextWrapped(GlassesStyleManager.GetName(key));
 
-                //to do: streamline this
-                ImGui.TextUnformatted("Unknown70_1");
-                DrawSByte("Unknown70_1", ref replace.Unknown70_1, i => i.Unknown70_1);
+                DrawSByte("Unknown70_1", "Unknown70_1",ref replace.Unknown70_1, i => i.Unknown70_1);
 
-                ImGui.TextUnformatted("Unknown70_2");
-                DrawSByte("Unknown70_2", ref replace.Unknown70_2, i => i.Unknown70_2);
+                DrawSByte("Unknown70_2", "Unknown70_2", ref replace.Unknown70_2, i => i.Unknown70_2);
 
-                ImGui.TextUnformatted("Unknown70_3");
-                DrawSByte("Unknown70_3", ref replace.Unknown70_3, i => i.Unknown70_3);
+                DrawSByte("Unknown70_3", "Unknown70_3", ref replace.Unknown70_3, i => i.Unknown70_3);
 
-                ImGui.TextUnformatted("Unknown70_4");
-                DrawSByte("Unknown70_4", ref replace.Unknown70_4, i => i.Unknown70_4);
+                DrawSByte("Unknown70_4", "Unknown70_4", ref replace.Unknown70_4, i => i.Unknown70_4);
 
-                ImGui.TextUnformatted("Unknown70_5");
-                DrawSByte("Unknown70_5", ref replace.Unknown70_5, i => i.Unknown70_5);
+                DrawSByte("Unknown70_5", "Unknown70_5", ref replace.Unknown70_5, i => i.Unknown70_5);
 
-                ImGui.TextUnformatted("Unknown70_6");
-                DrawSByte("Unknown70_6", ref replace.Unknown70_6, i => i.Unknown70_6);
+                DrawSByte("Unknown70_6", "Unknown70_6", ref replace.Unknown70_6, i => i.Unknown70_6);
 
-                ImGui.TextUnformatted("Disable in UI");
-                DrawShort("Unknown70_7", ref replace.Unknown70_7, i => i.Unknown70_7);
+                DrawShort("Unknown70_7", "Disable in UI", ref replace.Unknown70_7, i => i.Unknown70_7);
 
-                ImGui.NewLine();
-                ImGui.Separator();
-                ImGui.NewLine();
+                UiGlobals.DrawItemSeparator();
                 continue;
 
                 #endregion
                 #region Items
                 
-                void DrawShort(string name, ref short value,
+                void DrawShort(string refname, string text, ref short value,
                     Func<GlassesStyleReplace, short> getDefault)
                 {
+                    ImGui.TextUnformatted(text);
                     ImGui.SetCursorPosX(ImGui.GetCursorPosX() + 15);
-                    ImGui.SetNextItemWidth(110 * Scale);
+                    ImGui.SetNextItemWidth(110 * CalcGlobals.GlobalScale());
                     int relay = value;
-                    if (ImGui.InputInt("##" + name + key, ref relay))
+                    if (ImGui.InputInt("##" + refname + key, ref relay))
                     {
                         value = (short)relay;
                         Setup.SetGlassesStyle(key);
@@ -95,22 +80,23 @@ public class GlassesStyleMain
 
                     using (ImRaii.PushFont(UiBuilder.IconFont))
                     {
-                        if (ImGui.Button($"{FontAwesomeIcon.Reply.ToIconString()}##{name}{key}"))
+                        if (ImGui.Button($"{FontAwesomeIcon.Reply.ToIconString()}##{refname}{key}"))
                         {
                             value = getDefault(GlassesStyleManager.GetOriginal(key));
-                            Setup.SetGlasses(key);
+                            Setup.SetGlassesStyle(key);
                             Service.Config.Save();
                         }
                     }
                 }
 
-                void DrawSByte(string name, ref sbyte value,
-                     Func<GlassesStyleReplace, sbyte> getDefault)
+                void DrawSByte(string refname, string text, ref sbyte value,
+                    Func<GlassesStyleReplace, sbyte> getDefault)
                 {
+                    ImGui.TextUnformatted(text);
                     ImGui.SetCursorPosX(ImGui.GetCursorPosX() + 15);
-                    ImGui.SetNextItemWidth(110 * Scale);
+                    ImGui.SetNextItemWidth(110 * CalcGlobals.GlobalScale());
                     int relay = value;
-                    if (ImGui.InputInt("##" + name + key, ref relay))
+                    if (ImGui.InputInt("##" + refname + key, ref relay))
                     {
                         value = (sbyte)relay;
                         Setup.SetGlassesStyle(key);
@@ -120,7 +106,7 @@ public class GlassesStyleMain
 
                     using (ImRaii.PushFont(UiBuilder.IconFont))
                     {
-                        if (ImGui.Button($"{FontAwesomeIcon.Reply.ToIconString()}##{name}{key}"))
+                        if (ImGui.Button($"{FontAwesomeIcon.Reply.ToIconString()}##{refname}{key}"))
                         {
                             value = getDefault(GlassesStyleManager.GetOriginal(key));
                             Setup.SetGlassesStyle(key);
@@ -136,14 +122,11 @@ public class GlassesStyleMain
             using var searchGlassesStyle = ImRaii.Popup(searchPopup);
             if (searchGlassesStyle)
             {
-                var width = 200 * Scale;
-                var height = 200 * Scale;
-
-                ImGui.SetNextItemWidth(width);
+                ImGui.SetNextItemWidth(CalcGlobals.XY());
                 ImGui.InputText("##Search glasses styles", ref search, 256);
                 var localsearch = search;
 
-                using var popupChild = ImRaii.Child(searchPopup, new Vector2(width, height), true);
+                using var popupChild = ImRaii.Child(searchPopup, CalcGlobals.SearchPopScale(), true);
                 foreach (var pair in GlassesStyleManager.Names.OrderBy(i =>
                 {
                     if (string.IsNullOrEmpty(localsearch)) return 0;

@@ -10,9 +10,9 @@
 - limit input values to prevent the log from going haywire
 - refactoring broke sheet calls when reenabling the plugin somehow. need to fix it
 - figure out how to streamline some of the fields
-- TiltParam is broken because I don't know
 - more sheets to break stuff
 - find out how to circumvent handling of the packed bools
+- checkmarks to enable sheets don't actually make a difference right now
 
 
 `FieldOffset(0x??)` is the actual address being updated. Lumina sheets are just used for pulling base data. so, technically, if the column doesn't exist in the source data, a dummy field can be supplied, although that does make things slightly obtuse.

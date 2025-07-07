@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Runtime.InteropServices;
 using Lumina.Excel.Sheets;
+#pragma warning disable CA1416 // Validate platform compatibility
 
 namespace ActionTimelineReplacement.Sheets;
 
@@ -61,7 +62,7 @@ public static class MountManager
                 act?.Unknown8 ?? 0,
                 (ushort)(act?.MountCustomize.RowId ?? 0),
                 act?.Unknown9 ?? 0,
-                act?.Unknown10 ?? 0); //0x50
+                act?.Unknown10 ?? 0);
         }
         return replacement!;
     }

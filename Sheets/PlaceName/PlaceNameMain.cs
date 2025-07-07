@@ -1,31 +1,25 @@
 ﻿using Dalamud.Interface.Utility.Raii;
 using Dalamud.Interface;
-using System.Numerics;
 using ImGuiNET;
 using System;
 using System.Linq;
-using Dalamud.Interface.Utility;
 using ActionTimelineReplacement.Base.Setups;
 using ActionTimelineReplacement.Windows;
+using ActionTimelineReplacement.Base.Items.Global;
+#pragma warning disable CA1416 // Validate platform compatibility
 
 namespace ActionTimelineReplacement.Sheets;
 
 #region Main
 public class PlaceNameMain
 {
-    private static float Scale => ImGuiHelpers.GlobalScale;
     public static void Draw(string mainkey, ref Configuration.ReplacementSet _activeSet, ref string search)
     {
-        var itemHeight = ImGui.CalcTextSize("").Y + ImGui.GetStyle().FramePadding.Y * 2 + ImGui.GetStyle().WindowPadding.Y;
-
-        using var subList = ImRaii.Child(mainkey, new Vector2(-1, ImGui.GetWindowSize().Y - ImGui.GetCursorPosY() - itemHeight - ImGui.GetStyle().WindowPadding.Y), false);
+        using var subList = ImRaii.Child(mainkey, CalcGlobals.BodyScale(), false);
         if (subList)
         {
             const string searchPopup = "Search place names";
-            if (ImGui.Button(" + "))
-            {
-                ImGui.OpenPopup(searchPopup);
-            }
+            UiGlobals.DrawAddItem(searchPopup);
 
             foreach (var key in _activeSet.PlaceNameWriter.Keys)
             {
@@ -57,45 +51,36 @@ public class PlaceNameMain
                 DrawString("Name (Unknown)", ref replacement.placeNameUnk0, i => i.placeNameUnk0);
                 ImGui.SameLine();*/
 
-                ImGui.TextUnformatted("Unknown 1");
-                DrawSByte("Unk1", ref replace.placeNameUnk1, i => i.placeNameUnk1);
+                DrawSByte("Unk1", "Unknown 1", ref replace.placeNameUnk1, i => i.placeNameUnk1);
 
-                ImGui.TextUnformatted("Unknown 2");
-                DrawSByte("Unk2", ref replace.placeNameUnk2, i => i.placeNameUnk2);
+                DrawSByte("Unk2", "Unknown 2", ref replace.placeNameUnk2, i => i.placeNameUnk2);
 
-                ImGui.TextUnformatted("Unknown 3");
-                DrawSByte("Unk3", ref replace.placeNameUnk3, i => i.placeNameUnk3);
+                DrawSByte("Unk3", "Unknown 3", ref replace.placeNameUnk3, i => i.placeNameUnk3);
 
-                ImGui.TextUnformatted("Unknown 4");
-                DrawSByte("Unk4", ref replace.placeNameUnk4, i => i.placeNameUnk4);
+                DrawSByte("Unk4", "Unknown 4", ref replace.placeNameUnk4, i => i.placeNameUnk4);
 
-                ImGui.TextUnformatted("Unknown 5");
-                DrawSByte("Unk5", ref replace.placeNameUnk5, i => i.placeNameUnk5);
+                DrawSByte("Unk5", "Unknown 5", ref replace.placeNameUnk5, i => i.placeNameUnk5);
 
-                ImGui.TextUnformatted("Unknown 6");
-                DrawSByte("Unk6", ref replace.placeNameUnk6, i => i.placeNameUnk6);
+                DrawSByte("Unk6", "Unknown 6", ref replace.placeNameUnk6, i => i.placeNameUnk6);
 
-                ImGui.TextUnformatted("Unknown 7");
-                DrawUShort("Unk7", ref replace.placeNameUnk7, i => i.placeNameUnk7);
+                DrawUShort("Unk7", "Unknown 7", ref replace.placeNameUnk7, i => i.placeNameUnk7);
 
-                ImGui.TextUnformatted("Unknown 8");
-                DrawByte("Unk8", ref replace.placeNameUnk8, i => i.placeNameUnk8);
+                DrawByte("Unk8", "Unknown 8", ref replace.placeNameUnk8, i => i.placeNameUnk8);
 
-                ImGui.NewLine();
-                ImGui.Separator();
-                ImGui.NewLine();
+                UiGlobals.DrawItemSeparator();
                 continue;
 
                 #endregion
                 #region Items
 
-                void DrawUShort(string name, ref ushort value,
+                void DrawUShort(string refname, string text, ref ushort value,
                     Func<PlaceNameReplace, ushort> getDefault)
                 {
+                    ImGui.TextUnformatted(text);
                     ImGui.SetCursorPosX(ImGui.GetCursorPosX() + 15);
-                    ImGui.SetNextItemWidth(110 * Scale);
+                    ImGui.SetNextItemWidth(110 * CalcGlobals.GlobalScale());
                     int relay = value;
-                    if (ImGui.InputInt("##" + name + key, ref relay))
+                    if (ImGui.InputInt("##" + refname + key, ref relay))
                     {
                         value = (ushort)relay;
                         Setup.SetPlaceName(key);
@@ -105,7 +90,7 @@ public class PlaceNameMain
 
                     using (ImRaii.PushFont(UiBuilder.IconFont))
                     {
-                        if (ImGui.Button($"{FontAwesomeIcon.Reply.ToIconString()}##{name}{key}"))
+                        if (ImGui.Button($"{FontAwesomeIcon.Reply.ToIconString()}##{refname}{key}"))
                         {
                             value = getDefault(PlaceNameManager.GetOriginal(key));
                             Setup.SetPlaceName(key);
@@ -114,13 +99,14 @@ public class PlaceNameMain
                     }
                 }
 
-                void DrawByte(string name, ref byte value,
-                     Func<PlaceNameReplace, byte> getDefault)
+                void DrawByte(string refname, string text, ref byte value,
+                    Func<PlaceNameReplace, byte> getDefault)
                 {
+                    ImGui.TextUnformatted(text);
                     ImGui.SetCursorPosX(ImGui.GetCursorPosX() + 15);
-                    ImGui.SetNextItemWidth(110 * Scale);
+                    ImGui.SetNextItemWidth(110 * CalcGlobals.GlobalScale());
                     int relay = value;
-                    if (ImGui.InputInt("##" + name + key, ref relay))
+                    if (ImGui.InputInt("##" + refname + key, ref relay))
                     {
                         value = (byte)relay;
                         Setup.SetPlaceName(key);
@@ -130,7 +116,7 @@ public class PlaceNameMain
 
                     using (ImRaii.PushFont(UiBuilder.IconFont))
                     {
-                        if (ImGui.Button($"{FontAwesomeIcon.Reply.ToIconString()}##{name}{key}"))
+                        if (ImGui.Button($"{FontAwesomeIcon.Reply.ToIconString()}##{refname}{key}"))
                         {
                             value = getDefault(PlaceNameManager.GetOriginal(key));
                             Setup.SetPlaceName(key);
@@ -139,13 +125,14 @@ public class PlaceNameMain
                     }
                 }
 
-                void DrawSByte(string name, ref sbyte value,
-                     Func<PlaceNameReplace, sbyte> getDefault)
+                void DrawSByte(string refname, string text, ref sbyte value,
+                    Func<PlaceNameReplace, sbyte> getDefault)
                 {
+                    ImGui.TextUnformatted(text);
                     ImGui.SetCursorPosX(ImGui.GetCursorPosX() + 15);
-                    ImGui.SetNextItemWidth(110 * Scale);
+                    ImGui.SetNextItemWidth(110 * CalcGlobals.GlobalScale());
                     int relay = value;
-                    if (ImGui.InputInt("##" + name + key, ref relay))
+                    if (ImGui.InputInt("##" + refname + key, ref relay))
                     {
                         value = (sbyte)relay;
                         Setup.SetPlaceName(key);
@@ -155,7 +142,7 @@ public class PlaceNameMain
 
                     using (ImRaii.PushFont(UiBuilder.IconFont))
                     {
-                        if (ImGui.Button($"{FontAwesomeIcon.Reply.ToIconString()}##{name}{key}"))
+                        if (ImGui.Button($"{FontAwesomeIcon.Reply.ToIconString()}##{refname}{key}"))
                         {
                             value = getDefault(PlaceNameManager.GetOriginal(key));
                             Setup.SetPlaceName(key);
@@ -197,14 +184,11 @@ public class PlaceNameMain
             using var searchPlaceName = ImRaii.Popup(searchPopup);
             if (searchPlaceName)
             {
-                var width = 200 * Scale;
-                var height = 200 * Scale;
-
-                ImGui.SetNextItemWidth(width);
+                ImGui.SetNextItemWidth(CalcGlobals.XY());
                 ImGui.InputText("##Search place names", ref search, 256);
                 var localsearch = search;
 
-                using var popupChild = ImRaii.Child(searchPopup, new Vector2(width, height), true);
+                using var popupChild = ImRaii.Child(searchPopup, CalcGlobals.SearchPopScale(), true);
                 foreach (var pair in PlaceNameManager.Names.OrderBy(i =>
                 {
                     if (string.IsNullOrEmpty(localsearch)) return 0;

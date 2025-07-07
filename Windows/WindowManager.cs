@@ -1,5 +1,6 @@
 ﻿using System;
 using Dalamud.Interface.Windowing;
+#pragma warning disable CA1416 // Validate platform compatibility
 
 namespace ActionTimelineReplacement.Windows;
 
