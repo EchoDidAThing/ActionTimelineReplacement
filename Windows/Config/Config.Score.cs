@@ -1,5 +1,5 @@
 ﻿using Dalamud.Interface.Windowing;
-using ActionTimelineReplacement.Base.Items.Global;
+using ActionTimelineReplacement.Base.Global;
 using System;
 
 namespace ActionTimelineReplacement.Windows;

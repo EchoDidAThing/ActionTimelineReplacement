@@ -1,7 +1,7 @@
 ﻿using System.Numerics;
 using Dalamud.Interface.Utility.Raii;
 using Dalamud.Interface.Windowing;
-using ActionTimelineReplacement.Base.Items.Global;
+using ActionTimelineReplacement.Base.Global;
 using ImGuiNET;
 using System.Collections.Generic;
 using ActionTimelineReplacement.Sheets;

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Numerics;
 using System.Runtime.InteropServices;
-using ActionTimelineReplacement.Base.Items.Global;
+using ActionTimelineReplacement.Base.Global;
 using ActionTimelineReplacement.Base.Setups;
 using ActionTimelineReplacement.Sheets;
 using Dalamud.Interface.Colors;

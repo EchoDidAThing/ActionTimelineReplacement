@@ -1,6 +1,6 @@
 ﻿using ImGuiNET;
 
-namespace ActionTimelineReplacement.Base.Items.Global;
+namespace ActionTimelineReplacement.Base.Global;
 
 public class UiGlobals
 {

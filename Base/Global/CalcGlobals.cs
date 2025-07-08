@@ -4,7 +4,7 @@ using ImGuiNET;
 using Dalamud.Interface.Utility;
 #pragma warning disable CA1416 // Validate platform compatibility
 
-namespace ActionTimelineReplacement.Base.Items.Global;
+namespace ActionTimelineReplacement.Base.Global;
 
 public class CalcGlobals
 {

@@ -1,12 +1,11 @@
 ﻿using Dalamud.Interface.Utility.Raii;
 using Dalamud.Interface;
-using System.Numerics;
 using ImGuiNET;
 using System;
 using System.Linq;
 using ActionTimelineReplacement.Base.Setups;
 using ActionTimelineReplacement.Windows;
-using ActionTimelineReplacement.Base.Items.Global;
+using ActionTimelineReplacement.Base.Global;
 #pragma warning disable CA1416 // Validate platform compatibility
 
 namespace ActionTimelineReplacement.Sheets;
