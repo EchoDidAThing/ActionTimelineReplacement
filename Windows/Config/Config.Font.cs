@@ -1,6 +1,6 @@
 ﻿using Dalamud.Interface.Windowing;
 using System;
-using ImGuiNET;
+using Dalamud.Bindings.ImGui;
 using Dalamud.Interface.GameFonts;
 #pragma warning disable CA1416 // Validate platform compatibility
 
@@ -17,7 +17,7 @@ public sealed partial class ConfigWindow : Window
         try
         {
             var font = handle.Lock().ImFont;
-            if ((IntPtr)font.NativePtr == IntPtr.Zero)
+            if ((IntPtr)font.Handle == IntPtr.Zero)
             {
                 return ImGui.GetFont();
             }

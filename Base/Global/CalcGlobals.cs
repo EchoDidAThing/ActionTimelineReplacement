@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Numerics;
-using ImGuiNET;
+using Dalamud.Bindings.ImGui;
 using Dalamud.Interface.Utility;
 #pragma warning disable CA1416 // Validate platform compatibility
 

@@ -2,7 +2,7 @@
 using Dalamud.Interface.Utility.Raii;
 using Dalamud.Interface.Windowing;
 using ActionTimelineReplacement.Base.Global;
-using ImGuiNET;
+using Dalamud.Bindings.ImGui;
 using System.Collections.Generic;
 using ActionTimelineReplacement.Sheets;
 #pragma warning disable CA1416 // Validate platform compatibility
