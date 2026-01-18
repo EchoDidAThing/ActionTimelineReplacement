@@ -1,0 +1,63 @@
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Runtime.InteropServices;
+using Lumina.Excel.Sheets;
+
+namespace ActionTimelineReplacement.Sheets;
+
+public static class OrnamentCustomizeManager
+{
+    private static Dictionary<uint, string>? _Names;
+
+    private static readonly Dictionary<uint, OrnamentCustomizeReplace> old = [];
+
+    public static Dictionary<uint, string> Names => _Names
+        ??= Service.DataManager.GetExcelSheet<OrnamentCustomize>()
+            .Where(i => !string.IsNullOrEmpty(i.RowId.ToString()))
+            .ToDictionary(i => i.RowId, i => i.RowId.ToString());
+
+    public static IEnumerable<uint> AllOrnamentCustomizeIds =>
+       Service.Config.ReplacementSets.SelectMany(i => i.OrnamentCustomizeWriter.Keys);
+
+    public static string GetName(uint id)
+    {
+        return Names.GetValueOrDefault(id, "Unknown");
+    }
+
+    public static OrnamentCustomizeReplace GetReplacement(uint idx)
+        => GetConfig(idx) ?? GetOriginal(idx);
+
+    private static OrnamentCustomizeReplace? GetConfig(uint idx)
+    {
+        if (!Service.Config.EnableReplacement) return null;
+
+        foreach (var item in Service.Config.ReplacementSets)
+        {
+            foreach (var replacement in item.OrnamentCustomizeWriter
+                         .Where(r => item.Enabled)
+                         .OrderByDescending(r => r.Key))
+            {
+                return replacement.Value.Replacement;
+            }
+        }
+        return null;
+    }
+
+    public static OrnamentCustomizeReplace GetOriginal(uint idx)
+    {
+        ref var replacement = ref CollectionsMarshal.GetValueRefOrAddDefault(old, idx, out var exists);
+        if (!exists)
+        {
+            var act = Service.DataManager.GetExcelSheet<OrnamentCustomize>()?.GetRow(idx);
+            replacement = new OrnamentCustomizeReplace(
+                act?.Unknown0 ?? 0,
+                act?.Unknown1 ?? 0,
+                act?.Unknown2 ?? 0,
+                act?.Unknown3 ?? 0,
+                act?.Unknown4 ?? 0,
+                act?.Unknown5 ?? 0,
+                act?.Unknown6 ?? 0);
+        }
+        return replacement!;
+    }
+}

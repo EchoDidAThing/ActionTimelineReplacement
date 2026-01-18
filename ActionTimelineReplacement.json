@@ -1,9 +1,9 @@
 {
-  "Name": "ActionTimelineReplacement",
-  "Author": "Loskh,Papachin,DethiCra",
-  "Punchline": "A simple plugin to replace timelines of actions.",
-  "Description": "A simple plugin to replace timelines of actions.",
+  "Name": "ATR Custom",
+  "Author": "Echo / taco, via Loskh, Papachin, and DethiCra",
+  "Punchline": "Punching some lines.",
+  "Description": "A plugin to dynamically edit datasheets.",
   "RepoUrl": "https://github.com/papapachin/ActionTimelineReplacement/tree/Global",
-  "Tags": ["Action"],
+  "Tags": ["pain"],
   "IconUrl": "https://raw.githubusercontent.com/papapachin/ActionTimelineReplacement/Global/actiontimeline.png"
 }
