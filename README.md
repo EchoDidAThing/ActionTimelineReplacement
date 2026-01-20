@@ -5,6 +5,7 @@
 - Add codepath to create custom entries(reference field, edited fields). Saved without indexes and dynamically updated.
 - Redo readme
 - Automatically generate/update mod to enable default paths for stuff.
+- More graceful configfile handling to allow for it to handle changes in data.
 
 #taco's to-do:
 - limit input values to prevent the log from going haywire
