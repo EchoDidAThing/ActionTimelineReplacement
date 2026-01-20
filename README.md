@@ -1,8 +1,8 @@
 #Echo's TODO
 - add more sheets
-- rework the Code to actually be more modular as needed.
+- Try to find a way to make adding new values and sheets not a struggle.
 - add handling for Strings(CHECK NAMINGWAY) and packedbools
-- Add codepath to create custom entries(reference field, edited fields)
+- Add codepath to create custom entries(reference field, edited fields). Saved without indexes and dynamically updated.
 - Redo readme
 - Automatically generate/update mod to enable default paths for stuff.
 
