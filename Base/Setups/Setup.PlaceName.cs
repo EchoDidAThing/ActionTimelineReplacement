@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+﻿/*using System.Collections.Generic;
 using ActionTimelineReplacement.Sheets;
 
 namespace ActionTimelineReplacement.Base.Setups;
@@ -22,4 +22,4 @@ public static unsafe partial class Setup
         Service.Log.Info("Setting place name data for [{id}].", id);
         replacement.WriteToPointer(data);
     }
-}
+}*/

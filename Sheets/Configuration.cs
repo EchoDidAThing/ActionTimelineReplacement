@@ -19,7 +19,7 @@ public class Configuration : IPluginConfiguration
     Dictionary<uint, TiltParamConfig> tiltparamwriter,
     Dictionary<uint, GlassesConfig> glasseswriter,
     Dictionary<uint, GlassesStyleConfig> glassesstylewriter,
-    Dictionary<uint, PlaceNameConfig> placenamewriter,
+    //Dictionary<uint, PlaceNameConfig> placenamewriter,
     Dictionary<uint, ActionTimelineConfig> actiontimelinewriter,
     Dictionary<uint, OrnamentConfig> ornamentwriter,
     Dictionary<uint, OrnamentCustomizeConfig> ornamentcustomizewriter)
@@ -39,7 +39,7 @@ public class Configuration : IPluginConfiguration
         public Dictionary<uint, StatusConfig> StatusWriter { get; set; } = statuswriter;
         public Dictionary<uint, GlassesConfig> GlassesWriter { get; set; } = glasseswriter;
         public Dictionary<uint, GlassesStyleConfig> GlassesStyleWriter { get; set; } = glassesstylewriter;
-        public Dictionary<uint, PlaceNameConfig> PlaceNameWriter { get; set; } = placenamewriter;
+        //public Dictionary<uint, PlaceNameConfig> PlaceNameWriter { get; set; } = placenamewriter;
         public Dictionary<uint, ActionTimelineConfig> ActionTimelineWriter { get; set; } = actiontimelinewriter;
         public Dictionary<uint, OrnamentConfig> OrnamentWriter { get; set; } = ornamentwriter;
         public Dictionary<uint, OrnamentCustomizeConfig> OrnamentCustomizeWriter { get; set; } = ornamentcustomizewriter;

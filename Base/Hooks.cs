@@ -9,10 +9,11 @@ public static unsafe class Hooks
     private delegate ActionData* GetActionDataDelegate(uint RowId);
     private delegate StatusData* GetStatusDataDelegate(uint RowId);
     private delegate MountData* GetMountDataDelegate(uint RowId);
+    private delegate MountCustomizeData* GetMountCustomizeDataDelegate(uint RowId);
     private delegate TiltParamData* GetTiltParamDataDelegate(uint RowId);
     private delegate GlassesData* GetGlassesDataDelegate(uint RowId);
     private delegate GlassesStyleData* GetGlassesStyleDataDelegate(uint RowId);
-    private delegate PlaceNameData* GetPlaceNameDataDelegate(uint RowId);
+    //private delegate PlaceNameData* GetPlaceNameDataDelegate(uint RowId);
     private delegate ActionTimelineData* GetActionTimelineDataDelegate(uint RowId);
     private delegate OrnamentData* GetOrnamentDataDelegate(uint RowId);
     private delegate OrnamentCustomizeData* GetOrnamentCustomizeDataDelegate(uint RowId);
@@ -27,7 +28,6 @@ public static unsafe class Hooks
     //private delegate StatusHitEffectData* GetStatusHitEffectDataDelegate(uint RowId);
     //private delegate StatusLoopVFXData* GetStatusLoopVFXDataDelegate(uint RowId);
     //private delegate VFXData* GetVFXDataDelegate(uint RowId);
-    //private delegate MountCustomizeData* GetMountCustomizeDataDelegate(uint RowId);
     //private delegate MountTransientData* GetMountTransientDataDelegate(uint RowId);
 
     #endregion
@@ -35,11 +35,12 @@ public static unsafe class Hooks
 
     private static GetActionDataDelegate? _getActionDataHook;
     private static GetStatusDataDelegate? _getStatusDataHook;
-    private static GetMountDataDelegate? _getMountDataHook;
+    private static GetMountDataDelegate? _getMountDataHook; 
+    private static GetMountCustomizeDataDelegate? _getMountCustomizeDataHook;
     private static GetTiltParamDataDelegate? _getTiltParamDataHook;
     private static GetGlassesDataDelegate? _getGlassesDataHook;
     private static GetGlassesStyleDataDelegate? _getGlassesStyleDataHook;
-    private static GetPlaceNameDataDelegate? _getPlaceNameDataHook;
+    //private static GetPlaceNameDataDelegate? _getPlaceNameDataHook;
     private static GetActionTimelineDataDelegate? _getActionTimelineDataHook;
     private static GetOrnamentDataDelegate? _getOrnamentDataHook;
     private static GetOrnamentCustomizeDataDelegate? _getOrnamentCustomizeDataHook;
@@ -53,7 +54,6 @@ public static unsafe class Hooks
     //private static GetStatusHitEffectDataDelegate? _getStatusHitEffectDataHook;
     //private static GetStatusLoopVFXDataDelegate? _getStatusLoopVFXDataHook;
     //private static GetVFXDataDelegate? _getVFXDataHook;
-    //private static GetMountCustomizeDataDelegate? _getMountCustomizeDataHook;
     //private static GetMountTransientDataDelegate? _getMountTransientDataHook;
 
     #endregion
@@ -61,9 +61,9 @@ public static unsafe class Hooks
 
     public static ActionData* GetActionData(uint RowId)
     {
-        _getActionDataHook ??= Marshal.GetDelegateForFunctionPointer<GetActionDataDelegate>
-        (Service.Scanner.ScanText(
-            "E8 ?? ?? ?? ?? 80 FB 12"));
+        _getActionDataHook ??= Marshal.GetDelegateForFunctionPointer<GetActionDataDelegate>(Service.Scanner.ScanText(
+            "E8 ?? ?? ?? ?? F6 40 3E 10"));
+        //updated for 7.4, Component::Exd::ExdModule.GetActionRow located inside Client::Game::ActionManager.GetActionStatus
 
         return _getActionDataHook(RowId);
     }
@@ -72,22 +72,32 @@ public static unsafe class Hooks
     {
         _getStatusDataHook ??= Marshal.GetDelegateForFunctionPointer<GetStatusDataDelegate>(Service.Scanner.ScanText(
             "E8 ?? ?? ?? ?? 48 85 C0 0F 84 ?? ?? ?? ?? 44 0F B7 03"));
-        //inside "E8 ?? ?? ?? ?? 48 85 C0 74 ?? F6 40 ?? ?? 75 ?? 0F B6 48 ?? 84 C9" sttausmanager:playgainvfx
-        //or "E8 ?? ?? ?? ?? 48 89 45 ?? 48 8B D8 48 85 C0 0F 84 ?? ?? ?? ?? F6 40" from ongainstatus? may be needed.
-        // or "E8 ?? ?? ?? ?? 48 85 C0 0F 84 ?? ?? ?? ?? 44 0F B7 03" under actionmanager
+        //updated for 7.4, Component::Exd::ExdModule.GetStatusRow located inside Client::Game::ActionManager.GetActionStatus
         return _getStatusDataHook(RowId);
     }
 
     public static MountData* GetMountData(uint RowId)
     {
         _getMountDataHook ??= Marshal.GetDelegateForFunctionPointer<GetMountDataDelegate>(Service.Scanner.ScanText(
-            "E8 ?? ?? ?? ?? 48 8B F8 48 85 C0 0F 84 ?? ?? ?? ?? 0F B7 40 ?? 66 85 C0 75 ?? 66 39 6F"));
+            "E8 ?? ?? ?? ?? 4C 8B F8 48 85 C0 0F 84 ?? ?? ?? ?? 0F 29 B4 24"));
+        //updated for 7.4, Component::Exd::ExdModule.GetMountRow located inside Client::Game::Character::MountContainer.SetupMountContainer
         return _getMountDataHook(RowId);
     }
+    
+    private static MountCustomizeData* GetMountCustomizeData(uint RowId)
+    {
+        _getMountCustomizeDataHook ??= Marshal.GetDelegateForFunctionPointer<GetMountCustomizeDataDelegate>(Service.Scanner.ScanText(
+            "E8 ?? ?? ?? ?? F3 0F 10 35 ?? ?? ?? ?? 48 8B F8"));
+        //updated for 7.4, Component::Exd::ExdModule.GetMountCustomizeRow located inside Client::Game::Character::MountContainer.SetupMountContainer
+
+        return _getMountCustomizeDataHook(RowId);
+    }
+    
     public static TiltParamData* GetTiltParamData(uint RowId)
     {
         _getTiltParamDataHook ??= Marshal.GetDelegateForFunctionPointer<GetTiltParamDataDelegate>(Service.Scanner.ScanText(
-            "E8 ?? ?? ?? ?? 0F B7 4F ?? 48 8B F0 E8 ?? ?? ?? ?? C6 43"));
+            "E8 ?? ?? ?? ?? 0F B7 4F ?? 48 8B F0 E8 ?? ?? ?? ?? 33 D2"));
+        //updated for 7.4, Component::Exd::ExdModule.GetMountTiltParamRow located inside a function within Client::Game::Character::MountContainer.CreateAndSetupMountContainer
         return _getTiltParamDataHook(RowId);
     }
 
@@ -95,29 +105,30 @@ public static unsafe class Hooks
     {
         _getGlassesDataHook ??= Marshal.GetDelegateForFunctionPointer<GetGlassesDataDelegate>(Service.Scanner.ScanText(
             "E8 ?? ?? ?? ?? 48 85 C0 74 ?? 66 44 39 78 ?? 7C"));
+        //Not verified for 7.4 Component::Exd::ExdModule.GetGlassesRow located inside Client::UI::RaptureAtkModule.HandleGlassesDrop
         return _getGlassesDataHook(RowId);
     }
 
     public static GlassesStyleData* GetGlassesStyleData(uint RowId)
     {
         _getGlassesStyleDataHook ??= Marshal.GetDelegateForFunctionPointer<GetGlassesStyleDataDelegate>(Service.Scanner.ScanText(
-            "E8 ?? ?? ?? ?? 48 85 C0 74 ?? 0F B7 CE"));
+            "E8 ?? ?? ?? ?? 48 8B F8 48 85 C0 74 ?? 66 44 39 78"));
+        //Updated for 7.4 Component::Exd::ExdModule.GetGlassesStyleRow located inside Client::UI::RaptureAtkModule.HandleGlassesDrop
         return _getGlassesStyleDataHook(RowId);
     }
 
-    public static PlaceNameData* GetPlaceNameData(uint RowId)
+    /*public static PlaceNameData* GetPlaceNameData(uint RowId)
     {
         _getPlaceNameDataHook ??= Marshal.GetDelegateForFunctionPointer<GetPlaceNameDataDelegate>(Service.Scanner.ScanText(
             "E8 ?? ?? ?? ?? 48 85 C0 74 ?? 0F B6 48 ?? E8 ?? ?? ?? ?? 84 C0 74 ?? 8B CB"));
         return _getPlaceNameDataHook(RowId);
     }
-
+    */
     public static ActionTimelineData* GetActionTimelineData(uint RowId)
     {
         _getActionTimelineDataHook ??= Marshal.GetDelegateForFunctionPointer<GetActionTimelineDataDelegate>(Service.Scanner.ScanText(
-            "")); //sigs don't match yet
-        //E8 ?? ?? ?? ?? 48 85 C0 74 ?? F6 40 ?? ?? 74 ?? 8B CB E8 ?? ?? ?? ?? 48 8B 0D ?? ?? ?? ?? 48 8D 54 24 ?? 48 89 44 24 ?? 89 5C 24 ?? E8 ?? ?? ?? ?? FF C3 3B DE 72 ?? E8 ?? ?? ?? ?? 48 8B 74 24
-        //E8 ?? ?? ?? ?? 48 85 C0 74 ?? 80 78 ?? ?? 75 ?? 0F B6 4E
+            "E8 ?? ?? ?? ?? F6 40 3E 10")); 
+
 
         return _getActionTimelineDataHook(RowId);
     }
@@ -125,21 +136,24 @@ public static unsafe class Hooks
     public static OrnamentData* GetOrnamentData(uint RowId)
     {
         _getOrnamentDataHook ??= Marshal.GetDelegateForFunctionPointer<GetOrnamentDataDelegate>(Service.Scanner.ScanText(
-            "E8 ?? ?? ?? ?? 48 85 C0 74 ?? 0F B6 40 ?? FE C8 3C ?? 77 ?? 48 8B 45"));
+            "E8 ?? ?? ?? ?? 48 8B D8 48 85 C0 0F 84 ?? ?? ?? ?? F3 0F 10 05 ?? ?? ?? ?? 48 8D 8E"));
+        //Updated for 7.4 Component::Exd::ExdModule.GetOrnamentRow located inside Client::Game::Character::OrnamentContainer.SetupOrnament
         return _getOrnamentDataHook(RowId);
     }
 
     public static OrnamentCustomizeData* GetOrnamentCustomizeData(uint RowId)
     {
         _getOrnamentCustomizeDataHook ??= Marshal.GetDelegateForFunctionPointer<GetOrnamentCustomizeDataDelegate>(Service.Scanner.ScanText(
-            "E8 ?? ?? ?? ?? 48 8B D8 48 85 C0 0F 84 ?? ?? ?? ?? 0F B7 08 0F BF 40"));
+            "E8 ?? ?? ?? ?? 48 8B D8 48 85 C0 0F 84 ?? ?? ?? ?? 0F B7 08"));
+        //Updated for 7.4 Component::Exd::ExdModule.GetOrnamentCustomizeRow located inside A nested function under Client::Game::Character::OrnamentContainer.Update
         return _getOrnamentCustomizeDataHook(RowId);
     }
     
     public static OrnamentCustomizeGroupData* GetOrnamentCustomizeGroupData(uint RowId)
     {
         _getOrnamentCustomizeGroupDataHook ??= Marshal.GetDelegateForFunctionPointer<GetOrnamentCustomizeGroupDataDelegate>(Service.Scanner.ScanText(
-            "E8 ?? ?? ?? ?? 4C 8B E8 48 85 C0 0F 84 ?? ?? ?? ?? 49 8B 16 49 8B CE 41 0F B6 9E"));
+            "E8 ?? ?? ?? ?? 48 8B F0 48 85 C0 0F 84 ?? ?? ?? ?? 48 8B 17 48 8B CF 0F B6 9F"));
+        //Updated for 7.4 Component::Exd::ExdModule.GetOrnamentCustomizeGroupRow located inside A nested function under Client::Game::Character::OrnamentContainer.Update
         return _getOrnamentCustomizeGroupDataHook(RowId);
     }
 
@@ -220,14 +234,6 @@ public static unsafe class Hooks
         // OR "E8 ?? ?? ?? ?? 48 8B F8 4D 85 F6 0F 84 ?? ?? ?? ?? 48 85 C0 0F 84 ?? ?? ?? ?? 41 B9 ?? ?? ?? ?? 8B D3 45 8D 41"
 
         return _getMountTransientDataHook(RowId);
-    }
-
-    private static MountCustomizeData* GetMountCustomizeData(uint RowId)
-    {
-        _getMountCustomizeDataHook ??= Marshal.GetDelegateForFunctionPointer<GetMountCustomizeDataDelegate>(Service.Scanner.ScanText(
-            "E8 ?? ?? ?? ?? F3 0F 10 35 ?? ?? ?? ?? 48 8B F8" ));
-
-        return _getMountCustomizeDataHook(RowId);
     }
     */
     #endregion

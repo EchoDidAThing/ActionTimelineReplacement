@@ -104,9 +104,9 @@ public sealed partial class ConfigWindow : Window
                     case "GlassesStyle":
                         GlassesStyleMain.Draw(mainkey, ref _activeSet, ref _searchGlassesStyle);
                         break;
-                    case "PlaceName":
+                    /*case "PlaceName":
                         PlaceNameMain.Draw(mainkey, ref _activeSet, ref _searchPlaceName);
-                        break;
+                        break;*/
                     case "ActionTimeline":
                         ActionTimelineMain.Draw(mainkey, ref _activeSet, ref _searchActionTimeline);
                         break;

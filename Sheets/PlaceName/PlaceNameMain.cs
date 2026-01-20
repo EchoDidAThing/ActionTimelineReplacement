@@ -1,4 +1,5 @@
-﻿using Dalamud.Interface.Utility.Raii;
+﻿/*
+using Dalamud.Interface.Utility.Raii;
 using Dalamud.Interface;
 using Dalamud.Bindings.ImGui;
 using System;
@@ -49,7 +50,7 @@ public class PlaceNameMain
                 ImGui.SameLine();
 
                 DrawString("Name (Unknown)", ref replacement.placeNameUnk0, i => i.placeNameUnk0);
-                ImGui.SameLine();*/
+                ImGui.SameLine();
 
                 DrawSByte("Unk1", "Unknown 1", ref replace.placeNameUnk1, i => i.placeNameUnk1);
 
@@ -175,7 +176,7 @@ public class PlaceNameMain
                         }
                     }
                 }
-                */
+                
             }
 
             #endregion
@@ -221,4 +222,4 @@ public class PlaceNameMain
             #endregion
         }
     }
-}
+}*/
