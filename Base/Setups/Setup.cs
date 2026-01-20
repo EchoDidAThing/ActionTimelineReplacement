@@ -9,6 +9,7 @@ public static unsafe partial class Setup
         //TOSETUP: add setup here
         LoadAction(ActionManager.AllActionIds);
         LoadMount(MountManager.AllMountIds);
+        LoadMountCustomize(MountCustomizeManager.AllMountCustomizeIds);
         LoadStatus(StatusManager.AllStatusIds);
         LoadTiltParam(TiltParamManager.AllTiltParamIds);
         //LoadPlaceName(PlaceNameManager.AllPlaceNameIds);
