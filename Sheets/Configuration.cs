@@ -15,6 +15,7 @@ public class Configuration : IPluginConfiguration
     Dictionary<uint, ActionConfig> actionwriter,
     Dictionary<uint, ActionCastVFXConfig> actioncastvfxwriter,
     Dictionary<uint, MountConfig> mountwriter,
+    Dictionary<uint, MountCustomizeConfig> mountcustomizewriter,
     Dictionary<uint, StatusConfig> statuswriter,
     Dictionary<uint, TiltParamConfig> tiltparamwriter,
     Dictionary<uint, GlassesConfig> glasseswriter,
@@ -35,6 +36,7 @@ public class Configuration : IPluginConfiguration
         public Dictionary<uint, ActionConfig> ActionWriter { get; set; } = actionwriter;
         public Dictionary<uint, ActionCastVFXConfig> ActionCastVFXWriter { get; set; } = actioncastvfxwriter;
         public Dictionary<uint, MountConfig> MountWriter { get; set; } = mountwriter;
+        public Dictionary<uint, MountCustomizeConfig> MountCustomizeWriter { get; set; } = mountcustomizewriter;
         public Dictionary<uint, TiltParamConfig> TiltParamWriter { get; set; } = tiltparamwriter;
         public Dictionary<uint, StatusConfig> StatusWriter { get; set; } = statuswriter;
         public Dictionary<uint, GlassesConfig> GlassesWriter { get; set; } = glasseswriter;

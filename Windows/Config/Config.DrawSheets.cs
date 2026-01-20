@@ -17,11 +17,12 @@ public sealed partial class ConfigWindow : Window
     //TOSETUP: Add new search here
     private string _searchAction = string.Empty;
     private string _searchMount = string.Empty;
+    private string _searchMountCustomize = string.Empty;
     private string _searchTiltParam = string.Empty;
     private string _searchStatus = string.Empty;
     private string _searchGlasses = string.Empty;
     private string _searchGlassesStyle = string.Empty;
-    private string _searchPlaceName = string.Empty;
+    //private string _searchPlaceName = string.Empty;
     private string _searchActionTimeline = string.Empty;
     private string _searchOrnament = string.Empty;
     private string _searchOrnamentCustomize = string.Empty;
@@ -34,6 +35,7 @@ public sealed partial class ConfigWindow : Window
             //TOSETUP: Add new headers here
             _AllHeaders.Add("Action", []);
             _AllHeaders.Add("Mount", []);
+            _AllHeaders.Add("MountCustomize", []);
             _AllHeaders.Add("Status", []);
             _AllHeaders.Add("TiltParam", []);
             _AllHeaders.Add("Glasses", []);
@@ -91,6 +93,9 @@ public sealed partial class ConfigWindow : Window
                         break;
                     case "Mount":
                         MountMain.Draw(mainkey, ref _activeSet, ref _searchMount);
+                        break;
+                    case "MountCustomize":
+                        MountCustomizeMain.Draw(mainkey, ref _activeSet, ref _searchMountCustomize);
                         break;
                     case "Status":
                         StatusMain.Draw(mainkey, ref _activeSet, ref _searchStatus);

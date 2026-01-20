@@ -84,7 +84,7 @@ public static unsafe class Hooks
         return _getMountDataHook(RowId);
     }
     
-    private static MountCustomizeData* GetMountCustomizeData(uint RowId)
+    public static MountCustomizeData* GetMountCustomizeData(uint RowId)
     {
         _getMountCustomizeDataHook ??= Marshal.GetDelegateForFunctionPointer<GetMountCustomizeDataDelegate>(Service.Scanner.ScanText(
             "E8 ?? ?? ?? ?? F3 0F 10 35 ?? ?? ?? ?? 48 8B F8"));
