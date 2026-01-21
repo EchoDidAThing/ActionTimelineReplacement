@@ -8,6 +8,9 @@
 - Redo readme
 - Automatically generate/update mod to enable default paths for stuff.
 - More graceful configfile handling to allow for it to handle changes in data.
+- When Saving Data, Only save edited values.
+- Fix config loading to skip unknown sets.
+- Add some sort of config verification?
 
 #taco's to-do:
 - limit input values to prevent the log from going haywire
