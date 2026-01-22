@@ -23,7 +23,8 @@ public class Configuration : IPluginConfiguration
     //Dictionary<uint, PlaceNameConfig> placenamewriter,
     Dictionary<uint, ActionTimelineConfig> actiontimelinewriter,
     Dictionary<uint, OrnamentConfig> ornamentwriter,
-    Dictionary<uint, OrnamentCustomizeConfig> ornamentcustomizewriter)
+    Dictionary<uint, OrnamentCustomizeConfig> ornamentcustomizewriter,
+    Dictionary<uint, VfxConfig> vfxwriter)
     //Dictionary<uint, OrnamentCustomizeGroupConfig> ornamentcustomizegroupwriter)
     {
         public string Name = name;
@@ -45,6 +46,7 @@ public class Configuration : IPluginConfiguration
         public Dictionary<uint, ActionTimelineConfig> ActionTimelineWriter { get; set; } = actiontimelinewriter;
         public Dictionary<uint, OrnamentConfig> OrnamentWriter { get; set; } = ornamentwriter;
         public Dictionary<uint, OrnamentCustomizeConfig> OrnamentCustomizeWriter { get; set; } = ornamentcustomizewriter;
+        public Dictionary<uint, VfxConfig> VfxWriter { get; set; } = vfxwriter;
         //public Dictionary<uint, OrnamentCustomizeGroupConfig> OrnamentCustomizeGroupWriter { get; set; } = ornamentcustomizegroupwriter;
         //public Dictionary<float, PointMenuChoiceConfig> PointMenuChoiceWriter { get; set; } = pointmenuchoicewriter; //not really float, but it kind of is?
 

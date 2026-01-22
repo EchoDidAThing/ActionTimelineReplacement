@@ -17,6 +17,7 @@ public static unsafe partial class Setup
         LoadGlassesStyle(GlassesStyleManager.AllGlassesStyleIds);
         LoadOrnament(OrnamentManager.AllOrnamentIds);
         LoadOrnamentCustomize(OrnamentCustomizeManager.AllOrnamentCustomizeIds);
+        LoadVfx(VfxManager.AllVfxIds);
         //LoadOrnamentCustomizeGroup(OrnamentCustomizeGroupManager.AllOrnamentCustomizeGroupIds);
         //LoadActionTimeline(ActionTimelineManager.AllActionTimelineIds); //find sigs
         //LoadPointMenuChoice(PointMenuChoiceManager.AllPointMenuChoiceIds); //find sigs

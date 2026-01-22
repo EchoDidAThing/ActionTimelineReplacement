@@ -3,8 +3,10 @@
 namespace ActionTimelineReplacement.Base.Structs;
 
 [StructLayout(LayoutKind.Explicit)]
-public struct VFXData
+public struct VfxData
 {
-    //[FieldOffset(0x0)]
-    //public ushort PathOffset;
+    
+    [FieldOffset(0x0)]
+    public uint String1Offset;
+
 }

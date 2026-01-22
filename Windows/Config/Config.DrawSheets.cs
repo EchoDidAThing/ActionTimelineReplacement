@@ -26,6 +26,7 @@ public sealed partial class ConfigWindow : Window
     private string _searchActionTimeline = string.Empty;
     private string _searchOrnament = string.Empty;
     private string _searchOrnamentCustomize = string.Empty;
+    private string _searchVfx = string.Empty;
     //private string _searchPointMenuChoice = string.Empty;
 
     private void DrawSheets()
@@ -44,6 +45,7 @@ public sealed partial class ConfigWindow : Window
             _AllHeaders.Add("ActionTimeline", []);
             _AllHeaders.Add("Ornament", []);
             _AllHeaders.Add("OrnamentCustomize", []);
+            _AllHeaders.Add("Vfx", []);
             //_AllHeaders.Add("PointMenuChoice", []);
             foreach (var headerkey in _AllHeaders.Keys)
             {
@@ -120,6 +122,9 @@ public sealed partial class ConfigWindow : Window
                         break;
                     case "OrnamentCustomize":
                         OrnamentCustomizeMain.Draw(mainkey, ref _activeSet, ref _searchOrnamentCustomize);
+                        break;
+                    case "Vfx":
+                        VfxMain.Draw(mainkey, ref _activeSet, ref _searchVfx);
                         break;
                         //case "OrnamentCustomizeGroup":
                         //    OrnamentCustomizeGroupMain.Draw(mainkey, ref _activeSet, ref _searchOrnamentCustomizeGroup);
