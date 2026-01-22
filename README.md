@@ -3,14 +3,15 @@
 - add dev override for that stop so we can actually do fixes.
 - add more sheets.
 - Try to find a way to make adding new values and sheets not a struggle.
-- add handling for Strings(CHECK NAMINGWAY) and packedbools
+- add handling for multiple strings if needed and packedbools
 - Add codepath to create custom entries(reference field, edited fields). Saved without indexes and dynamically updated.
+- For above may need to leverage an edited EXD file for initial load to initialize the lines.
 - Redo readme
 - Automatically generate/update mod to enable default paths for stuff.
 - More graceful configfile handling to allow for it to handle changes in data.
 - When Saving Data, Only save edited values.
 - Fix config loading to skip unknown sets.
-- Add some sort of config verification?
+- Add some sort of config verification.
 
 #taco's to-do:
 - limit input values to prevent the log from going haywire
