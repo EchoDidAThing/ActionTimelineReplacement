@@ -1,7 +1,23 @@
 #Echo's TODO
 - add A way to prevent all changes until validated for a new patch.
 - add dev override for that stop so we can actually do fixes.
-- add more sheets.
+- add more sheets to check if okay:
+  -BGM
+  -ActionCastTimeline
+  -ActionTimeline
+  -WeaponTimeline
+  -Generalaction
+  -Petaction
+  -Ornamentaction?
+  -Item?
+  -Itemaction?
+  -Craftaction?
+  -Motiontimelineblendtable
+  -motiontimelineadvanced
+  -modelchara?
+  -status
+  -statusloopvfx
+  -statushiteffect
 - Try to find a way to make adding new values and sheets not a struggle.
 - add handling for multiple strings if needed and packedbools
 - Add codepath to create custom entries(reference field, edited fields). Saved without indexes and dynamically updated.
