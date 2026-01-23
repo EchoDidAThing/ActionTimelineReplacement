@@ -28,6 +28,7 @@
 - When Saving Data, Only save edited values.
 - Fix config loading to skip unknown sets.
 - Add some sort of config verification.
+- -Add copypath buttons for stuff like vfx.
 
 #taco's to-do:
 - limit input values to prevent the log from going haywire
