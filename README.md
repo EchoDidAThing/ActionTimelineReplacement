@@ -16,10 +16,10 @@
   -motiontimelineadvanced
   -modelchara?
   -status
-  -statusloopvfx
+  -statusloopvfx[added; needs verification]
   -statushiteffect
 - Try to find a way to make adding new values and sheets not a struggle.
-- add handling for multiple strings if needed and packedbools
+- add handling for multiple strings if needed.
 - Add codepath to create custom entries(reference field, edited fields). Saved without indexes and dynamically updated.
 - For above may need to leverage an edited EXD file for initial load to initialize the lines.
 - Redo readme
@@ -36,7 +36,6 @@
 - figure out how to streamline some of the fields
 - more sheets to break stuff
 - find out how to circumvent handling of the packed bools
-- checkmarks to enable sheets don't actually make a difference right now
 
 
 `FieldOffset(0x??)` is the actual address being updated. Lumina sheets are just used for pulling base data. so, technically, if the column doesn't exist in the source data, a dummy field can be supplied, although that does make things slightly obtuse.
