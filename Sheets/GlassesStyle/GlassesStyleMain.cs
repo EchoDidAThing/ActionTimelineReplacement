@@ -27,13 +27,22 @@ public class GlassesStyleMain
 
                 if (ImGui.Checkbox("##" + key, ref _activeSet.GlassesStyleWriter[key].Enabled))
                 {
-                    Setup.SetGlassesStyle(key);
+                    if (_activeSet.GlassesStyleWriter[key].Enabled)
+                    {
+                        Setup.SetGlassesStyle(key);
+                    }
+                    else
+                    {
+                        Setup.SetGlassesStyle(key, true);
+                    }
                     Service.Config.Save();
                 }
                 ImGui.SameLine();
                 if (ImGui.Button(" - ##" + key))
                 {
+                    Setup.SetGlassesStyle(key, true);
                     _activeSet.GlassesStyleWriter.Remove(key);
+                    Service.Config.Save();
                 }
 
                 ImGui.SameLine();

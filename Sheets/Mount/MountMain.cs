@@ -27,14 +27,23 @@ public class MountMain
 
                 if (ImGui.Checkbox("##" + key, ref _activeSet.MountWriter[key].Enabled))
                 {
-                    Setup.SetMount(key);
+                    if (_activeSet.MountWriter[key].Enabled)
+                    {
+                        Setup.SetMount(key);
+                    }
+                    else
+                    {
+                        Setup.SetMount(key, true);
+                    }
                     Service.Config.Save();
                 }
                 ImGui.SameLine();
 
                 if (ImGui.Button(" - ##" + key))
                 {
+                    Setup.SetMount(key, true);
                     _activeSet.MountWriter.Remove(key);
+                    Service.Config.Save();
                 }
 
                 ImGui.SameLine();

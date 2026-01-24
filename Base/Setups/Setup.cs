@@ -11,6 +11,7 @@ public static unsafe partial class Setup
         LoadMount(MountManager.AllMountIds);
         LoadMountCustomize(MountCustomizeManager.AllMountCustomizeIds);
         LoadStatus(StatusManager.AllStatusIds);
+        LoadStatusLoopVFX(StatusLoopVFXManager.AllStatusLoopVFXIds);
         LoadTiltParam(TiltParamManager.AllTiltParamIds);
         //LoadPlaceName(PlaceNameManager.AllPlaceNameIds);
         LoadGlasses(GlassesManager.AllGlassesIds);

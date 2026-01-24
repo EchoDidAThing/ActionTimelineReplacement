@@ -27,14 +27,23 @@ public class ActionTimelineMain
 
                 if (ImGui.Checkbox("##" + key, ref _activeSet.ActionTimelineWriter[key].Enabled))
                 {
-                    Setup.SetActionTimeline(key);
+                    if (_activeSet.ActionTimelineWriter[key].Enabled)
+                    {
+                        Setup.SetActionTimeline(key);
+                    }
+                    else
+                    {
+                        Setup.SetActionTimeline(key, true);
+                    }
                     Service.Config.Save();
                 }
                 ImGui.SameLine();
 
                 if (ImGui.Button(" - ##" + key))
                 {
+                    Setup.SetActionTimeline(key, true);
                     _activeSet.ActionTimelineWriter.Remove(key);
+                    Service.Config.Save();
                 }
 
                 ImGui.SameLine();

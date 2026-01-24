@@ -27,14 +27,23 @@ public class ActionMain
 
                 if (ImGui.Checkbox("##" + key, ref _activeSet.ActionWriter[key].Enabled))
                 {
-                    Setup.SetAction(key);
+                    if (_activeSet.ActionWriter[key].Enabled)
+                    {
+                        Setup.SetAction(key);
+                    }
+                    else
+                    {
+                        Setup.SetAction(key, true);
+                    }
                     Service.Config.Save();
                 }
                 ImGui.SameLine();
 
                 if (ImGui.Button(" - ##" + key))
                 {
+                    Setup.SetAction(key, true);
                     _activeSet.ActionWriter.Remove(key);
+                    Service.Config.Save();
                 }
 
                 //to do: show values as strings from their subsheets

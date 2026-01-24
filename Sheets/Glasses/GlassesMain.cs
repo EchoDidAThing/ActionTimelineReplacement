@@ -26,13 +26,22 @@ public class GlassesMain
 
                 if (ImGui.Checkbox("##" + key, ref _activeSet.GlassesWriter[key].Enabled))
                 {
-                    Setup.SetGlasses(key);
+                    if (_activeSet.GlassesWriter[key].Enabled)
+                    {
+                        Setup.SetGlasses(key);
+                    }
+                    else
+                    {
+                        Setup.SetGlasses(key, true);
+                    }
                     Service.Config.Save();
                 }
                 ImGui.SameLine();
                 if (ImGui.Button(" - ##" + key))
                 {
+                    Setup.SetGlasses(key, true);
                     _activeSet.GlassesWriter.Remove(key);
+                    Service.Config.Save();
                 }
 
                 ImGui.SameLine();

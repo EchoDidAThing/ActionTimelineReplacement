@@ -7,11 +7,13 @@ namespace ActionTimelineReplacement.Base;
 public static unsafe class Hooks
 {
     public const string vfxhook = "E8 ?? ?? ?? ?? 48 8B D0 48 8B CB E8 ?? ?? ?? ?? 0F 28 B4 24"; //updated for 7.4
-
+    public const string statusloopvfxhook = "E8 ?? ?? ?? ?? 48 8B D8 48 85 C0 74 ?? 66 39 38";//updated 7.4
 
     #region delegates
     private delegate ActionData* GetActionDataDelegate(uint RowId);
     private delegate StatusData* GetStatusDataDelegate(uint RowId);
+    private delegate StatusLoopVFXData* GetStatusLoopVFXDataDelegate(uint RowId);
+    private delegate IntPtr GetStatusLoopVFXDataDelegatepublic(uint RowId);
     private delegate MountData* GetMountDataDelegate(uint RowId);
     private delegate MountCustomizeData* GetMountCustomizeDataDelegate(uint RowId);
     private delegate TiltParamData* GetTiltParamDataDelegate(uint RowId);
@@ -32,7 +34,6 @@ public static unsafe class Hooks
     //private delegate ActionCastVFXData* GetActionCastVFXDataDelegate(uint RowId);
     //private delegate ActionTransientData* GetActionTransientDataDelegate(uint RowId);
     //private delegate StatusHitEffectData* GetStatusHitEffectDataDelegate(uint RowId);
-    //private delegate StatusLoopVFXData* GetStatusLoopVFXDataDelegate(uint RowId);
     //private delegate MountTransientData* GetMountTransientDataDelegate(uint RowId);
 
     #endregion
@@ -40,6 +41,8 @@ public static unsafe class Hooks
 
     private static GetActionDataDelegate? _getActionDataHook;
     private static GetStatusDataDelegate? _getStatusDataHook;
+    private static GetStatusLoopVFXDataDelegate? _getStatusLoopVFXDataHook;
+    private static GetStatusLoopVFXDataDelegatepublic? _getStatusLoopVFXDataHookpublic;
     private static GetMountDataDelegate? _getMountDataHook; 
     private static GetMountCustomizeDataDelegate? _getMountCustomizeDataHook;
     private static GetTiltParamDataDelegate? _getTiltParamDataHook;
@@ -59,7 +62,6 @@ public static unsafe class Hooks
     //private static GetActionCastVFXDataDelegate? _getActionCastVFXDataHook;
     //private static GetActionTransientDataDelegate? _getActionTransientDataHook;
     //private static GetStatusHitEffectDataDelegate? _getStatusHitEffectDataHook;
-    //private static GetStatusLoopVFXDataDelegate? _getStatusLoopVFXDataHook;
     //private static GetMountTransientDataDelegate? _getMountTransientDataHook;
 
     #endregion
@@ -81,6 +83,28 @@ public static unsafe class Hooks
         //updated for 7.4, Component::Exd::ExdModule.GetStatusRow located inside Client::Game::ActionManager.GetActionStatus
         //..from Namingway: "E8 ?? ?? ?? ?? 48 85 C0 74 96" Check it if the other one is not gonna work
         return _getStatusDataHook(RowId);
+    }
+
+    /*public static StatusHitEffectData* GetStatusHitEffectData(uint RowId)
+    {
+        _getStatusHitEffectDataHook ??= Marshal.GetDelegateForFunctionPointer<GetStatusHitEffectDataDelegate>(Service.Scanner.ScanText(
+            "E8 ?? ?? ?? ?? 48 85 C0 0F 84 ?? ?? ?? ?? 0F B7 30 E9"));
+        //updated for 7.4, under Client::Game::Character::ActionEffectHandler.ApplyOneTargetEffect
+        return _getStatusHitEffectDataHook(RowId);
+    }*/
+
+    public static StatusLoopVFXData* GetStatusLoopVFXData(uint RowId)
+    {
+        _getStatusLoopVFXDataHook ??= Marshal.GetDelegateForFunctionPointer<GetStatusLoopVFXDataDelegate>(Service.Scanner.ScanText(statusloopvfxhook));
+        
+
+        return _getStatusLoopVFXDataHook(RowId);
+    }
+    public static IntPtr GetStatusLoopVFXDatapublic(uint RowId)
+    {
+        _getStatusLoopVFXDataHookpublic ??= Marshal.GetDelegateForFunctionPointer<GetStatusLoopVFXDataDelegatepublic>(Service.Scanner.ScanText(statusloopvfxhook));
+
+        return _getStatusLoopVFXDataHookpublic(RowId);
     }
 
     public static MountData* GetMountData(uint RowId)
@@ -228,15 +252,6 @@ public static unsafe class Hooks
         //inside sttausmanager:playgainvfx
 
         return _getStatusHitEffectDataHook(RowId);
-    }
-
-    private static StatusLoopVFXData* GetStatusLoopVFXData(uint RowId)
-    {
-        _getStatusLoopVFXDataHook ??= Marshal.GetDelegateForFunctionPointer<GetStatusLoopVFXDataDelegate>(Service.Scanner.ScanText(
-            "E8 ?? ?? ?? ?? 48 8B D8 48 85 C0 74 ?? 66 44 39 30 74" ));
-        //THIS IS A BIG MAYBE. NOT SURE IF IT ACTUALLY IS.
-
-        return _getStatusLoopVFXDataHook(RowId);
     }
 
     private static MountTransientData* GetMountTransientData(uint RowId)

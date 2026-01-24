@@ -27,14 +27,23 @@ public class StatusMain
 
                 if (ImGui.Checkbox("##" + key, ref _activeSet.StatusWriter[key].Enabled))
                 {
-                    Setup.SetStatus(key);
+                    if (_activeSet.StatusWriter[key].Enabled)
+                    {
+                        Setup.SetStatus(key);
+                    }
+                    else
+                    {
+                        Setup.SetStatus(key, true);
+                    }
                     Service.Config.Save();
                 }
                 ImGui.SameLine();
 
                 if (ImGui.Button(" - ##" + key))
                 {
+                    Setup.SetStatus(key, true);
                     _activeSet.StatusWriter.Remove(key);
+                    Service.Config.Save();
                 }
 
                 ImGui.SameLine();

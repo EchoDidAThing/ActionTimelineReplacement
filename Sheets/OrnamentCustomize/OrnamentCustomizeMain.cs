@@ -27,13 +27,22 @@ public class OrnamentCustomizeMain
 
                 if (ImGui.Checkbox("##" + key, ref _activeSet.OrnamentCustomizeWriter[key].Enabled))
                 {
-                    Setup.SetOrnamentCustomize(key);
+                    if (_activeSet.OrnamentCustomizeWriter[key].Enabled)
+                    {
+                        Setup.SetOrnamentCustomize(key);
+                    }
+                    else
+                    {
+                        Setup.SetOrnamentCustomize(key, true);
+                    }
                     Service.Config.Save();
                 }
                 ImGui.SameLine();
                 if (ImGui.Button(" - ##" + key))
                 {
+                    Setup.SetOrnamentCustomize(key, true);
                     _activeSet.OrnamentCustomizeWriter.Remove(key);
+                    Service.Config.Save();
                 }
 
                 ImGui.SameLine();

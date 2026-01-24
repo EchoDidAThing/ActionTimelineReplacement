@@ -17,6 +17,7 @@ public class Configuration : IPluginConfiguration
     Dictionary<uint, MountConfig> mountwriter,
     Dictionary<uint, MountCustomizeConfig> mountcustomizewriter,
     Dictionary<uint, StatusConfig> statuswriter,
+    Dictionary<uint, StatusLoopVFXConfig> statusloopvfxwriter,
     Dictionary<uint, TiltParamConfig> tiltparamwriter,
     Dictionary<uint, GlassesConfig> glasseswriter,
     Dictionary<uint, GlassesStyleConfig> glassesstylewriter,
@@ -40,6 +41,7 @@ public class Configuration : IPluginConfiguration
         public Dictionary<uint, MountCustomizeConfig> MountCustomizeWriter { get; set; } = mountcustomizewriter;
         public Dictionary<uint, TiltParamConfig> TiltParamWriter { get; set; } = tiltparamwriter;
         public Dictionary<uint, StatusConfig> StatusWriter { get; set; } = statuswriter;
+        public Dictionary<uint, StatusLoopVFXConfig> StatusLoopVFXWriter { get; set; } = statusloopvfxwriter;
         public Dictionary<uint, GlassesConfig> GlassesWriter { get; set; } = glasseswriter;
         public Dictionary<uint, GlassesStyleConfig> GlassesStyleWriter { get; set; } = glassesstylewriter;
         //public Dictionary<uint, PlaceNameConfig> PlaceNameWriter { get; set; } = placenamewriter;

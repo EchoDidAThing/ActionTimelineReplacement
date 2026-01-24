@@ -83,7 +83,7 @@ public sealed partial class ConfigWindow : Window
             {
                 var randomset = new Random().Next(1, 100).ToString();
                 //TOSETUP: add new config bracket set here
-                Service.Config.ReplacementSets.Add(new Configuration.ReplacementSet("Set " + randomset, true, 0, [], [], [], [], [], [], [], [], [], [], [], []));
+                Service.Config.ReplacementSets.Add(new Configuration.ReplacementSet("Set " + randomset, true, 0, [], [], [], [], [], [], [], [], [], [], [], [], []));
                 Service.Config.Save();
             }
             ImGui.SameLine();

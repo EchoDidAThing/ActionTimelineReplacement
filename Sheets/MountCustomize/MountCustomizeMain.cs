@@ -27,14 +27,23 @@ public class MountCustomizeMain
 
                 if (ImGui.Checkbox("##" + key, ref _activeSet.MountCustomizeWriter[key].Enabled))
                 {
-                    Setup.SetMountCustomize(key);
+                    if (_activeSet.MountCustomizeWriter[key].Enabled)
+                    {
+                        Setup.SetMountCustomize(key);
+                    }
+                    else
+                    {
+                        Setup.SetMountCustomize(key, true);
+                    }
                     Service.Config.Save();
                 }
                 ImGui.SameLine();
 
                 if (ImGui.Button(" - ##" + key))
                 {
+                    Setup.SetMountCustomize(key, true);
                     _activeSet.MountCustomizeWriter.Remove(key);
+                    Service.Config.Save();
                 }
 
                 ImGui.SameLine();
