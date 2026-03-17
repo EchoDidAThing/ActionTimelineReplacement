@@ -5,18 +5,14 @@ namespace ActionTimelineReplacement.Base.Structs;
 [StructLayout(LayoutKind.Explicit)]
 public struct ActionTimelineData
 {
-    //This is a String so.. uh.. yeah
-    //[FieldOffset(0x0)]
-    //public ushort Path;
+    //NEW!! SETUP
+    [FieldOffset(0x0)]
+    public ushort AnimationOffset;
 
-    /* //these access subsheets
+    //NEW!! SETUP
     [FieldOffset(0x4)]
     public ushort WeaponTimeline;
-
-    [FieldOffset(0x4)]
-    public ushort SwimTimeline;
-    */
-
+    
     [FieldOffset(0x8)]
     public byte Type;
 

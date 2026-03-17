@@ -3,15 +3,18 @@
 namespace ActionTimelineReplacement.Base.Structs;
 
 [StructLayout(LayoutKind.Explicit)]
-public struct MountTransientData
+public struct GeneralActionData
 {
     //ALL NEW!! SETUP
     [FieldOffset(0x0)]
-    public ushort DescriptionOffset;
+    public ushort NameOffset;
 
     [FieldOffset(0x4)]
-    public ushort FullDescriptionOffset;
+    public ushort Description;
 
-    [FieldOffset(0x8)]
-    public ushort TooltipOffset;
+    [FieldOffset(0xC)]
+    public ushort Action;
+
+    [FieldOffset(0x08)]
+    public ushort Icon;
 }

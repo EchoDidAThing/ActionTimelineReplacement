@@ -12,6 +12,7 @@ public static unsafe partial class Setup
         LoadMountCustomize(MountCustomizeManager.AllMountCustomizeIds);
         LoadStatus(StatusManager.AllStatusIds);
         LoadStatusLoopVFX(StatusLoopVFXManager.AllStatusLoopVFXIds);
+        LoadStatusHitEffect(StatusHitEffectManager.AllStatusHitEffectIds);
         LoadTiltParam(TiltParamManager.AllTiltParamIds);
         //LoadPlaceName(PlaceNameManager.AllPlaceNameIds);
         LoadGlasses(GlassesManager.AllGlassesIds);

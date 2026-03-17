@@ -3,9 +3,12 @@
 namespace ActionTimelineReplacement.Base.Structs;
 
 [StructLayout(LayoutKind.Explicit)]
-public struct ActionTransientData
+public struct BGMData
 {
-    //NEW!! SETUP
+    //ALL NEW!! SETUP
     [FieldOffset(0x0)]
-    public ushort DescriptionOffset;
+    public ushort PathOffset;
+
+    [FieldOffset(0x08)]
+    public ushort Priority;
 }

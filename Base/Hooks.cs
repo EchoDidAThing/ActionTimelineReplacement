@@ -13,6 +13,7 @@ public static unsafe class Hooks
     private delegate ActionData* GetActionDataDelegate(uint RowId);
     private delegate StatusData* GetStatusDataDelegate(uint RowId);
     private delegate StatusLoopVFXData* GetStatusLoopVFXDataDelegate(uint RowId);
+    private delegate StatusHitEffectData* GetStatusHitEffectDataDelegate(uint RowId);
     private delegate IntPtr GetStatusLoopVFXDataDelegatepublic(uint RowId);
     private delegate MountData* GetMountDataDelegate(uint RowId);
     private delegate MountCustomizeData* GetMountCustomizeDataDelegate(uint RowId);
@@ -21,6 +22,7 @@ public static unsafe class Hooks
     private delegate GlassesStyleData* GetGlassesStyleDataDelegate(uint RowId);
     //private delegate PlaceNameData* GetPlaceNameDataDelegate(uint RowId);
     private delegate ActionTimelineData* GetActionTimelineDataDelegate(uint RowId);
+    private delegate WeaponTimelineData* GetWeaponTimelineDataDelegate(uint RowId);
     private delegate OrnamentData* GetOrnamentDataDelegate(uint RowId);
     private delegate OrnamentCustomizeData* GetOrnamentCustomizeDataDelegate(uint RowId);
     private delegate OrnamentCustomizeGroupData* GetOrnamentCustomizeGroupDataDelegate(uint RowId);
@@ -29,7 +31,6 @@ public static unsafe class Hooks
 
     //private delegate MotionTimelineData* GetMotionTimelineDataDelegate(uint RowId);
     //private delegate PointMenuChoiceData* GetPointMenuChoiceDataDelegate(float RowId);
-    //private delegate WeaponTimelineData* GetWeaponTimelineDataDelegate(uint RowId);
     //private delegate ActionCastTimelineData* GetActionCastTimelineDataDelegate(uint RowId);
     //private delegate ActionCastVFXData* GetActionCastVFXDataDelegate(uint RowId);
     //private delegate ActionTransientData* GetActionTransientDataDelegate(uint RowId);
@@ -43,6 +44,7 @@ public static unsafe class Hooks
     private static GetStatusDataDelegate? _getStatusDataHook;
     private static GetStatusLoopVFXDataDelegate? _getStatusLoopVFXDataHook;
     private static GetStatusLoopVFXDataDelegatepublic? _getStatusLoopVFXDataHookpublic;
+    private static GetStatusHitEffectDataDelegate? _getStatusHitEffectDataHook;
     private static GetMountDataDelegate? _getMountDataHook; 
     private static GetMountCustomizeDataDelegate? _getMountCustomizeDataHook;
     private static GetTiltParamDataDelegate? _getTiltParamDataHook;
@@ -50,6 +52,7 @@ public static unsafe class Hooks
     private static GetGlassesStyleDataDelegate? _getGlassesStyleDataHook;
     //private static GetPlaceNameDataDelegate? _getPlaceNameDataHook;
     private static GetActionTimelineDataDelegate? _getActionTimelineDataHook;
+    private static GetWeaponTimelineDataDelegate? _getWeaponTimelineDataHook;
     private static GetOrnamentDataDelegate? _getOrnamentDataHook;
     private static GetOrnamentCustomizeDataDelegate? _getOrnamentCustomizeDataHook;
     private static GetOrnamentCustomizeGroupDataDelegate? _getOrnamentCustomizeGroupDataHook;
@@ -57,7 +60,6 @@ public static unsafe class Hooks
     private static GetVFXDataDelegatepublic? _getVFXDataHookpublic;
 
     //private static GetPointMenuChoiceDataDelegate? _getPointMenuChoiceDataHook;
-    //private static GetWeaponTimelineDataDelegate? _getWeaponTimelineDataHook;
     //private static GetActionCastTimelineDataDelegate? _getActionCastTimelineDataHook;
     //private static GetActionCastVFXDataDelegate? _getActionCastVFXDataHook;
     //private static GetActionTransientDataDelegate? _getActionTransientDataHook;
@@ -85,13 +87,13 @@ public static unsafe class Hooks
         return _getStatusDataHook(RowId);
     }
 
-    /*public static StatusHitEffectData* GetStatusHitEffectData(uint RowId)
+    public static StatusHitEffectData* GetStatusHitEffectData(uint RowId)
     {
         _getStatusHitEffectDataHook ??= Marshal.GetDelegateForFunctionPointer<GetStatusHitEffectDataDelegate>(Service.Scanner.ScanText(
             "E8 ?? ?? ?? ?? 48 85 C0 0F 84 ?? ?? ?? ?? 0F B7 30 E9"));
         //updated for 7.4, under Client::Game::Character::ActionEffectHandler.ApplyOneTargetEffect
         return _getStatusHitEffectDataHook(RowId);
-    }*/
+    }
 
     public static StatusLoopVFXData* GetStatusLoopVFXData(uint RowId)
     {
@@ -162,6 +164,14 @@ public static unsafe class Hooks
 
 
         return _getActionTimelineDataHook(RowId);
+    }
+    public static WeaponTimelineData* GetWeaponTimelineData(uint RowId)
+    {
+        _getWeaponTimelineDataHook ??= Marshal.GetDelegateForFunctionPointer<GetWeaponTimelineDataDelegate>(Service.Scanner.ScanText(
+            "E8 ?? ?? ?? ?? 48 8B E8 48 85 C0 0F 84 ?? ?? ?? ?? 83 FF ?? 75"));
+
+
+        return _getWeaponTimelineDataHook(RowId);
     }
 
     public static OrnamentData* GetOrnamentData(uint RowId)

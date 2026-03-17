@@ -1,4 +1,5 @@
-﻿using ActionTimelineReplacement.Base.Structs;
+﻿using ActionTimelineReplacement.Base.Global;
+using ActionTimelineReplacement.Base.Structs;
 
 namespace ActionTimelineReplacement.Sheets;
 
@@ -22,6 +23,7 @@ public class TiltParamReplace(
     public byte Unknown3 = unknown3;
     public byte Unknown4 = unknown4;
     public bool Unknown5 = mouseReverse;
+    public byte UnknownBitfield1 = ProcessingGlobals.PackBools(mouseReverse);
     public unsafe void WriteToPointer(TiltParamData* ptr)
     {
         ptr->TiltRate = Unknown0;
@@ -29,6 +31,6 @@ public class TiltParamReplace(
         ptr->MaxAngle = Unknown2;
         ptr->Unknown3 = Unknown3;
         ptr->Unknown4 = Unknown4;
-        ptr->MouseReverse = Unknown5;
+        ptr->UnknownBitfield1 = UnknownBitfield1;
     }
 }

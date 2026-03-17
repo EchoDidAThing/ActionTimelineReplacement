@@ -5,5 +5,10 @@ namespace ActionTimelineReplacement.Base.Structs;
 [StructLayout(LayoutKind.Explicit)]
 public struct ActionCastTimelineData
 {
-    //FILLMEOUT
+    //ALL NEW!! SETUP
+    [FieldOffset(0x0)]
+    public ushort ActionTimeline;
+
+    [FieldOffset(0x0)]
+    public ushort Vfx;
 }
