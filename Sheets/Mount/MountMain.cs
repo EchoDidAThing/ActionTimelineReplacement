@@ -72,8 +72,6 @@ public class MountMain
 
                 DrawUShort("MountCustomize", "Mount Customize ID", ref replace.MountCustomize, i => i.MountCustomize);
 
-                DrawUShort("Unknown9", "Unknown 9", ref replace.Unknown9, i => i.Unknown9);
-
                 DrawUShort("SwimAnimSpeed", "Swim Animation Speed", ref replace.SwimAnimSpeed, i => i.SwimAnimSpeed);
 
                 //DrawByte("MountBoolSet1", "Mount Bools 1 [raw]", ref replace.MountBoolSet1, i => i.MountBoolSet1);
@@ -171,7 +169,6 @@ public class MountMain
                                     original.Unknown7,
                                     original.Unknown8,
                                     original.MountCustomize,
-                                    original.Unknown9,
                                     original.SwimAnimSpeed),
                                 false);
                         Service.Config.Save();

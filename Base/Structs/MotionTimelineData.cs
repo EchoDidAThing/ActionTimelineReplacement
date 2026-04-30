@@ -7,7 +7,7 @@ public struct MotionTimelineData
 {
     //NEW!! SETUP
     [FieldOffset(0x0)]
-    public string FileOffset;
+    public ushort FileOffset;
 
     [FieldOffset(0x4)]
     public byte BlendGroup;

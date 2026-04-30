@@ -19,7 +19,6 @@ public class MountReplace(
     ushort unknown7,
     ushort unknown8,
     ushort mountCustomize,
-    ushort unknown9,
     ushort swimAnimSpeed)
     //byte mountBoolSet1
 {
@@ -33,7 +32,6 @@ public class MountReplace(
     public ushort Unknown7 = unknown7;
     public ushort Unknown8 = unknown8;
     public ushort MountCustomize = mountCustomize;
-    public ushort Unknown9 = unknown9;
     public ushort SwimAnimSpeed = swimAnimSpeed;
     //public byte MountBoolSet1 = mountBoolSet1;
     public unsafe void WriteToPointer(MountData* ptr)
@@ -48,7 +46,6 @@ public class MountReplace(
         ptr->Unknown7 = Unknown7;
         ptr->Unknown8 = Unknown8;
         ptr->MountCustomize = MountCustomize;
-        ptr->Unknown9 = Unknown9;
         ptr->UnderwaterAnimSpeed = SwimAnimSpeed;
         //ptr->MountBoolSet1 = MountBoolSet1;
     }

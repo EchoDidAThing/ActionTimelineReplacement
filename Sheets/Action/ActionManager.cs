@@ -52,10 +52,9 @@ public static class ActionManager
             var act = Service.DataManager.GetExcelSheet<Action>()?.GetRow(idx);
             replacement = new ActionReplace(
                 (ushort)(act?.AnimationStart.RowId ?? 0),
-                (ushort)(act?.AnimationEnd.RowId ?? 0),
+                (short)(act?.AnimationEnd.RowId ?? 0),
                 (ushort)(act?.ActionTimelineHit.RowId ?? 0),
                 (ushort)(act?.VFX.RowId ?? 0),
-                (ushort)(act?.ActionCategory.RowId ?? 0),
                 act?.Unknown1 ?? 0,
                 act?.Unknown2 ?? 0,
                 act?.Unknown4 ?? 0,

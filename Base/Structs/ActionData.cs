@@ -10,7 +10,7 @@ public struct ActionData
     [FieldOffset(0x0)]
     public ushort ActionNameOffset;
 
-    [FieldOffset(0x0)]
+    [FieldOffset(0x08)]
     public ushort Icon;
 
     [FieldOffset(0xA)]

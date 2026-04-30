@@ -50,13 +50,13 @@ public static class GlassesStyleManager
         {
             var act = Service.DataManager.GetExcelSheet<GlassesStyle>()?.GetRow(idx);
             replacement = new GlassesStyleReplace(
-                act?.Unknown_70_1 ?? 0,
-                act?.Unknown_70_2 ?? 0,
-                act?.Unknown_70_3 ?? 0,
+                act?.Adjective ?? 0,
+                act?.PossessivePronoun?? 0,
+                act?.StartsWithVowel ?? 0,
                 act?.Unknown_70_4 ?? 0,
-                act?.Unknown_70_5 ?? 0,
-                act?.Unknown_70_6 ?? 0,
-                act?.Unknown_70_7 ?? 0);
+                act?.Pronoun ?? 0,
+                act?.Article ?? 0,
+                act?.GlassesSlot ?? 0);
         }
         return replacement!;
     }
