@@ -6,7 +6,7 @@ namespace ActionTimelineReplacement.Base;
 
 public static unsafe class Hooks
 {
-    public const string vfxhook = "E8 ?? ?? ?? ?? 48 8B D0 48 8B CB E8 ?? ?? ?? ?? 0F 28 B4 24"; //updated for 7.4
+    public const string vfxhook = "E8 ?? ?? ?? ?? 48 8B D0 48 8B CB E8 ?? ?? ?? ?? 45 84 F6"; //updated for 7.5
     public const string statusloopvfxhook = "E8 ?? ?? ?? ?? 48 8B D8 48 85 C0 74 ?? 66 39 38";//updated 7.4
 
     #region delegates
@@ -81,8 +81,8 @@ public static unsafe class Hooks
     public static StatusData* GetStatusData(uint RowId)
     {
         _getStatusDataHook ??= Marshal.GetDelegateForFunctionPointer<GetStatusDataDelegate>(Service.Scanner.ScanText(
-            "E8 ?? ?? ?? ?? 48 85 C0 0F 84 ?? ?? ?? ?? 44 0F B7 03"));
-        //updated for 7.4, Component::Exd::ExdModule.GetStatusRow located inside Client::Game::ActionManager.GetActionStatus
+            "E8 ?? ?? ?? ?? 4C 8B C0 48 85 C0 0F 84 ?? ?? ?? ?? 0F B7 13"));
+        //updated for 7.5, Component::Exd::ExdModule.GetStatusRow located inside Client::Game::ActionManager.GetActionStatus
         //..from Namingway: "E8 ?? ?? ?? ?? 48 85 C0 74 96" Check it if the other one is not gonna work
         return _getStatusDataHook(RowId);
     }
@@ -185,8 +185,8 @@ public static unsafe class Hooks
     public static OrnamentCustomizeData* GetOrnamentCustomizeData(uint RowId)
     {
         _getOrnamentCustomizeDataHook ??= Marshal.GetDelegateForFunctionPointer<GetOrnamentCustomizeDataDelegate>(Service.Scanner.ScanText(
-            "E8 ?? ?? ?? ?? 48 8B D8 48 85 C0 0F 84 ?? ?? ?? ?? 0F B7 08"));
-        //Updated for 7.4 Component::Exd::ExdModule.GetOrnamentCustomizeRow located inside A nested function under Client::Game::Character::OrnamentContainer.Update
+            "E8 ?? ?? ?? ?? 48 8B D8 48 85 C0 0F 84 ?? ?? ?? ?? 0F B7 08 0F BF 40"));
+        //Updated for 7.5 Component::Exd::ExdModule.GetOrnamentCustomizeRow located inside A nested function under Client::Game::Character::OrnamentContainer.Update
         return _getOrnamentCustomizeDataHook(RowId);
     }
     
