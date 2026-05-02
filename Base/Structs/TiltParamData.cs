@@ -21,5 +21,8 @@ public struct TiltParamData
     public byte Unknown4;
 
     [FieldOffset(0x8)]
+    public byte UnknownBitfield1;
+
+    [FieldOffset(0x8)]
     public bool MouseReverse;
 }

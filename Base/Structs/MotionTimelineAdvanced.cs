@@ -3,15 +3,12 @@
 namespace ActionTimelineReplacement.Base.Structs;
 
 [StructLayout(LayoutKind.Explicit)]
-public struct MountTransientData
+public struct MotionTimelineAdvanced
 {
     //ALL NEW!! SETUP
     [FieldOffset(0x0)]
-    public ushort DescriptionOffset;
+    public byte SourceStringOffset;
 
     [FieldOffset(0x4)]
-    public ushort FullDescriptionOffset;
-
-    [FieldOffset(0x8)]
-    public ushort TooltipOffset;
+    public byte DestStringOffset;
 }

@@ -1,17 +1,22 @@
-﻿using System.Runtime.InteropServices;
+﻿using System;
+using System.Runtime.InteropServices;
 
 namespace ActionTimelineReplacement.Base.Structs;
 
 [StructLayout(LayoutKind.Explicit)]
 public struct StatusData
 {
-    //This is a String so.. uh.. yeah
-    //[FieldOffset(0x0)]
-    //public ushort Name;
+    //NEW!! SETUP
+    [FieldOffset(0x0)]
+    public ushort NameOffset;
 
-    //This is a String so.. uh.. yeah
-    //[FieldOffset(0x4)]
-    //public ushort Description;
+    //NEW!! SETUP
+    [FieldOffset(0x4)]
+    public ushort DescriptionOffset;
+
+    //NEW!! SETUP
+    [FieldOffset(0x8)]
+    public UInt32 Icon;
 
     [FieldOffset(0xC)]
     public int ParamModifier;
@@ -25,6 +30,7 @@ public struct StatusData
     [FieldOffset(0x17)]
     public byte StatusCategory; //buff, debuff, removable
 
+    //MAYBE CHANGE TO UINT16
     [FieldOffset(0x18)]
     public byte StatusHitEffect;
 

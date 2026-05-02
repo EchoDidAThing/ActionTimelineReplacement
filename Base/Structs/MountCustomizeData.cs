@@ -112,4 +112,22 @@ public struct MountCustomizeData
 
     [FieldOffset(0x38)]
     public byte VieraFemaleCameraHeight;
+
+    [FieldOffset(0x39)]
+    public byte Unknown0;
+
+    [FieldOffset(0x3A)]
+    public byte Unknown1;
+
+    [FieldOffset(0x3B)]
+    public byte Unknown2;
+
+    [FieldOffset(0x3C)]
+    public byte Unknown3;
+
+    [FieldOffset(0x3D)]
+    public byte Unknown4;
+
+    [FieldOffset(0x3E)]
+    public byte Unknown5;
 }

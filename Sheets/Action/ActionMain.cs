@@ -57,11 +57,9 @@ public class ActionMain
 
                 DrawUShort("Start", "Start", ref replace.AnimationStart, i => i.AnimationStart);
 
-                DrawUShort("End", "End", ref replace.AnimationEnd, i => i.AnimationEnd);
+                DrawShort("End", "End", ref replace.AnimationEnd, i => i.AnimationEnd);
 
                 DrawUShort("Hit", "Hit", ref replace.ActionTimelineHit, i => i.ActionTimelineHit);
-
-                DrawUShort("ActionCategory", "Action Category ID", ref replace.ActionCategory, i => i.ActionCategory);
 
                 DrawByte("Unknown1", "Unknown 1", ref replace.Unknown1, i => i.Unknown1);
 
@@ -87,6 +85,33 @@ public class ActionMain
                     if (ImGui.InputInt("##" + refname + key, ref relay))
                     {
                         value = (ushort)relay;
+                        Setup.SetAction(key);
+                        Service.Config.Save();
+                    }
+                    ImGui.SameLine();
+
+                    using (ImRaii.PushFont(UiBuilder.IconFont))
+                    {
+                        if (ImGui.Button($"{FontAwesomeIcon.Reply.ToIconString()}##{refname}{key}"))
+                        {
+                            value = getDefault(ActionManager.GetOriginal(key));
+                            Setup.SetAction(key);
+                            Service.Config.Save();
+                        }
+                    }
+                }
+
+
+                void DrawShort(string refname, string text, ref short value,
+                    Func<ActionReplace, short> getDefault)
+                {
+                    ImGui.TextUnformatted(text);
+                    ImGui.SetCursorPosX(ImGui.GetCursorPosX() + 15);
+                    ImGui.SetNextItemWidth(110 * CalcGlobals.GlobalScale());
+                    int relay = value;
+                    if (ImGui.InputInt("##" + refname + key, ref relay))
+                    {
+                        value = (short)relay;
                         Setup.SetAction(key);
                         Service.Config.Save();
                     }
@@ -157,7 +182,6 @@ public class ActionMain
                                     original.AnimationEnd,
                                     original.ActionTimelineHit,
                                     original.CastVfx,
-                                    original.ActionCategory,
                                     original.Unknown1,
                                     original.Unknown2,
                                     original.Unknown4,

@@ -21,6 +21,7 @@ public sealed partial class ConfigWindow : Window
     private string _searchTiltParam = string.Empty;
     private string _searchStatus = string.Empty;
     private string _searchStatusLoopVFX = string.Empty;
+    private string _searchStatusHitEffect = string.Empty;
     private string _searchGlasses = string.Empty;
     private string _searchGlassesStyle = string.Empty;
     //private string _searchPlaceName = string.Empty;
@@ -40,6 +41,7 @@ public sealed partial class ConfigWindow : Window
             _AllHeaders.Add("MountCustomize", []);
             _AllHeaders.Add("Status", []);
             _AllHeaders.Add("StatusLoopVFX", []);
+            _AllHeaders.Add("StatusHitEffect", []);
             _AllHeaders.Add("TiltParam", []);
             _AllHeaders.Add("Glasses", []);
             _AllHeaders.Add("GlassesStyle", []);
@@ -106,6 +108,9 @@ public sealed partial class ConfigWindow : Window
                         break;
                     case "StatusLoopVFX":
                         StatusLoopVFXMain.Draw(mainkey, ref _activeSet, ref _searchStatusLoopVFX);
+                        break;
+                    case "StatusHitEffect":
+                        StatusHitEffectMain.Draw(mainkey, ref _activeSet, ref _searchStatusHitEffect);
                         break;
                     case "TiltParam":
                         TiltParamMain.Draw(mainkey, ref _activeSet, ref _searchTiltParam);

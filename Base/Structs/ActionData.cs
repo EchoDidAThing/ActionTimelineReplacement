@@ -1,10 +1,18 @@
-﻿using System.Runtime.InteropServices;
+﻿using System;
+using System.Runtime.InteropServices;
 
 namespace ActionTimelineReplacement.Base.Structs;
 
 [StructLayout(LayoutKind.Explicit)]
 public struct ActionData
 {
+    //NEW!! SETUP
+    [FieldOffset(0x0)]
+    public ushort ActionNameOffset;
+
+    [FieldOffset(0x08)]
+    public ushort Icon;
+
     [FieldOffset(0xA)]
     public ushort CastVfx;
 
@@ -12,10 +20,7 @@ public struct ActionData
     public ushort ActionTimelineHit;
 
     [FieldOffset(0x20)]
-    public ushort AnimationEnd;
-
-    [FieldOffset(0x22)]
-    public ushort ActionCategory;
+    public Int16 AnimationEnd;
 
     [FieldOffset(0x23)]
     public byte Unknown1;

@@ -3,9 +3,9 @@
 namespace ActionTimelineReplacement.Base.Structs;
 
 [StructLayout(LayoutKind.Explicit)]
-public struct ActionTransientData
+public struct ItemActionData
 {
-    //NEW!! SETUP
+    //ALL NEW!! SETUP
     [FieldOffset(0x0)]
-    public ushort DescriptionOffset;
+    public ushort Action;
 }
