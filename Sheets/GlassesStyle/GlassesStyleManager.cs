@@ -31,14 +31,20 @@ public static class GlassesStyleManager
     {
         if (!Service.Config.EnableReplacement) return null;
 
+        List<KeyValuePair<int, GlassesStyleReplace>> replacements = [];
+
         foreach (var item in Service.Config.ReplacementSets)
         {
             foreach (var replacement in item.GlassesStyleWriter
-                         .Where(r => item.Enabled)
-                         .OrderByDescending(r => r.Key))
+                         .Where(r => item.Enabled))
             {
-                return replacement.Value.Replacement;
+                replacements.Add(new KeyValuePair<int, GlassesStyleReplace>(item.Priority, replacement.Value.Replacement));
             }
+        }
+        foreach (var replacement in replacements
+                         .OrderByDescending(r => r.Key))
+        {
+            return replacement.Value;
         }
         return null;
     }

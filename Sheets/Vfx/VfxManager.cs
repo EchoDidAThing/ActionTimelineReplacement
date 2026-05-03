@@ -47,16 +47,23 @@ public static class VfxManager
 
     public static VfxReplace GetOriginal(uint idx)
     {
-        ref var replacement = ref CollectionsMarshal.GetValueRefOrAddDefault(old, idx, out var exists);
-        if (!exists)
-        {
-            var act = Service.DataManager.GetExcelSheet<VFX>()?.GetRow(idx);
+        if (!Service.Config.EnableReplacement) return null;
 
-            replacement = new VfxReplace(
-                idx,
-                act?.Location.ToString() ?? ""
-                );
+        List<KeyValuePair<int, VfxReplace>> replacements = [];
+
+        foreach (var item in Service.Config.ReplacementSets)
+        {
+            foreach (var replacement in item.VfxWriter
+                         .Where(r => item.Enabled))
+            {
+                replacements.Add(new KeyValuePair<int, VfxReplace>(item.Priority, replacement.Value.Replacement));
+            }
         }
-        return replacement!;
+        foreach (var replacement in replacements
+                         .OrderByDescending(r => r.Key))
+        {
+            return replacement.Value;
+        }
+        return null;
     }
 }

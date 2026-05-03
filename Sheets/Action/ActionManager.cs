@@ -32,14 +32,20 @@ public static class ActionManager
     {
         if (!Service.Config.EnableReplacement) return null;
 
+        List<KeyValuePair<int, ActionReplace>> replacements = [];
+
         foreach (var item in Service.Config.ReplacementSets)
         {
             foreach (var replacement in item.ActionWriter
-                         .Where(r => item.Enabled)
-                         .OrderByDescending(r => item.Priority))
+                         .Where(r => item.Enabled))
             {
-                return replacement.Value.Replacement;
+                replacements.Add(new KeyValuePair<int, ActionReplace>(item.Priority, replacement.Value.Replacement));
             }
+        }
+        foreach (var replacement in replacements
+                         .OrderByDescending(r => r.Key))
+        {
+            return replacement.Value;
         }
         return null;
     }
