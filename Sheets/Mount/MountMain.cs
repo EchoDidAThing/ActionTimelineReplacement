@@ -13,6 +13,7 @@ namespace ActionTimelineReplacement.Sheets;
 #region Main
 public class MountMain
 {
+    const string type = "Mount";
     public static void Draw(string mainkey, ref Configuration.ReplacementSet _activeSet, ref string search)
     {
         using var subList = ImRaii.Child(mainkey, CalcGlobals.BodyScale(), false);
@@ -24,6 +25,7 @@ public class MountMain
             foreach (var key in _activeSet.MountWriter.Keys)
             {
                 var replace = _activeSet.MountWriter[key].Replacement;
+                var DefaultValues = MountManager.GetOriginal(key);
 
                 if (ImGui.Checkbox("##" + key, ref _activeSet.MountWriter[key].Enabled))
                 {
@@ -52,27 +54,19 @@ public class MountMain
                 ImGui.SameLine();
                 ImGui.TextWrapped(MountManager.GetName(key));
 
-                DrawUShort("RideBGM", "Ride BGM ID", ref replace.RideBGM, i => i.RideBGM);
 
-                DrawUShort("GroundTilt", "Ground Tilt ID", ref replace.TiltParam1, i => i.TiltParam1);
+                UiGlobals.DrawUShort("Ride BGM ID", type, key, ref replace.RideBGM, DefaultValues.RideBGM);
+                UiGlobals.DrawUShort("Ground Tilt ID", type, key, ref replace.TiltParam1, DefaultValues.TiltParam1);
+                UiGlobals.DrawUShort("Fly/Swim Tilt ID", type, key, ref replace.TiltParam2, DefaultValues.TiltParam2);
+                UiGlobals.DrawUShort("Unknown Tilt3 ID", type, key, ref replace.TiltParam3, DefaultValues.TiltParam3);
+                UiGlobals.DrawUShort("Unknown Tilt4 ID", type, key, ref replace.TiltParam4, DefaultValues.TiltParam4);
+                UiGlobals.DrawUShort("Fly Up/Down Tilt", type, key, ref replace.FlyUpDownTilt, DefaultValues.FlyUpDownTilt);
+                UiGlobals.DrawUShort("Unknown 6", type, key, ref replace.Unknown6, DefaultValues.Unknown6);
+                UiGlobals.DrawUShort("Unknown 7", type, key, ref replace.Unknown7, DefaultValues.Unknown7);
+                UiGlobals.DrawUShort("Unknown 8", type, key, ref replace.Unknown8, DefaultValues.Unknown8);
+                UiGlobals.DrawUShort("Mount Customize ID", type, key, ref replace.MountCustomize, DefaultValues.MountCustomize);
+                UiGlobals.DrawUShort("Swim Animation Speed", type, key, ref replace.SwimAnimSpeed, DefaultValues.SwimAnimSpeed);
 
-                DrawUShort("FlySwimTilt", "Fly/Swim Tilt ID", ref replace.TiltParam2, i => i.TiltParam2);
-
-                DrawUShort("Tilt3", "Unknown Tilt3 ID", ref replace.TiltParam3, i => i.TiltParam3);
-
-                DrawUShort("Tilt4", "Unknown Tilt4 ID", ref replace.TiltParam4, i => i.TiltParam4);
-
-                DrawUShort("FlyUpDownTilt", "Fly Up/Down Tilt", ref replace.FlyUpDownTilt, i => i.FlyUpDownTilt);
-
-                DrawUShort("Unknown6", "Unknown 6", ref replace.Unknown6, i => i.Unknown6);
-
-                DrawUShort("Unknown7", "Unknown 7", ref replace.Unknown7, i => i.Unknown7);
-
-                DrawUShort("Unknown8", "Unknown 8", ref replace.Unknown8, i => i.Unknown8);
-
-                DrawUShort("MountCustomize", "Mount Customize ID", ref replace.MountCustomize, i => i.MountCustomize);
-
-                DrawUShort("SwimAnimSpeed", "Swim Animation Speed", ref replace.SwimAnimSpeed, i => i.SwimAnimSpeed);
 
                 //DrawByte("MountBoolSet1", "Mount Bools 1 [raw]", ref replace.MountBoolSet1, i => i.MountBoolSet1);
 
@@ -82,58 +76,7 @@ public class MountMain
                 #endregion
                 #region Items
 
-                //to do: streamline items
-                void DrawUShort(string refname, string text, ref ushort value,
-                    Func<MountReplace, ushort> getDefault)
-                {
-                    ImGui.TextUnformatted(text);
-                    ImGui.SetCursorPosX(ImGui.GetCursorPosX() + 15);
-                    ImGui.SetNextItemWidth(110 * CalcGlobals.GlobalScale());
-                    int relay = value;
-                    if (ImGui.InputInt("##" + refname + key, ref relay))
-                    {
-                        value = (ushort)relay;
-                        Setup.SetMount(key);
-                        Service.Config.Save();
-                    }
-                    ImGui.SameLine();
-
-                    using (ImRaii.PushFont(UiBuilder.IconFont))
-                    {
-                        if (ImGui.Button($"{FontAwesomeIcon.Reply.ToIconString()}##{refname}{key}"))
-                        {
-                            value = getDefault(MountManager.GetOriginal(key));
-                            Setup.SetMount(key);
-                            Service.Config.Save();
-                        }
-                    }
-                }
-
-                void DrawByte(string refname, string text, ref byte value,
-                    Func<MountReplace, byte> getDefault)
-                {
-                    ImGui.TextUnformatted(text);
-                    ImGui.SetCursorPosX(ImGui.GetCursorPosX() + 15);
-                    ImGui.SetNextItemWidth(110 * CalcGlobals.GlobalScale());
-                    int relay = value;
-                    if (ImGui.InputInt("##" + refname + key, ref relay))
-                    {
-                        value = (byte)relay;
-                        Setup.SetMount(key);
-                        Service.Config.Save();
-                    }
-                    ImGui.SameLine();
-
-                    using (ImRaii.PushFont(UiBuilder.IconFont))
-                    {
-                        if (ImGui.Button($"{FontAwesomeIcon.Reply.ToIconString()}##{refname}{key}"))
-                        {
-                            value = getDefault(MountManager.GetOriginal(key));
-                            Setup.SetMount(key);
-                            Service.Config.Save();
-                        }
-                    }
-                }
+             
             }
 
             #endregion

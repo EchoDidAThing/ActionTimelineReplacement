@@ -13,6 +13,7 @@ namespace ActionTimelineReplacement.Sheets;
 #region Main
 public class MountCustomizeMain
 {
+    const string type = "MountCustomize";
     public static void Draw(string mainkey, ref Configuration.ReplacementSet _activeSet, ref string search)
     {
         using var subList = ImRaii.Child(mainkey, CalcGlobals.BodyScale(), false);
@@ -24,6 +25,7 @@ public class MountCustomizeMain
             foreach (var key in _activeSet.MountCustomizeWriter.Keys)
             {
                 var replace = _activeSet.MountCustomizeWriter[key].Replacement;
+                var DefaultValues = MountCustomizeManager.GetOriginal(key);
 
                 if (ImGui.Checkbox("##" + key, ref _activeSet.MountCustomizeWriter[key].Enabled))
                 {
@@ -52,42 +54,43 @@ public class MountCustomizeMain
                 ImGui.SameLine();
                 ImGui.TextWrapped(MountCustomizeManager.GetName(key));
 
-                DrawUShort("HyurMidlanderMaleScale", "Midlander Male Scale", ref replace.HyurMidlanderMaleScale, i => i.HyurMidlanderMaleScale);
-                DrawUShort("HyurMidlanderFemaleScale", "Midlander Female Scale", ref replace.HyurMidlanderFemaleScale, i => i.HyurMidlanderFemaleScale);
-                DrawUShort("HyurHighlanderMaleScale", "Highlander Male Scale", ref replace.HyurHighlanderMaleScale, i => i.HyurHighlanderMaleScale);
-                DrawUShort("HyurHighlanderFemaleScale", "Highlander Female Scale", ref replace.HyurHighlanderFemaleScale, i => i.HyurHighlanderFemaleScale);
-                DrawUShort("ElezenMaleScale", "Elezen Male Scale", ref replace.ElezenMaleScale, i => i.ElezenMaleScale);
-                DrawUShort("ElezenFemaleScale", "Elezen Female Scale", ref replace.ElezenFemaleScale, i => i.ElezenFemaleScale);
-                DrawUShort("LalafellMaleScale", "Lalafell Male Scale", ref replace.LalafellMaleScale, i => i.LalafellMaleScale);
-                DrawUShort("LalafellFemaleScale", "Lalafell Female Scale", ref replace.LalafellFemaleScale, i => i.LalafellFemaleScale);
-                DrawUShort("MiqoteMaleScale", "Miqote Male Scale", ref replace.MiqoteMaleScale, i => i.MiqoteMaleScale);
-                DrawUShort("MiqoteFemaleScale", "Miqote Female Scale", ref replace.MiqoteFemaleScale, i => i.MiqoteFemaleScale);
-                DrawUShort("RoegadynMaleScale", "Roegadyn Male Scale", ref replace.RoegadynMaleScale, i => i.RoegadynMaleScale);
-                DrawUShort("RoegadynFemaleScale", "Roegadyn Female Scale", ref replace.RoegadynFemaleScale, i => i.RoegadynFemaleScale);
-                DrawUShort("AuRaMaleScale", "AuRa Male Scale", ref replace.AuRaMaleScale, i => i.AuRaMaleScale);
-                DrawUShort("AuRaFemaleScale", "AuRa Female Scale", ref replace.AuRaFemaleScale, i => i.AuRaFemaleScale);
-                DrawUShort("HrothgarMaleScale", "Hrothgar Male Scale", ref replace.HrothgarMaleScale, i => i.HrothgarMaleScale);
-                DrawUShort("HrothgarFemaleScale", "Hrothgar Female Scale", ref replace.HrothgarFemaleScale, i => i.HrothgarFemaleScale);
-                DrawUShort("VieraMaleScale", "Viera Male Scale", ref replace.VieraMaleScale, i => i.VieraMaleScale);
-                DrawUShort("VieraFemaleScale", "Viera Female Scale", ref replace.VieraFemaleScale, i => i.VieraFemaleScale);
-                DrawUShort("HyurMidlanderMaleCameraHeight", "Midlander Male CameraHeight", ref replace.HyurMidlanderMaleCameraHeight, i => i.HyurMidlanderMaleCameraHeight);
-                DrawUShort("HyurMidlanderFemaleCameraHeight", "Midlander Female CameraHeight", ref replace.HyurMidlanderFemaleCameraHeight, i => i.HyurMidlanderFemaleCameraHeight);
-                DrawUShort("HyurHighlanderMaleCameraHeight", "Highlander Male CameraHeight", ref replace.HyurHighlanderMaleCameraHeight, i => i.HyurHighlanderMaleCameraHeight);
-                DrawByte("HyurHighlanderFemaleCameraHeight", "Highlander Female CameraHeight", ref replace.HyurHighlanderFemaleCameraHeight, i => i.HyurHighlanderFemaleCameraHeight);
-                DrawByte("ElezenMaleCameraHeight", "Elezen Male CameraHeight", ref replace.ElezenMaleCameraHeight, i => i.ElezenMaleCameraHeight);
-                DrawByte("ElezenFemaleCameraHeight", "Elezen Female CameraHeight", ref replace.ElezenFemaleCameraHeight, i => i.ElezenFemaleCameraHeight);
-                DrawByte("LalafellMaleCameraHeight", "Lalafell Male CameraHeight", ref replace.LalafellMaleCameraHeight, i => i.LalafellMaleCameraHeight);
-                DrawByte("LalafellFemaleCameraHeight", "Lalafell Female CameraHeight", ref replace.LalafellFemaleCameraHeight, i => i.LalafellFemaleCameraHeight);
-                DrawByte("MiqoteMaleCameraHeight", "Miqote Male CameraHeight", ref replace.MiqoteMaleCameraHeight, i => i.MiqoteMaleCameraHeight);
-                DrawByte("MiqoteFemaleCameraHeight", "Miqote Female CameraHeight", ref replace.MiqoteFemaleCameraHeight, i => i.MiqoteFemaleCameraHeight);
-                DrawByte("RoegadynMaleCameraHeight", "Roegadyn Male CameraHeight", ref replace.RoegadynMaleCameraHeight, i => i.RoegadynMaleCameraHeight);
-                DrawByte("RoegadynFemaleCameraHeight", "Roegadyn Female CameraHeight", ref replace.RoegadynFemaleCameraHeight, i => i.RoegadynFemaleCameraHeight);
-                DrawByte("AuRaMaleCameraHeight", "AuRa Male CameraHeight", ref replace.AuRaMaleCameraHeight, i => i.AuRaMaleCameraHeight);
-                DrawByte("AuRaFemaleCameraHeight", "AuRa Female CameraHeight", ref replace.AuRaFemaleCameraHeight, i => i.AuRaFemaleCameraHeight);
-                DrawByte("HrothgarMaleCameraHeight", "Hrothgar Male CameraHeight", ref replace.HrothgarMaleCameraHeight, i => i.HrothgarMaleCameraHeight);
-                DrawByte("HrothgarFemaleCameraHeight", "Hrothgar Female CameraHeight", ref replace.HrothgarFemaleCameraHeight, i => i.HrothgarFemaleCameraHeight);
-                DrawByte("VieraMaleCameraHeight", "Viera Male CameraHeight", ref replace.VieraMaleCameraHeight, i => i.VieraMaleCameraHeight);
-                DrawByte("VieraFemaleCameraHeight", "Viera Female CameraHeight", ref replace.VieraFemaleCameraHeight, i => i.VieraFemaleCameraHeight);
+
+                UiGlobals.DrawUShort("Midlander Male Scale", type, key, ref replace.HyurMidlanderMaleScale, DefaultValues.HyurMidlanderMaleScale);
+                UiGlobals.DrawUShort("Midlander Female Scale", type, key, ref replace.HyurMidlanderFemaleScale, DefaultValues.HyurMidlanderFemaleScale);
+                UiGlobals.DrawUShort("Highlander Male Scale", type, key, ref replace.HyurHighlanderMaleScale, DefaultValues.HyurHighlanderMaleScale);
+                UiGlobals.DrawUShort("Highlander Female Scale", type, key, ref replace.HyurHighlanderFemaleScale, DefaultValues.HyurHighlanderFemaleScale);
+                UiGlobals.DrawUShort("Elezen Male Scale", type, key, ref replace.ElezenMaleScale, DefaultValues.ElezenMaleScale);
+                UiGlobals.DrawUShort("Elezen Female Scale", type, key, ref replace.ElezenFemaleScale, DefaultValues.ElezenFemaleScale);
+                UiGlobals.DrawUShort("Lalafell Male Scale", type, key, ref replace.LalafellMaleScale, DefaultValues.LalafellMaleScale);
+                UiGlobals.DrawUShort("Lalafell Female Scale", type, key, ref replace.LalafellFemaleScale, DefaultValues.LalafellFemaleScale);
+                UiGlobals.DrawUShort("Miqote Male Scale", type, key, ref replace.MiqoteMaleScale, DefaultValues.MiqoteMaleScale);
+                UiGlobals.DrawUShort("Miqote Female Scale", type, key, ref replace.MiqoteFemaleScale, DefaultValues.MiqoteFemaleScale);
+                UiGlobals.DrawUShort("Roegadyn Male Scale", type, key, ref replace.RoegadynMaleScale, DefaultValues.RoegadynMaleScale);
+                UiGlobals.DrawUShort("Roegadyn Female Scale", type, key, ref replace.RoegadynFemaleScale, DefaultValues.RoegadynFemaleScale);
+                UiGlobals.DrawUShort("AuRa Male Scale", type, key, ref replace.AuRaMaleScale, DefaultValues.AuRaMaleScale);
+                UiGlobals.DrawUShort("AuRa Female Scale", type, key, ref replace.AuRaFemaleScale, DefaultValues.AuRaFemaleScale);
+                UiGlobals.DrawUShort("Hrothgar Male Scale", type, key, ref replace.HrothgarMaleScale, DefaultValues.HrothgarMaleScale);
+                UiGlobals.DrawUShort("Hrothgar Female Scale", type, key, ref replace.HrothgarFemaleScale, DefaultValues.HrothgarFemaleScale);
+                UiGlobals.DrawUShort("Viera Male Scale", type, key, ref replace.VieraMaleScale, DefaultValues.VieraMaleScale);
+                UiGlobals.DrawUShort("Viera Female Scale", type, key, ref replace.VieraFemaleScale, DefaultValues.VieraFemaleScale);
+                UiGlobals.DrawUShort("Midlander Male CameraHeight", type, key, ref replace.HyurMidlanderMaleCameraHeight, DefaultValues.HyurMidlanderMaleCameraHeight);
+                UiGlobals.DrawUShort("Midlander Female CameraHeight", type, key, ref replace.HyurMidlanderFemaleCameraHeight, DefaultValues.HyurMidlanderFemaleCameraHeight);
+                UiGlobals.DrawUShort("Highlander Male CameraHeight", type, key, ref replace.HyurHighlanderMaleCameraHeight, DefaultValues.HyurHighlanderMaleCameraHeight);
+                UiGlobals.DrawByte("Highlander Female CameraHeight", type, key, ref replace.HyurHighlanderFemaleCameraHeight, DefaultValues.HyurHighlanderFemaleCameraHeight);
+                UiGlobals.DrawByte("Elezen Male CameraHeight", type, key, ref replace.ElezenMaleCameraHeight, DefaultValues.ElezenMaleCameraHeight);
+                UiGlobals.DrawByte("Elezen Female CameraHeight", type, key, ref replace.ElezenFemaleCameraHeight, DefaultValues.ElezenFemaleCameraHeight);
+                UiGlobals.DrawByte("Lalafell Male CameraHeight", type, key, ref replace.LalafellMaleCameraHeight, DefaultValues.LalafellMaleCameraHeight);
+                UiGlobals.DrawByte("Lalafell Female CameraHeight", type, key, ref replace.LalafellFemaleCameraHeight, DefaultValues.LalafellFemaleCameraHeight);
+                UiGlobals.DrawByte("Miqote Male CameraHeight", type, key, ref replace.MiqoteMaleCameraHeight, DefaultValues.MiqoteMaleCameraHeight);
+                UiGlobals.DrawByte("Miqote Female CameraHeight", type, key, ref replace.MiqoteFemaleCameraHeight, DefaultValues.MiqoteFemaleCameraHeight);
+                UiGlobals.DrawByte("Roegadyn Male CameraHeight", type, key, ref replace.RoegadynMaleCameraHeight, DefaultValues.RoegadynMaleCameraHeight);
+                UiGlobals.DrawByte("Roegadyn Female CameraHeight", type, key, ref replace.RoegadynFemaleCameraHeight, DefaultValues.RoegadynFemaleCameraHeight);
+                UiGlobals.DrawByte("AuRa Male CameraHeight", type, key, ref replace.AuRaMaleCameraHeight, DefaultValues.AuRaMaleCameraHeight);
+                UiGlobals.DrawByte("AuRa Female CameraHeight", type, key, ref replace.AuRaFemaleCameraHeight, DefaultValues.AuRaFemaleCameraHeight);
+                UiGlobals.DrawByte("Hrothgar Male CameraHeight", type, key, ref replace.HrothgarMaleCameraHeight, DefaultValues.HrothgarMaleCameraHeight);
+                UiGlobals.DrawByte("Hrothgar Female CameraHeight", type, key, ref replace.HrothgarFemaleCameraHeight, DefaultValues.HrothgarFemaleCameraHeight);
+                UiGlobals.DrawByte("Viera Male CameraHeight", type, key, ref replace.VieraMaleCameraHeight, DefaultValues.VieraMaleCameraHeight);
+                UiGlobals.DrawByte("Viera Female CameraHeight", type, key, ref replace.VieraFemaleCameraHeight, DefaultValues.VieraFemaleCameraHeight);
 
                 //DrawByte("MountBoolSet1", "Mount Bools 1 [raw]", ref replace.MountBoolSet1, i => i.MountBoolSet1);
 
@@ -97,58 +100,7 @@ public class MountCustomizeMain
                 #endregion
                 #region Items
 
-                //to do: streamline items
-                void DrawUShort(string refname, string text, ref ushort value,
-                    Func<MountCustomizeReplace, ushort> getDefault)
-                {
-                    ImGui.TextUnformatted(text);
-                    ImGui.SetCursorPosX(ImGui.GetCursorPosX() + 15);
-                    ImGui.SetNextItemWidth(110 * CalcGlobals.GlobalScale());
-                    int relay = value;
-                    if (ImGui.InputInt("##" + refname + key, ref relay))
-                    {
-                        value = (ushort)relay;
-                        Setup.SetMountCustomize(key);
-                        Service.Config.Save();
-                    }
-                    ImGui.SameLine();
-
-                    using (ImRaii.PushFont(UiBuilder.IconFont))
-                    {
-                        if (ImGui.Button($"{FontAwesomeIcon.Reply.ToIconString()}##{refname}{key}"))
-                        {
-                            value = getDefault(MountCustomizeManager.GetOriginal(key));
-                            Setup.SetMountCustomize(key);
-                            Service.Config.Save();
-                        }
-                    }
-                }
-
-                void DrawByte(string refname, string text, ref byte value,
-                    Func<MountCustomizeReplace, byte> getDefault)
-                {
-                    ImGui.TextUnformatted(text);
-                    ImGui.SetCursorPosX(ImGui.GetCursorPosX() + 15);
-                    ImGui.SetNextItemWidth(110 * CalcGlobals.GlobalScale());
-                    int relay = value;
-                    if (ImGui.InputInt("##" + refname + key, ref relay))
-                    {
-                        value = (byte)relay;
-                        Setup.SetMountCustomize(key);
-                        Service.Config.Save();
-                    }
-                    ImGui.SameLine();
-
-                    using (ImRaii.PushFont(UiBuilder.IconFont))
-                    {
-                        if (ImGui.Button($"{FontAwesomeIcon.Reply.ToIconString()}##{refname}{key}"))
-                        {
-                            value = getDefault(MountCustomizeManager.GetOriginal(key));
-                            Setup.SetMountCustomize(key);
-                            Service.Config.Save();
-                        }
-                    }
-                }
+               
             }
 
             #endregion

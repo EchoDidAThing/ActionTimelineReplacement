@@ -13,6 +13,7 @@ namespace ActionTimelineReplacement.Sheets;
 #region Main
 public class ActionMain
 {
+    const string type = "Action";
     public static void Draw(string mainkey, ref Configuration.ReplacementSet _activeSet, ref string search)
     {
         using var subList = ImRaii.Child(mainkey, CalcGlobals.BodyScale(), false);
@@ -24,6 +25,7 @@ public class ActionMain
             foreach (var key in _activeSet.ActionWriter.Keys)
             {
                 var replace = _activeSet.ActionWriter[key].Replacement;
+                var DefaultValues = ActionManager.GetOriginal(key);
 
                 if (ImGui.Checkbox("##" + key, ref _activeSet.ActionWriter[key].Enabled))
                 {
@@ -53,21 +55,16 @@ public class ActionMain
                 ImGui.SameLine();
                 ImGui.TextWrapped(ActionManager.GetName(key));
 
-                DrawUShort("Cast", "Cast", ref replace.CastVfx, i => i.CastVfx);
 
-                DrawUShort("Start", "Start", ref replace.AnimationStart, i => i.AnimationStart);
 
-                DrawShort("End", "End", ref replace.AnimationEnd, i => i.AnimationEnd);
-
-                DrawUShort("Hit", "Hit", ref replace.ActionTimelineHit, i => i.ActionTimelineHit);
-
-                DrawByte("Unknown1", "Unknown 1", ref replace.Unknown1, i => i.Unknown1);
-
-                DrawByte("Unknown2", "Unknown 2", ref replace.Unknown2, i => i.Unknown2);
-
-                DrawByte("Unknown4", "Unknown 4", ref replace.Unknown4, i => i.Unknown4);
-
-                DrawByte("Unknown_70", "Unknown_70", ref replace.Unknown_70, i => i.Unknown_70);
+                UiGlobals.DrawUShort("Cast", type, key, ref replace.CastVfx, DefaultValues.CastVfx);
+                UiGlobals.DrawUShort("Start", type, key, ref replace.AnimationStart, DefaultValues.AnimationStart);
+                UiGlobals.DrawShort("End", type, key, ref replace.AnimationEnd, DefaultValues.AnimationEnd);
+                UiGlobals.DrawUShort("Hit", type, key, ref replace.ActionTimelineHit, DefaultValues.ActionTimelineHit);
+                UiGlobals.DrawByte("Unknown 1", type, key, ref replace.Unknown1, DefaultValues.Unknown1);
+                UiGlobals.DrawByte("Unknown 2", type, key, ref replace.Unknown2, DefaultValues.Unknown2);
+                UiGlobals.DrawByte("Unknown 4", type, key, ref replace.Unknown4, DefaultValues.Unknown4);
+                UiGlobals.DrawByte("Unknown_70", type, key, ref replace.Unknown_70, DefaultValues.Unknown_70);
 
                 UiGlobals.DrawItemSeparator();
                 continue;
@@ -75,84 +72,7 @@ public class ActionMain
                 #endregion
                 #region Items
 
-                void DrawUShort(string refname, string text, ref ushort value,
-                    Func<ActionReplace, ushort> getDefault)
-                {
-                    ImGui.TextUnformatted(text);
-                    ImGui.SetCursorPosX(ImGui.GetCursorPosX() + 15);
-                    ImGui.SetNextItemWidth(110 * CalcGlobals.GlobalScale());
-                    int relay = value;
-                    if (ImGui.InputInt("##" + refname + key, ref relay))
-                    {
-                        value = (ushort)relay;
-                        Setup.SetAction(key);
-                        Service.Config.Save();
-                    }
-                    ImGui.SameLine();
-
-                    using (ImRaii.PushFont(UiBuilder.IconFont))
-                    {
-                        if (ImGui.Button($"{FontAwesomeIcon.Reply.ToIconString()}##{refname}{key}"))
-                        {
-                            value = getDefault(ActionManager.GetOriginal(key));
-                            Setup.SetAction(key);
-                            Service.Config.Save();
-                        }
-                    }
-                }
-
-
-                void DrawShort(string refname, string text, ref short value,
-                    Func<ActionReplace, short> getDefault)
-                {
-                    ImGui.TextUnformatted(text);
-                    ImGui.SetCursorPosX(ImGui.GetCursorPosX() + 15);
-                    ImGui.SetNextItemWidth(110 * CalcGlobals.GlobalScale());
-                    int relay = value;
-                    if (ImGui.InputInt("##" + refname + key, ref relay))
-                    {
-                        value = (short)relay;
-                        Setup.SetAction(key);
-                        Service.Config.Save();
-                    }
-                    ImGui.SameLine();
-
-                    using (ImRaii.PushFont(UiBuilder.IconFont))
-                    {
-                        if (ImGui.Button($"{FontAwesomeIcon.Reply.ToIconString()}##{refname}{key}"))
-                        {
-                            value = getDefault(ActionManager.GetOriginal(key));
-                            Setup.SetAction(key);
-                            Service.Config.Save();
-                        }
-                    }
-                }
-
-                void DrawByte(string refname, string text, ref byte value,
-                    Func<ActionReplace, byte> getDefault)
-                {
-                    ImGui.TextUnformatted(text);
-                    ImGui.SetCursorPosX(ImGui.GetCursorPosX() + 15);
-                    ImGui.SetNextItemWidth(110 * CalcGlobals.GlobalScale());
-                    int relay = value;
-                    if (ImGui.InputInt("##" + refname + key, ref relay))
-                    {
-                        value = (byte)relay;
-                        Setup.SetAction(key);
-                        Service.Config.Save();
-                    }
-                    ImGui.SameLine();
-
-                    using (ImRaii.PushFont(UiBuilder.IconFont))
-                    {
-                        if (ImGui.Button($"{FontAwesomeIcon.Reply.ToIconString()}##{refname}{key}"))
-                        {
-                            value = getDefault(ActionManager.GetOriginal(key));
-                            Setup.SetAction(key);
-                            Service.Config.Save();
-                        }
-                    }
-                }
+                
             }
             
             #endregion

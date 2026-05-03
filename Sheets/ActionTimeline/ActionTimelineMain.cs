@@ -13,6 +13,7 @@ namespace ActionTimelineReplacement.Sheets;
 #region Main
 public class ActionTimelineMain
 {
+    const string type = "ActionTimeline";
     public static void Draw(string mainkey, ref Configuration.ReplacementSet _activeSet, ref string search)
     {
         using var subList = ImRaii.Child(mainkey, CalcGlobals.BodyScale(), false);
@@ -24,6 +25,7 @@ public class ActionTimelineMain
             foreach (var key in _activeSet.ActionTimelineWriter.Keys)
             {
                 var replace = _activeSet.ActionTimelineWriter[key].Replacement;
+                var DefaultValues = ActionTimelineManager.GetOriginal(key);
 
                 if (ImGui.Checkbox("##" + key, ref _activeSet.ActionTimelineWriter[key].Enabled))
                 {
@@ -52,29 +54,19 @@ public class ActionTimelineMain
                 ImGui.SameLine();
                 ImGui.TextWrapped(ActionTimelineManager.GetName(key));
 
-                DrawByte("Type", "Type", ref replace.Type, i => i.Type);
 
-                DrawByte("Priority", "Priority", ref replace.Priority, i => i.Priority);
-
-                DrawByte("Stance", "Stance", ref replace.Stance, i => i.Stance);
-
-                DrawByte("Slot", "Slot", ref replace.Slot, i => i.Slot);
-
-                DrawByte("LookAtMode", "Look-At Mode", ref replace.LookAtMode, i => i.LookAtMode);                
-
-                DrawByte("ActionTimelineIDMode", "Action Timeline ID Mode", ref replace.ActionTimelineIDMode, i => i.ActionTimelineIDMode);
-
-                DrawByte("LoadType", "Load Type", ref replace.LoadType, i => i.LoadType);
-
-                DrawByte("StartAttach", "Start Attach", ref replace.StartAttach, i => i.StartAttach);
-
-                DrawByte("ResidentPap", "Resident PAP", ref replace.ResidentPap, i => i.ResidentPap);
-
-                DrawByte("Unknown6", "PAP Type", ref replace.Unknown6, i => i.Unknown6);
-
-                DrawByte("Unknown1", "Unknown 1", ref replace.Unknown1, i => i.Unknown1);
-
-                DrawByte("VPRBladeState", "VPR Blade State [uses fake original]", ref replace.VPRBladeState, i => i.VPRBladeState);
+                UiGlobals.DrawByte("Type", type, key, ref replace.Type, DefaultValues.Type);
+                UiGlobals.DrawByte("Priority", type, key, ref replace.Priority, DefaultValues.Priority);
+                UiGlobals.DrawByte("Stance", type, key, ref replace.Stance, DefaultValues.Stance);
+                UiGlobals.DrawByte("Slot", type, key, ref replace.Slot, DefaultValues.Slot);
+                UiGlobals.DrawByte("LookAt Mode", type, key, ref replace.LookAtMode, DefaultValues.LookAtMode);
+                UiGlobals.DrawByte("Action Tomeline ID Mode", type, key, ref replace.ActionTimelineIDMode, DefaultValues.ActionTimelineIDMode);
+                UiGlobals.DrawByte("Load Type", type, key, ref replace.LoadType, DefaultValues.LoadType);
+                UiGlobals.DrawByte("Start Attach", type, key, ref replace.StartAttach, DefaultValues.StartAttach);
+                UiGlobals.DrawByte("Resident PAP", type, key, ref replace.ResidentPap, DefaultValues.ResidentPap);
+                UiGlobals.DrawByte("PAP Type", type, key, ref replace.Unknown6, DefaultValues.Unknown6);
+                UiGlobals.DrawByte("Unknown 1", type, key, ref replace.Unknown1, DefaultValues.Unknown1);
+                UiGlobals.DrawByte("Viper Blade State[Uses fake original]", type, key, ref replace.VPRBladeState, DefaultValues.VPRBladeState);
 
                 UiGlobals.DrawItemSeparator();
                 continue;
@@ -82,31 +74,6 @@ public class ActionTimelineMain
                 #endregion
                 #region Items
 
-                void DrawByte(string refname, string text, ref byte value,
-                    Func<ActionTimelineReplace, byte> getDefault)
-                {
-                    ImGui.TextUnformatted(text);
-                    ImGui.SetCursorPosX(ImGui.GetCursorPosX() + 15);
-                    ImGui.SetNextItemWidth(110 * CalcGlobals.GlobalScale());
-                    int relay = value;
-                    if (ImGui.InputInt("##" + refname + key, ref relay))
-                    {
-                        value = (byte)relay;
-                        Setup.SetActionTimeline(key);
-                        Service.Config.Save();
-                    }
-                    ImGui.SameLine();
-
-                    using (ImRaii.PushFont(UiBuilder.IconFont))
-                    {
-                        if (ImGui.Button($"{FontAwesomeIcon.Reply.ToIconString()}##{refname}{key}"))
-                        {
-                            value = getDefault(ActionTimelineManager.GetOriginal(key));
-                            Setup.SetActionTimeline(key);
-                            Service.Config.Save();
-                        }
-                    }
-                }
             }
 
             #endregion

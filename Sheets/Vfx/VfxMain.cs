@@ -6,6 +6,8 @@ using System.Linq;
 using ActionTimelineReplacement.Base.Setups;
 using ActionTimelineReplacement.Windows;
 using ActionTimelineReplacement.Base.Global;
+using System.Reflection.Metadata;
+
 #pragma warning disable CA1416 // Validate platform compatibility
 
 namespace ActionTimelineReplacement.Sheets;
@@ -13,6 +15,7 @@ namespace ActionTimelineReplacement.Sheets;
 #region Main
 public class VfxMain
 {
+    const string type = "VFX";
     public static void Draw(string mainkey, ref Configuration.ReplacementSet _activeSet, ref string search)
     {
         using var subList = ImRaii.Child(mainkey, CalcGlobals.BodyScale(), false);
@@ -24,6 +27,7 @@ public class VfxMain
             foreach (var key in _activeSet.VfxWriter.Keys)
             {
                 var replace = _activeSet.VfxWriter[key].Replacement;
+                var DefaultValues = VfxManager.GetOriginal(key);
 
                 if (ImGui.Checkbox("##" + key, ref _activeSet.VfxWriter[key].Enabled))
                 {
@@ -52,7 +56,7 @@ public class VfxMain
                 ImGui.SameLine();
                 ImGui.TextWrapped(VfxManager.GetName(key));
 
-                DrawString("VfxPath", "Vfx Path", ref replace.String1, i => i.String1);
+                UiGlobals.DrawString("VFX Path", type, key, ref replace.String1, DefaultValues.String1);
 
 
                 UiGlobals.DrawItemSeparator();
@@ -62,161 +66,7 @@ public class VfxMain
                 #region Items
 
 
-                void DrawUint(string refname, string text, ref uint value,
-                    Func<VfxReplace, uint> getDefault)
-                {
-                    ImGui.TextUnformatted(text);
-                    ImGui.SetCursorPosX(ImGui.GetCursorPosX() + 15);
-                    ImGui.SetNextItemWidth(110 * CalcGlobals.GlobalScale());
-                    uint relay = value;
-                    if (ImGui.InputUInt("##" + refname + key, ref relay))
-                    {
-                        value = relay;
-                        Setup.SetVfx(key);
-                        Service.Config.Save();
-                    }
-                    ImGui.SameLine();
-
-                    using (ImRaii.PushFont(UiBuilder.IconFont))
-                    {
-                        if (ImGui.Button($"{FontAwesomeIcon.Reply.ToIconString()}##{refname}{key}"))
-                        {
-                            value = getDefault(VfxManager.GetOriginal(key));
-                            Setup.SetVfx(key);
-                            Service.Config.Save();
-                        }
-                    }
-                }
-
-                void DrawString(string refname, string text, ref string value,
-                    Func<VfxReplace, string> getDefault)
-                {
-                    ImGui.TextUnformatted(text);
-                    ImGui.SetCursorPosX(ImGui.GetCursorPosX() + 15);
-                    ImGui.SetNextItemWidth(110 * CalcGlobals.GlobalScale());
-                    string relay = value;
-                    if (ImGui.InputText("##" + refname + key, ref relay))
-                    {
-                        value = relay;
-                        Setup.SetVfx(key);
-                        Service.Config.Save();
-                    }
-                    ImGui.SameLine();
-
-                    using (ImRaii.PushFont(UiBuilder.IconFont))
-                    {
-                        if (ImGui.Button($"{FontAwesomeIcon.Reply.ToIconString()}##{refname}{key}"))
-                        {
-                            value = getDefault(VfxManager.GetOriginal(key));
-                            Setup.SetVfx(key);
-                            Service.Config.Save();
-                        }
-                    }
-                }
-
-                void DrawInt(string refname, string text, ref int value,
-                    Func<VfxReplace, int> getDefault)
-                {
-                    ImGui.TextUnformatted(text);
-                    ImGui.SetCursorPosX(ImGui.GetCursorPosX() + 15);
-                    ImGui.SetNextItemWidth(110 * CalcGlobals.GlobalScale());
-                    int relay = value;
-                    if (ImGui.InputInt("##" + refname + key, ref relay))
-                    {
-                        value = relay;
-                        Setup.SetVfx(key);
-                        Service.Config.Save();
-                    }
-                    ImGui.SameLine();
-
-                    using (ImRaii.PushFont(UiBuilder.IconFont))
-                    {
-                        if (ImGui.Button($"{FontAwesomeIcon.Reply.ToIconString()}##{refname}{key}"))
-                        {
-                            value = getDefault(VfxManager.GetOriginal(key));
-                            Setup.SetVfx(key);
-                            Service.Config.Save();
-                        }
-                    }
-                }
-
-                void DrawUShort(string refname, string text, ref ushort value,
-                    Func<VfxReplace, ushort> getDefault)
-                {
-                    ImGui.TextUnformatted(text);
-                    ImGui.SetCursorPosX(ImGui.GetCursorPosX() + 15);
-                    ImGui.SetNextItemWidth(110 * CalcGlobals.GlobalScale());
-                    int relay = value;
-                    if (ImGui.InputInt("##" + refname + key, ref relay))
-                    {
-                        value = (ushort)relay;
-                        Setup.SetVfx(key);
-                        Service.Config.Save();
-                    }
-                    ImGui.SameLine();
-
-                    using (ImRaii.PushFont(UiBuilder.IconFont))
-                    {
-                        if (ImGui.Button($"{FontAwesomeIcon.Reply.ToIconString()}##{refname}{key}"))
-                        {
-                            value = getDefault(VfxManager.GetOriginal(key));
-                            Setup.SetVfx(key);
-                            Service.Config.Save();
-                        }
-                    }
-                }
-
-                void DrawByte(string refname, string text, ref byte value,
-                    Func<VfxReplace, byte> getDefault)
-                {
-                    ImGui.TextUnformatted(text);
-                    ImGui.SetCursorPosX(ImGui.GetCursorPosX() + 15);
-                    ImGui.SetNextItemWidth(110 * CalcGlobals.GlobalScale());
-                    int relay = value;
-                    if (ImGui.InputInt("##" + refname + key, ref relay))
-                    {
-                        value = (byte)relay;
-                        Setup.SetVfx(key);
-                        Service.Config.Save();
-                    }
-                    ImGui.SameLine();
-
-                    using (ImRaii.PushFont(UiBuilder.IconFont))
-                    {
-                        if (ImGui.Button($"{FontAwesomeIcon.Reply.ToIconString()}##{refname}{key}"))
-                        {
-                            value = getDefault(VfxManager.GetOriginal(key));
-                            Setup.SetVfx(key);
-                            Service.Config.Save();
-                        }
-                    }
-                }
-
-                void DrawSByte(string refname, string text, ref sbyte value,
-                    Func<VfxReplace, sbyte> getDefault)
-                {
-                    ImGui.TextUnformatted(text);
-                    ImGui.SetCursorPosX(ImGui.GetCursorPosX() + 15);
-                    ImGui.SetNextItemWidth(110 * CalcGlobals.GlobalScale());
-                    int relay = value;
-                    if (ImGui.InputInt("##" + refname + key, ref relay))
-                    {
-                        value = (sbyte)relay;
-                        Setup.SetVfx(key);
-                        Service.Config.Save();
-                    }
-                    ImGui.SameLine();
-
-                    using (ImRaii.PushFont(UiBuilder.IconFont))
-                    {
-                        if (ImGui.Button($"{FontAwesomeIcon.Reply.ToIconString()}##{refname}{key}"))
-                        {
-                            value = getDefault(VfxManager.GetOriginal(key));
-                            Setup.SetVfx(key);
-                            Service.Config.Save();
-                        }
-                    }
-                }
+                
             }
 
             #endregion

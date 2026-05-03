@@ -13,6 +13,7 @@ namespace ActionTimelineReplacement.Sheets;
 #region Main
 public class StatusLoopVFXMain
 {
+    const string type = "StatusLoopVFX";
     public static void Draw(string mainkey, ref Configuration.ReplacementSet _activeSet, ref string search)
     {
         using var subList = ImRaii.Child(mainkey, CalcGlobals.BodyScale(), false);
@@ -24,6 +25,7 @@ public class StatusLoopVFXMain
             foreach (var key in _activeSet.StatusLoopVFXWriter.Keys)
             {
                 var replace = _activeSet.StatusLoopVFXWriter[key].Replacement;
+                var DefaultValues = StatusLoopVFXManager.GetOriginal(key);
 
                 if (ImGui.Checkbox("##" + key, ref _activeSet.StatusLoopVFXWriter[key].Enabled))
                 {
@@ -53,17 +55,18 @@ public class StatusLoopVFXMain
                 ImGui.TextWrapped(StatusLoopVFXManager.GetName(key));
 
                 //to do: show loop vfx and hit effect as strings
-                DrawUShort("FriendlyVFX", "Friendly VFX ID", ref replace.FriendlyVFX, i => i.FriendlyVFX);
-                DrawUShort("StackVFX1", "Stack VFX 1 ID", ref replace.StackVFX1, i => i.StackVFX1);
-                DrawUShort("StackVFX2", "Stack VFX 2 ID", ref replace.StackVFX2, i => i.StackVFX2);
-                DrawUShort("EnemyVFX", "Enemy VFX ID", ref replace.EnemyVFX, i => i.EnemyVFX);
-                DrawByte("Stack1Trigger", "Stack 1 Trigger", ref replace.StackTrigger1, i => i.StackTrigger1);
-                DrawByte("Stack2Trigger", "Stack 2 Trigger", ref replace.StackTrigger2, i => i.StackTrigger2);
-                DrawByte("Unknown1", "Unknown1", ref replace.Unknown1, i => i.Unknown1);
-                DrawByte("Unknown2", "Unknown2", ref replace.Unknown2, i => i.Unknown2);
-                DrawBool("Unknown3", "Unknown3", ref replace.Unknown3, i => i.Unknown3);
-                DrawBool("Unknown4", "Unknown4", ref replace.Unknown4, i => i.Unknown4);
-                DrawBool("Unknown5", "Unknown5", ref replace.Unknown5, i => i.Unknown5);
+
+                UiGlobals.DrawUShort("Friendly VFX ID", type, key, ref replace.FriendlyVFX, DefaultValues.FriendlyVFX);
+                UiGlobals.DrawUShort("Stack VFX 1 ID", type, key, ref replace.StackVFX1, DefaultValues.StackVFX1);
+                UiGlobals.DrawUShort("Stack VFX 2 ID", type, key, ref replace.StackVFX2, DefaultValues.StackVFX2);
+                UiGlobals.DrawUShort("Enemy VFX ID", type, key, ref replace.EnemyVFX, DefaultValues.EnemyVFX);
+                UiGlobals.DrawByte("Stack 1 Trigger", type, key, ref replace.StackTrigger1, DefaultValues.StackTrigger1);
+                UiGlobals.DrawByte("Stack 2 Trigger", type, key, ref replace.StackTrigger2, DefaultValues.StackTrigger2);
+                UiGlobals.DrawByte("Unknown 1", type, key, ref replace.Unknown1, DefaultValues.Unknown1);
+                UiGlobals.DrawByte("Unknown 2", type, key, ref replace.Unknown2, DefaultValues.Unknown2);
+                UiGlobals.DrawBool("Unknown 3", type, key, ref replace.Unknown3, DefaultValues.Unknown3);
+                UiGlobals.DrawBool("Unknown 4", type, key, ref replace.Unknown4, DefaultValues.Unknown4);
+                UiGlobals.DrawBool("Unknown 5", type, key, ref replace.Unknown5, DefaultValues.Unknown5);
 
                 UiGlobals.DrawItemSeparator();
                 continue;
@@ -71,135 +74,7 @@ public class StatusLoopVFXMain
                 #endregion
                 #region Items
 
-                void DrawInt(string refname, string text, ref int value,
-                    Func<StatusLoopVFXReplace, int> getDefault)
-                {
-                    ImGui.TextUnformatted(text);
-                    ImGui.SetCursorPosX(ImGui.GetCursorPosX() + 15);
-                    ImGui.SetNextItemWidth(110 * CalcGlobals.GlobalScale());
-                    int relay = value;
-                    if (ImGui.InputInt("##" + refname + key, ref relay))
-                    {
-                        value = relay;
-                        Setup.SetStatusLoopVFX(key);
-                        Service.Config.Save();
-                    }
-                    ImGui.SameLine();
-
-                    using (ImRaii.PushFont(UiBuilder.IconFont))
-                    {
-                        if (ImGui.Button($"{FontAwesomeIcon.Reply.ToIconString()}##{refname}{key}"))
-                        {
-                            value = getDefault(StatusLoopVFXManager.GetOriginal(key));
-                            Setup.SetStatusLoopVFX(key);
-                            Service.Config.Save();
-                        }
-                    }
-                }
-
-                void DrawUShort(string refname, string text, ref ushort value,
-                    Func<StatusLoopVFXReplace, ushort> getDefault)
-                {
-                    ImGui.TextUnformatted(text);
-                    ImGui.SetCursorPosX(ImGui.GetCursorPosX() + 15);
-                    ImGui.SetNextItemWidth(110 * CalcGlobals.GlobalScale());
-                    int relay = value;
-                    if (ImGui.InputInt("##" + refname + key, ref relay))
-                    {
-                        value = (ushort)relay;
-                        Setup.SetStatusLoopVFX(key);
-                        Service.Config.Save();
-                    }
-                    ImGui.SameLine();
-
-                    using (ImRaii.PushFont(UiBuilder.IconFont))
-                    {
-                        if (ImGui.Button($"{FontAwesomeIcon.Reply.ToIconString()}##{refname}{key}"))
-                        {
-                            value = getDefault(StatusLoopVFXManager.GetOriginal(key));
-                            Setup.SetStatusLoopVFX(key);
-                            Service.Config.Save();
-                        }
-                    }
-                }
-
-                void DrawByte(string refname, string text, ref byte value,
-                    Func<StatusLoopVFXReplace, byte> getDefault)
-                {
-                    ImGui.TextUnformatted(text);
-                    ImGui.SetCursorPosX(ImGui.GetCursorPosX() + 15);
-                    ImGui.SetNextItemWidth(110 * CalcGlobals.GlobalScale());
-                    int relay = value;
-                    if (ImGui.InputInt("##" + refname + key, ref relay))
-                    {
-                        value = (byte)relay;
-                        Setup.SetStatusLoopVFX(key);
-                        Service.Config.Save();
-                    }
-                    ImGui.SameLine();
-
-                    using (ImRaii.PushFont(UiBuilder.IconFont))
-                    {
-                        if (ImGui.Button($"{FontAwesomeIcon.Reply.ToIconString()}##{refname}{key}"))
-                        {
-                            value = getDefault(StatusLoopVFXManager.GetOriginal(key));
-                            Setup.SetStatusLoopVFX(key);
-                            Service.Config.Save();
-                        }
-                    }
-                }
-
-                void DrawBool(string refname, string text, ref bool value,
-                    Func<StatusLoopVFXReplace, bool> getDefault)
-                {
-                    ImGui.TextUnformatted(text);
-                    ImGui.SetCursorPosX(ImGui.GetCursorPosX() + 15);
-                    ImGui.SetNextItemWidth(110 * CalcGlobals.GlobalScale());
-                    bool relay = value;
-                    if (ImGui.Checkbox("##" + refname + key, ref relay))
-                    {
-                        value = (bool)relay;
-                        Setup.SetStatusLoopVFX(key);
-                        Service.Config.Save();
-                    }
-                    ImGui.SameLine();
-
-                    using (ImRaii.PushFont(UiBuilder.IconFont))
-                    {
-                        if (ImGui.Button($"{FontAwesomeIcon.Reply.ToIconString()}##{refname}{key}"))
-                        {
-                            value = getDefault(StatusLoopVFXManager.GetOriginal(key));
-                            Setup.SetStatusLoopVFX(key);
-                            Service.Config.Save();
-                        }
-                    }
-                }
-
-                void DrawSByte(string refname, string text, ref sbyte value,
-                    Func<StatusLoopVFXReplace, sbyte> getDefault)
-                {
-                    ImGui.TextUnformatted(text);
-                    ImGui.SetCursorPosX(ImGui.GetCursorPosX() + 15);
-                    ImGui.SetNextItemWidth(110 * CalcGlobals.GlobalScale());
-                    int relay = value;
-                    if (ImGui.InputInt("##" + refname + key, ref relay))
-                    {
-                        value = (sbyte)relay;
-                        Setup.SetStatusLoopVFX(key);
-                        Service.Config.Save();
-                    }
-                    ImGui.SameLine();
-
-                    using (ImRaii.PushFont(UiBuilder.IconFont))
-                    {
-                        if (ImGui.Button($"{FontAwesomeIcon.Reply.ToIconString()}##{refname}{key}"))
-                        {
-                            value = getDefault(StatusLoopVFXManager.GetOriginal(key));
-                            Setup.SetStatusLoopVFX(key);
-                            Service.Config.Save();
-                        }
-                    }
-                }
+                
                 
             }
 

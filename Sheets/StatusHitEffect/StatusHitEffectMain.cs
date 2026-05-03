@@ -13,6 +13,7 @@ namespace ActionTimelineReplacement.Sheets;
 #region Main
 public class StatusHitEffectMain
 {
+    const string type = "StatusHitEffect";
     public static void Draw(string mainkey, ref Configuration.ReplacementSet _activeSet, ref string search)
     {
         using var subList = ImRaii.Child(mainkey, CalcGlobals.BodyScale(), false);
@@ -24,6 +25,7 @@ public class StatusHitEffectMain
             foreach (var key in _activeSet.StatusHitEffectWriter.Keys)
             {
                 var replace = _activeSet.StatusHitEffectWriter[key].Replacement;
+                var DefaultValues = StatusHitEffectManager.GetOriginal(key);
 
                 if (ImGui.Checkbox("##" + key, ref _activeSet.StatusHitEffectWriter[key].Enabled))
                 {
@@ -53,7 +55,8 @@ public class StatusHitEffectMain
                 ImGui.TextWrapped(StatusHitEffectManager.GetName(key));
 
                 //to do: show loop vfx and hit effect as strings
-                DrawUShort("VFXRow", "VFX Row", ref replace.VFX, i => i.VFX);
+
+                UiGlobals.DrawUShort("VFX Row", type, key, ref replace.VFX, DefaultValues.VFX);
 
                 UiGlobals.DrawItemSeparator();
                 continue;
@@ -61,135 +64,6 @@ public class StatusHitEffectMain
                 #endregion
                 #region Items
 
-                void DrawInt(string refname, string text, ref int value,
-                    Func<StatusHitEffectReplace, int> getDefault)
-                {
-                    ImGui.TextUnformatted(text);
-                    ImGui.SetCursorPosX(ImGui.GetCursorPosX() + 15);
-                    ImGui.SetNextItemWidth(110 * CalcGlobals.GlobalScale());
-                    int relay = value;
-                    if (ImGui.InputInt("##" + refname + key, ref relay))
-                    {
-                        value = relay;
-                        Setup.SetStatusHitEffect(key);
-                        Service.Config.Save();
-                    }
-                    ImGui.SameLine();
-
-                    using (ImRaii.PushFont(UiBuilder.IconFont))
-                    {
-                        if (ImGui.Button($"{FontAwesomeIcon.Reply.ToIconString()}##{refname}{key}"))
-                        {
-                            value = getDefault(StatusHitEffectManager.GetOriginal(key));
-                            Setup.SetStatusHitEffect(key);
-                            Service.Config.Save();
-                        }
-                    }
-                }
-
-                void DrawUShort(string refname, string text, ref ushort value,
-                    Func<StatusHitEffectReplace, ushort> getDefault)
-                {
-                    ImGui.TextUnformatted(text);
-                    ImGui.SetCursorPosX(ImGui.GetCursorPosX() + 15);
-                    ImGui.SetNextItemWidth(110 * CalcGlobals.GlobalScale());
-                    int relay = value;
-                    if (ImGui.InputInt("##" + refname + key, ref relay))
-                    {
-                        value = (ushort)relay;
-                        Setup.SetStatusHitEffect(key);
-                        Service.Config.Save();
-                    }
-                    ImGui.SameLine();
-
-                    using (ImRaii.PushFont(UiBuilder.IconFont))
-                    {
-                        if (ImGui.Button($"{FontAwesomeIcon.Reply.ToIconString()}##{refname}{key}"))
-                        {
-                            value = getDefault(StatusHitEffectManager.GetOriginal(key));
-                            Setup.SetStatusHitEffect(key);
-                            Service.Config.Save();
-                        }
-                    }
-                }
-
-                void DrawByte(string refname, string text, ref byte value,
-                    Func<StatusHitEffectReplace, byte> getDefault)
-                {
-                    ImGui.TextUnformatted(text);
-                    ImGui.SetCursorPosX(ImGui.GetCursorPosX() + 15);
-                    ImGui.SetNextItemWidth(110 * CalcGlobals.GlobalScale());
-                    int relay = value;
-                    if (ImGui.InputInt("##" + refname + key, ref relay))
-                    {
-                        value = (byte)relay;
-                        Setup.SetStatusHitEffect(key);
-                        Service.Config.Save();
-                    }
-                    ImGui.SameLine();
-
-                    using (ImRaii.PushFont(UiBuilder.IconFont))
-                    {
-                        if (ImGui.Button($"{FontAwesomeIcon.Reply.ToIconString()}##{refname}{key}"))
-                        {
-                            value = getDefault(StatusHitEffectManager.GetOriginal(key));
-                            Setup.SetStatusHitEffect(key);
-                            Service.Config.Save();
-                        }
-                    }
-                }
-
-                void DrawBool(string refname, string text, ref bool value,
-                    Func<StatusHitEffectReplace, bool> getDefault)
-                {
-                    ImGui.TextUnformatted(text);
-                    ImGui.SetCursorPosX(ImGui.GetCursorPosX() + 15);
-                    ImGui.SetNextItemWidth(110 * CalcGlobals.GlobalScale());
-                    bool relay = value;
-                    if (ImGui.Checkbox("##" + refname + key, ref relay))
-                    {
-                        value = (bool)relay;
-                        Setup.SetStatusHitEffect(key);
-                        Service.Config.Save();
-                    }
-                    ImGui.SameLine();
-
-                    using (ImRaii.PushFont(UiBuilder.IconFont))
-                    {
-                        if (ImGui.Button($"{FontAwesomeIcon.Reply.ToIconString()}##{refname}{key}"))
-                        {
-                            value = getDefault(StatusHitEffectManager.GetOriginal(key));
-                            Setup.SetStatusHitEffect(key);
-                            Service.Config.Save();
-                        }
-                    }
-                }
-
-                void DrawSByte(string refname, string text, ref sbyte value,
-                    Func<StatusHitEffectReplace, sbyte> getDefault)
-                {
-                    ImGui.TextUnformatted(text);
-                    ImGui.SetCursorPosX(ImGui.GetCursorPosX() + 15);
-                    ImGui.SetNextItemWidth(110 * CalcGlobals.GlobalScale());
-                    int relay = value;
-                    if (ImGui.InputInt("##" + refname + key, ref relay))
-                    {
-                        value = (sbyte)relay;
-                        Setup.SetStatusHitEffect(key);
-                        Service.Config.Save();
-                    }
-                    ImGui.SameLine();
-
-                    using (ImRaii.PushFont(UiBuilder.IconFont))
-                    {
-                        if (ImGui.Button($"{FontAwesomeIcon.Reply.ToIconString()}##{refname}{key}"))
-                        {
-                            value = getDefault(StatusHitEffectManager.GetOriginal(key));
-                            Setup.SetStatusHitEffect(key);
-                            Service.Config.Save();
-                        }
-                    }
-                }
                 
             }
 

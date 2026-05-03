@@ -1,4 +1,5 @@
 ﻿using ActionTimelineReplacement.Sheets;
+using System;
 
 namespace ActionTimelineReplacement.Base.Setups;
 
@@ -23,5 +24,65 @@ public static unsafe partial class Setup
         //LoadOrnamentCustomizeGroup(OrnamentCustomizeGroupManager.AllOrnamentCustomizeGroupIds);
         //LoadActionTimeline(ActionTimelineManager.AllActionTimelineIds); //find sigs
         //LoadPointMenuChoice(PointMenuChoiceManager.AllPointMenuChoiceIds); //find sigs
+    }
+
+    public static void SetupByType(uint id, string type, bool reset = false)
+    {
+        switch (type)
+        {
+            case "Action":
+                SetAction(id, reset);
+                break;
+            case "ActionTimeline":
+                SetActionTimeline(id, reset);
+                break;
+            case "Glasses":
+                SetGlasses(id, reset);
+                break;
+            case "GlassesStyle":
+                SetGlassesStyle(id, reset);
+                break;
+            case "Mount":
+                SetMount(id, reset);
+                break;
+            case "MountCustomize":
+                SetMountCustomize(id, reset);
+                break;
+            case "Ornament":
+                SetOrnament(id, reset);
+                break;
+            case "OrnamentCustomize":
+                SetOrnamentCustomize(id, reset);
+                break;
+            case "OrnamentCustomizeGroup":
+                SetOrnamentCustomizeGroup(id, reset);
+                break;
+            case "Placename":
+                //SetPlaceName(id, reset);
+                break;
+            case "PointMenuChoice":
+                //SetPointMenuChoice(id, reset);
+                break;
+            case "Status":
+                SetStatus(id, reset);
+                break;
+            case "StatusHitEffect":
+                SetStatusHitEffect(id, reset);
+                break;
+            case "StatusLoopVFX":
+                SetStatusLoopVFX(id, reset);
+                break;
+            case "TiltParam":
+                SetTiltParam(id, reset);
+                break;
+            case "Vfx":
+                SetVfx(id, reset);
+                break;
+            default:
+                Service.Log.Error("Datasheet type [{type}] Is not Defined", type);
+                break;
+
+
+        }
     }
 }

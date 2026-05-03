@@ -13,6 +13,7 @@ namespace ActionTimelineReplacement.Sheets;
 #region Main
 public class OrnamentCustomizeMain
 {
+    const string type = "OrnamentCustomize";
     public static void Draw(string mainkey, ref Configuration.ReplacementSet _activeSet, ref string search)
     {
         using var subList = ImRaii.Child(mainkey, CalcGlobals.BodyScale(), false);
@@ -24,6 +25,7 @@ public class OrnamentCustomizeMain
             foreach (var key in _activeSet.OrnamentCustomizeWriter.Keys)
             {
                 var replace = _activeSet.OrnamentCustomizeWriter[key].Replacement;
+                var DefaultValues = OrnamentCustomizeManager.GetOriginal(key);
 
                 if (ImGui.Checkbox("##" + key, ref _activeSet.OrnamentCustomizeWriter[key].Enabled))
                 {
@@ -51,77 +53,21 @@ public class OrnamentCustomizeMain
                 ImGui.SameLine();
                 ImGui.TextWrapped(OrnamentCustomizeManager.GetName(key));
 
-                DrawUShort("Unknown0","Unknown 0", ref replace.Unknown0, i => i.Unknown0);
-
-                DrawShort("Unknown1", "Unknown 1", ref replace.Unknown1, i => i.Unknown1);
-
-                DrawShort("Unknown2", "Unknown 2", ref replace.Unknown2, i => i.Unknown2);
-
-                DrawShort("Unknown3", "Unknown 3", ref replace.Unknown3, i => i.Unknown3);
-
-                DrawShort("Unknown4", "Unknown 4", ref replace.Unknown4, i => i.Unknown4);
-
-                DrawShort("Unknown5", "Unknown 5", ref replace.Unknown5, i => i.Unknown5);
-
-                DrawShort("Unknown6", "Unknown 6", ref replace.Unknown6, i => i.Unknown6);
+                UiGlobals.DrawUShort("Unknown 0", type, key, ref replace.Unknown0, DefaultValues.Unknown0);
+                UiGlobals.DrawShort("Unknown 1", type, key, ref replace.Unknown1, DefaultValues.Unknown1);
+                UiGlobals.DrawShort("Unknown 2", type, key, ref replace.Unknown2, DefaultValues.Unknown2);
+                UiGlobals.DrawShort("PUnknown 3", type, key, ref replace.Unknown3, DefaultValues.Unknown3);
+                UiGlobals.DrawShort("Unknown 4", type, key, ref replace.Unknown4, DefaultValues.Unknown4);
+                UiGlobals.DrawShort("Unknown 5", type, key, ref replace.Unknown5, DefaultValues.Unknown5);
+                UiGlobals.DrawShort("Unknown 6", type, key, ref replace.Unknown6, DefaultValues.Unknown6);
 
                 UiGlobals.DrawItemSeparator();
                 continue;
 
-                #endregion
+#endregion
                 #region Items
-                
-                void DrawShort(string refname, string text, ref short value,
-                    Func<OrnamentCustomizeReplace, short> getDefault)
-                {
-                    ImGui.TextUnformatted(text);
-                    ImGui.SetCursorPosX(ImGui.GetCursorPosX() + 15);
-                    ImGui.SetNextItemWidth(110 * CalcGlobals.GlobalScale());
-                    int relay = value;
-                    if (ImGui.InputInt("##" + refname + key, ref relay))
-                    {
-                        value = (short)relay;
-                        Setup.SetOrnamentCustomize(key);
-                        Service.Config.Save();
-                    }
-                    ImGui.SameLine();
 
-                    using (ImRaii.PushFont(UiBuilder.IconFont))
-                    {
-                        if (ImGui.Button($"{FontAwesomeIcon.Reply.ToIconString()}##{refname}{key}"))
-                        {
-                            value = getDefault(OrnamentCustomizeManager.GetOriginal(key));
-                            Setup.SetOrnamentCustomize(key);
-                            Service.Config.Save();
-                        }
-                    }
-                }
 
-                void DrawUShort(string refname, string text, ref ushort value,
-                    Func<OrnamentCustomizeReplace, ushort> getDefault)
-                {
-                    ImGui.TextUnformatted(text);
-                    ImGui.SetCursorPosX(ImGui.GetCursorPosX() + 15);
-                    ImGui.SetNextItemWidth(110 * CalcGlobals.GlobalScale());
-                    int relay = value;
-                    if (ImGui.InputInt("##" + refname + key, ref relay))
-                    {
-                        value = (ushort)relay;
-                        Setup.SetOrnamentCustomize(key);
-                        Service.Config.Save();
-                    }
-                    ImGui.SameLine();
-
-                    using (ImRaii.PushFont(UiBuilder.IconFont))
-                    {
-                        if (ImGui.Button($"{FontAwesomeIcon.Reply.ToIconString()}##{refname}{key}"))
-                        {
-                            value = getDefault(OrnamentCustomizeManager.GetOriginal(key));
-                            Setup.SetOrnamentCustomize(key);
-                            Service.Config.Save();
-                        }
-                    }
-                }
             }
                             
             #endregion
