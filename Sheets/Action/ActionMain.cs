@@ -57,14 +57,14 @@ public class ActionMain
 
 
 
-                UiGlobals.DrawUShort("Cast", type, key, ref replace.CastVfx, DefaultValues.CastVfx);
-                UiGlobals.DrawUShort("Start", type, key, ref replace.AnimationStart, DefaultValues.AnimationStart);
-                UiGlobals.DrawShort("End", type, key, ref replace.AnimationEnd, DefaultValues.AnimationEnd);
-                UiGlobals.DrawUShort("Hit", type, key, ref replace.ActionTimelineHit, DefaultValues.ActionTimelineHit);
-                UiGlobals.DrawByte("Unknown 1", type, key, ref replace.Unknown1, DefaultValues.Unknown1);
-                UiGlobals.DrawByte("Unknown 2", type, key, ref replace.Unknown2, DefaultValues.Unknown2);
-                UiGlobals.DrawByte("Unknown 4", type, key, ref replace.Unknown4, DefaultValues.Unknown4);
-                UiGlobals.DrawByte("Unknown_70", type, key, ref replace.Unknown_70, DefaultValues.Unknown_70);
+                UiGlobals.DrawUShort("Cast", type, key, _activeSet.ActionWriter[key].Enabled, ref replace.CastVfx, DefaultValues.CastVfx);
+                UiGlobals.DrawUShort("Start", type, key, _activeSet.ActionWriter[key].Enabled, ref replace.AnimationStart, DefaultValues.AnimationStart);
+                UiGlobals.DrawShort("End", type, key, _activeSet.ActionWriter[key].Enabled, ref replace.AnimationEnd, DefaultValues.AnimationEnd);
+                UiGlobals.DrawUShort("Hit", type, key, _activeSet.ActionWriter[key].Enabled, ref replace.ActionTimelineHit, DefaultValues.ActionTimelineHit);
+                UiGlobals.DrawByte("Unknown 1", type, key, _activeSet.ActionWriter[key].Enabled, ref replace.Unknown1, DefaultValues.Unknown1);
+                UiGlobals.DrawByte("Unknown 2", type, key, _activeSet.ActionWriter[key].Enabled, ref replace.Unknown2, DefaultValues.Unknown2);
+                UiGlobals.DrawByte("Unknown 4", type, key, _activeSet.ActionWriter[key].Enabled, ref replace.Unknown4, DefaultValues.Unknown4);
+                UiGlobals.DrawByte("Unknown_70", type, key, _activeSet.ActionWriter[key].Enabled, ref replace.Unknown_70, DefaultValues.Unknown_70);
 
                 UiGlobals.DrawItemSeparator();
                 continue;

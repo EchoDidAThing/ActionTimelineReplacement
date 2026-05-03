@@ -79,7 +79,7 @@ public static unsafe partial class Setup
                 SetVfx(id, reset);
                 break;
             default:
-                Service.Log.Error("Datasheet type [{type}] Is not Defined", type);
+                Service.Log.Error("Datasheet type [{type}] is not defined", type);
                 break;
 
 

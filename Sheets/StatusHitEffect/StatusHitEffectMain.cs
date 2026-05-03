@@ -56,7 +56,7 @@ public class StatusHitEffectMain
 
                 //to do: show loop vfx and hit effect as strings
 
-                UiGlobals.DrawUShort("VFX Row", type, key, ref replace.VFX, DefaultValues.VFX);
+                UiGlobals.DrawUShort("VFX Row", type, key, _activeSet.StatusHitEffectWriter[key].Enabled, ref replace.VFX, DefaultValues.VFX);
 
                 UiGlobals.DrawItemSeparator();
                 continue;

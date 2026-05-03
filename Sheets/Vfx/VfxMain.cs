@@ -56,7 +56,7 @@ public class VfxMain
                 ImGui.SameLine();
                 ImGui.TextWrapped(VfxManager.GetName(key));
 
-                UiGlobals.DrawString("VFX Path", type, key, ref replace.String1, DefaultValues.String1);
+                UiGlobals.DrawString("VFX Path", type, key, _activeSet.VfxWriter[key].Enabled, ref replace.String1, DefaultValues.String1);
 
 
                 UiGlobals.DrawItemSeparator();

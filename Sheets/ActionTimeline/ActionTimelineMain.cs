@@ -55,18 +55,18 @@ public class ActionTimelineMain
                 ImGui.TextWrapped(ActionTimelineManager.GetName(key));
 
 
-                UiGlobals.DrawByte("Type", type, key, ref replace.Type, DefaultValues.Type);
-                UiGlobals.DrawByte("Priority", type, key, ref replace.Priority, DefaultValues.Priority);
-                UiGlobals.DrawByte("Stance", type, key, ref replace.Stance, DefaultValues.Stance);
-                UiGlobals.DrawByte("Slot", type, key, ref replace.Slot, DefaultValues.Slot);
-                UiGlobals.DrawByte("LookAt Mode", type, key, ref replace.LookAtMode, DefaultValues.LookAtMode);
-                UiGlobals.DrawByte("Action Tomeline ID Mode", type, key, ref replace.ActionTimelineIDMode, DefaultValues.ActionTimelineIDMode);
-                UiGlobals.DrawByte("Load Type", type, key, ref replace.LoadType, DefaultValues.LoadType);
-                UiGlobals.DrawByte("Start Attach", type, key, ref replace.StartAttach, DefaultValues.StartAttach);
-                UiGlobals.DrawByte("Resident PAP", type, key, ref replace.ResidentPap, DefaultValues.ResidentPap);
-                UiGlobals.DrawByte("PAP Type", type, key, ref replace.Unknown6, DefaultValues.Unknown6);
-                UiGlobals.DrawByte("Unknown 1", type, key, ref replace.Unknown1, DefaultValues.Unknown1);
-                UiGlobals.DrawByte("Viper Blade State[Uses fake original]", type, key, ref replace.VPRBladeState, DefaultValues.VPRBladeState);
+                UiGlobals.DrawByte("Type", type, key, _activeSet.ActionTimelineWriter[key].Enabled, ref replace.Type, DefaultValues.Type);
+                UiGlobals.DrawByte("Priority", type, key, _activeSet.ActionTimelineWriter[key].Enabled, ref replace.Priority, DefaultValues.Priority);
+                UiGlobals.DrawByte("Stance", type, key, _activeSet.ActionTimelineWriter[key].Enabled, ref replace.Stance, DefaultValues.Stance);
+                UiGlobals.DrawByte("Slot", type, key, _activeSet.ActionTimelineWriter[key].Enabled, ref replace.Slot, DefaultValues.Slot);
+                UiGlobals.DrawByte("LookAt Mode", type, key, _activeSet.ActionTimelineWriter[key].Enabled, ref replace.LookAtMode, DefaultValues.LookAtMode);
+                UiGlobals.DrawByte("Action Timeline ID Mode", type, key, _activeSet.ActionTimelineWriter[key].Enabled, ref replace.ActionTimelineIDMode, DefaultValues.ActionTimelineIDMode);
+                UiGlobals.DrawByte("Load Type", type, key, _activeSet.ActionTimelineWriter[key].Enabled, ref replace.LoadType, DefaultValues.LoadType);
+                UiGlobals.DrawByte("Start Attach", type, key, _activeSet.ActionTimelineWriter[key].Enabled, ref replace.StartAttach, DefaultValues.StartAttach);
+                UiGlobals.DrawByte("Resident PAP", type, key, _activeSet.ActionTimelineWriter[key].Enabled, ref replace.ResidentPap, DefaultValues.ResidentPap);
+                UiGlobals.DrawByte("PAP Type", type, key, _activeSet.ActionTimelineWriter[key].Enabled, ref replace.Unknown6, DefaultValues.Unknown6);
+                UiGlobals.DrawByte("Unknown 1", type, key, _activeSet.ActionTimelineWriter[key].Enabled, ref replace.Unknown1, DefaultValues.Unknown1);
+                UiGlobals.DrawByte("Viper Blade State[Uses fake original]", type, key, _activeSet.ActionTimelineWriter[key].Enabled, ref replace.VPRBladeState, DefaultValues.VPRBladeState);
 
                 UiGlobals.DrawItemSeparator();
                 continue;

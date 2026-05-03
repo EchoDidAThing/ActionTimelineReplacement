@@ -54,13 +54,13 @@ public class GlassesStyleMain
                 ImGui.TextWrapped(GlassesStyleManager.GetName(key));
 
 
-                UiGlobals.DrawSByte("Unknown70_1", type, key, ref replace.Unknown70_1, DefaultValues.Unknown70_1);
-                UiGlobals.DrawSByte("Unknown70_2", type, key, ref replace.Unknown70_2, DefaultValues.Unknown70_2);
-                UiGlobals.DrawSByte("Unknown70_3", type, key, ref replace.Unknown70_3, DefaultValues.Unknown70_3);
-                UiGlobals.DrawSByte("Unknown70_4", type, key, ref replace.Unknown70_4, DefaultValues.Unknown70_4);
-                UiGlobals.DrawSByte("Unknown70_5", type, key, ref replace.Unknown70_5, DefaultValues.Unknown70_5);
-                UiGlobals.DrawSByte("Unknown70_6", type, key, ref replace.Unknown70_6, DefaultValues.Unknown70_6);
-                UiGlobals.DrawShort("Disable in UI", type, key, ref replace.Unknown70_7, DefaultValues.Unknown70_7);
+                UiGlobals.DrawSByte("Unknown70_1", type, key, _activeSet.GlassesStyleWriter[key].Enabled, ref replace.Unknown70_1, DefaultValues.Unknown70_1);
+                UiGlobals.DrawSByte("Unknown70_2", type, key, _activeSet.GlassesStyleWriter[key].Enabled, ref replace.Unknown70_2, DefaultValues.Unknown70_2);
+                UiGlobals.DrawSByte("Unknown70_3", type, key, _activeSet.GlassesStyleWriter[key].Enabled, ref replace.Unknown70_3, DefaultValues.Unknown70_3);
+                UiGlobals.DrawSByte("Unknown70_4", type, key, _activeSet.GlassesStyleWriter[key].Enabled, ref replace.Unknown70_4, DefaultValues.Unknown70_4);
+                UiGlobals.DrawSByte("Unknown70_5", type, key, _activeSet.GlassesStyleWriter[key].Enabled, ref replace.Unknown70_5, DefaultValues.Unknown70_5);
+                UiGlobals.DrawSByte("Unknown70_6", type, key, _activeSet.GlassesStyleWriter[key].Enabled, ref replace.Unknown70_6, DefaultValues.Unknown70_6);
+                UiGlobals.DrawShort("Disable in UI", type, key, _activeSet.GlassesStyleWriter[key].Enabled, ref replace.Unknown70_7, DefaultValues.Unknown70_7);
 
                 UiGlobals.DrawItemSeparator();
                 continue;

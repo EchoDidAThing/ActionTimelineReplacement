@@ -1,10 +1,12 @@
-﻿using ActionTimelineReplacement.Sheets;
+﻿using ActionTimelineReplacement;
+using ActionTimelineReplacement.Base.Setups;
+using ActionTimelineReplacement.Sheets;
 using Dalamud.Bindings.ImGui;
 using Dalamud.Interface;
 using Dalamud.Interface.Utility.Raii;
-using ActionTimelineReplacement.Base.Setups;
 using FFXIVClientStructs.FFXIV.Common.Lua;
 using System;
+using static FFXIVClientStructs.FFXIV.Client.UI.Misc.AozNoteModule;
 
 namespace ActionTimelineReplacement.Base.Global;
 
@@ -29,7 +31,7 @@ public class UiGlobals
         ImGui.NewLine();
     }
 
-    public static void DrawString(string name, string type, uint key, ref string value,
+    public static void DrawString(string name, string type, uint key, bool changesenabled, ref string value,
     string defaultvalue)
     {
         string refname = name.Replace(" ", "");
@@ -38,7 +40,7 @@ public class UiGlobals
         ImGui.SetNextItemWidth(110 * CalcGlobals.GlobalScale());
         if (ImGui.InputText("##" + refname + key, ref value))
         {
-            Setup.SetupByType(key, type);
+            if (changesenabled) { Setup.SetupByType(key, type); }
             Service.Config.Save();
         }
         ImGui.SameLine();
@@ -48,13 +50,13 @@ public class UiGlobals
             if (ImGui.Button($"{FontAwesomeIcon.Reply.ToIconString()}##{refname}{key}"))
             {
                 value = defaultvalue;
-                Setup.SetupByType(key, type);
+                if (changesenabled) { Setup.SetupByType(key, type); }
                 Service.Config.Save();
             }
         }
     }
 
-    public static void DrawSByte(string name, string type, uint key, ref sbyte value,
+    public static void DrawSByte(string name, string type, uint key, bool changesenabled, ref sbyte value,
     sbyte defaultvalue)
     {
         string refname = name.Replace(" ", "");
@@ -63,7 +65,7 @@ public class UiGlobals
         ImGui.SetNextItemWidth(110 * CalcGlobals.GlobalScale());
         if (ImGui.InputSByte("##" + refname + key, ref value))
         {
-            Setup.SetupByType(key, type);
+            if (changesenabled) { Setup.SetupByType(key, type); }
             Service.Config.Save();
         }
         ImGui.SameLine();
@@ -73,14 +75,14 @@ public class UiGlobals
             if (ImGui.Button($"{FontAwesomeIcon.Reply.ToIconString()}##{refname}{key}"))
             {
                 value = defaultvalue;
-                Setup.SetupByType(key, type);
+                if (changesenabled) { Setup.SetupByType(key, type); }
                 Service.Config.Save();
             }
         }
     }
 
 
-    public static void DrawByte(string name, string type, uint key, ref byte value,
+    public static void DrawByte(string name, string type, uint key, bool changesenabled, ref byte value,
     byte defaultvalue)
     {
         string refname = name.Replace(" ", "");
@@ -89,7 +91,7 @@ public class UiGlobals
         ImGui.SetNextItemWidth(110 * CalcGlobals.GlobalScale());
         if (ImGui.InputByte("##" + refname + key, ref value))
         {
-            Setup.SetupByType(key, type);
+            if (changesenabled) { Setup.SetupByType(key, type); }
             Service.Config.Save();
         }
         ImGui.SameLine();
@@ -99,12 +101,12 @@ public class UiGlobals
             if (ImGui.Button($"{FontAwesomeIcon.Reply.ToIconString()}##{refname}{key}"))
             {
                 value = defaultvalue;
-                Setup.SetupByType(key, type);
+                if (changesenabled) { Setup.SetupByType(key, type); }
                 Service.Config.Save();
             }
         }
     }
-    public static void DrawShort(string name, string type, uint key, ref short value,
+    public static void DrawShort(string name, string type, uint key, bool changesenabled, ref short value,
     short defaultvalue)
     {
         string refname = name.Replace(" ", "");
@@ -113,7 +115,7 @@ public class UiGlobals
         ImGui.SetNextItemWidth(110 * CalcGlobals.GlobalScale());
         if (ImGui.InputShort("##" + refname + key, ref value))
         {
-            Setup.SetupByType(key, type);
+            if (changesenabled) { Setup.SetupByType(key, type); }
             Service.Config.Save();
         }
         ImGui.SameLine();
@@ -123,12 +125,12 @@ public class UiGlobals
             if (ImGui.Button($"{FontAwesomeIcon.Reply.ToIconString()}##{refname}{key}"))
             {
                 value = defaultvalue;
-                Setup.SetupByType(key, type);
+                if (changesenabled) { Setup.SetupByType(key, type); }
                 Service.Config.Save();
             }
         }
     }
-    public static void DrawUShort(string name, string type, uint key, ref ushort value,
+    public static void DrawUShort(string name, string type, uint key, bool changesenabled, ref ushort value,
     ushort defaultvalue)
     {
         string refname = name.Replace(" ", "");
@@ -137,7 +139,7 @@ public class UiGlobals
         ImGui.SetNextItemWidth(110 * CalcGlobals.GlobalScale());
         if (ImGui.InputUShort("##" + refname + key, ref value))
         {
-            Setup.SetupByType(key, type);
+            if (changesenabled) { Setup.SetupByType(key, type); }
             Service.Config.Save();
         }
         ImGui.SameLine();
@@ -147,12 +149,12 @@ public class UiGlobals
             if (ImGui.Button($"{FontAwesomeIcon.Reply.ToIconString()}##{refname}{key}"))
             {
                 value = defaultvalue;
-                Setup.SetupByType(key, type);
+                if (changesenabled) { Setup.SetupByType(key, type); }
                 Service.Config.Save();
             }
         }
     }
-    public static void DrawInt(string name, string type, uint key, ref int value,
+    public static void DrawInt(string name, string type, uint key, bool changesenabled, ref int value,
     int defaultvalue)
     {
         string refname = name.Replace(" ", "");
@@ -161,7 +163,7 @@ public class UiGlobals
         ImGui.SetNextItemWidth(110 * CalcGlobals.GlobalScale());
         if (ImGui.InputInt("##" + refname + key, ref value))
         {
-            Setup.SetupByType(key, type);
+            if (changesenabled) { Setup.SetupByType(key, type); }
             Service.Config.Save();
         }
         ImGui.SameLine();
@@ -171,12 +173,12 @@ public class UiGlobals
             if (ImGui.Button($"{FontAwesomeIcon.Reply.ToIconString()}##{refname}{key}"))
             {
                 value = defaultvalue;
-                Setup.SetupByType(key, type);
+                if (changesenabled) { Setup.SetupByType(key, type); }
                 Service.Config.Save();
             }
         }
     }
-    public static void DrawUInt(string name, string type, uint key, ref uint value,
+    public static void DrawUInt(string name, string type, uint key, bool changesenabled, ref uint value,
     uint defaultvalue)
     {
         string refname = name.Replace(" ", "");
@@ -185,7 +187,7 @@ public class UiGlobals
         ImGui.SetNextItemWidth(110 * CalcGlobals.GlobalScale());
         if (ImGui.InputUInt("##" + refname + key, ref value))
         {
-            Setup.SetupByType(key, type);
+            if (changesenabled) { Setup.SetupByType(key, type); }
             Service.Config.Save();
         }
         ImGui.SameLine();
@@ -195,12 +197,12 @@ public class UiGlobals
             if (ImGui.Button($"{FontAwesomeIcon.Reply.ToIconString()}##{refname}{key}"))
             {
                 value = defaultvalue;
-                Setup.SetupByType(key, type);
+                if (changesenabled) { Setup.SetupByType(key, type); }
                 Service.Config.Save();
             }
         }
     }
-    public static void DrawBool(string name, string type, uint key, ref bool value,
+    public static void DrawBool(string name, string type, uint key, bool changesenabled, ref bool value,
     bool defaultvalue)
     {
         string refname = name.Replace(" ", "");
@@ -209,7 +211,7 @@ public class UiGlobals
         ImGui.SetNextItemWidth(110 * CalcGlobals.GlobalScale());
         if (ImGui.Checkbox("##" + refname + key, ref value))
         {
-            Setup.SetupByType(key, type);
+            if (changesenabled) { Setup.SetupByType(key, type); }
             Service.Config.Save();
         }
         ImGui.SameLine();
@@ -219,11 +221,13 @@ public class UiGlobals
             if (ImGui.Button($"{FontAwesomeIcon.Reply.ToIconString()}##{refname}{key}"))
             {
                 value = defaultvalue;
-                Setup.SetupByType(key, type);
+                if (changesenabled) { Setup.SetupByType(key, type); }
                 Service.Config.Save();
             }
         }
     }
+
+   
 
 
 

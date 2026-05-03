@@ -53,14 +53,14 @@ public class GlassesMain
                 ImGui.TextWrapped(GlassesManager.GetName(key));
 
 
-                UiGlobals.DrawSByte("Unknown70_1", type, key, ref replace.Unknown70_1, DefaultValues.Unknown70_1);
-                UiGlobals.DrawSByte("Unknown70_2", type, key, ref replace.Unknown70_2, DefaultValues.Unknown70_2);
-                UiGlobals.DrawSByte("Unknown70_3", type, key, ref replace.Unknown70_3, DefaultValues.Unknown70_3);
-                UiGlobals.DrawSByte("Unknown70_4", type, key, ref replace.Unknown70_4, DefaultValues.Unknown70_4);
-                UiGlobals.DrawSByte("Unknown70_5", type, key, ref replace.Unknown70_5, DefaultValues.Unknown70_5);
-                UiGlobals.DrawSByte("Unknown70_6", type, key, ref replace.Unknown70_6, DefaultValues.Unknown70_6);
-                UiGlobals.DrawUInt("Unknown70_8", type, key, ref replace.Unknown70_7, DefaultValues.Unknown70_7);
-                UiGlobals.DrawUShort("Unknown70_8", type, key, ref replace.Unknown70_8, DefaultValues.Unknown70_8);
+                UiGlobals.DrawSByte("Unknown70_1", type, key, _activeSet.GlassesWriter[key].Enabled, ref replace.Unknown70_1, DefaultValues.Unknown70_1);
+                UiGlobals.DrawSByte("Unknown70_2", type, key, _activeSet.GlassesWriter[key].Enabled, ref replace.Unknown70_2, DefaultValues.Unknown70_2);
+                UiGlobals.DrawSByte("Unknown70_3", type, key, _activeSet.GlassesWriter[key].Enabled, ref replace.Unknown70_3, DefaultValues.Unknown70_3);
+                UiGlobals.DrawSByte("Unknown70_4", type, key, _activeSet.GlassesWriter[key].Enabled, ref replace.Unknown70_4, DefaultValues.Unknown70_4);
+                UiGlobals.DrawSByte("Unknown70_5", type, key, _activeSet.GlassesWriter[key].Enabled, ref replace.Unknown70_5, DefaultValues.Unknown70_5);
+                UiGlobals.DrawSByte("Unknown70_6", type, key, _activeSet.GlassesWriter[key].Enabled, ref replace.Unknown70_6, DefaultValues.Unknown70_6);
+                UiGlobals.DrawUInt("Unknown70_8", type, key, _activeSet.GlassesWriter[key].Enabled, ref replace.Unknown70_7, DefaultValues.Unknown70_7);
+                UiGlobals.DrawUShort("Unknown70_8", type, key, _activeSet.GlassesWriter[key].Enabled, ref replace.Unknown70_8, DefaultValues.Unknown70_8);
 
                 UiGlobals.DrawItemSeparator();
                 continue;
@@ -92,7 +92,7 @@ public class GlassesMain
                     if (ImGui.Selectable($"#{pair.Key:D5} {pair.Value}"))
                     {
                         var original = GlassesManager.GetOriginal(pair.Key);
-                        _activeSet.GlassesWriter[pair.Key] =
+                        _activeSet.GlassesWriter[pair.Key] = // can this be moved out into a cased thing? 
                             new GlassesConfig(new GlassesReplace(
                                     original.Unknown70_1,
                                     original.Unknown70_2,

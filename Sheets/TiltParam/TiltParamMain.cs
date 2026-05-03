@@ -45,12 +45,12 @@ public class TiltParamMain
                 ImGui.SameLine();
                 ImGui.TextWrapped(TiltParamManager.GetName(key));
 
-                UiGlobals.DrawUShort("Tilt Rate",type, key, ref replace.Unknown0, DefaultValues.Unknown0);
-                UiGlobals.DrawByte("Rotation Origin Offset", type, key, ref replace.Unknown1, DefaultValues.Unknown1);
-                UiGlobals.DrawByte("Max Angle", type, key, ref replace.Unknown2, DefaultValues.Unknown2);
-                UiGlobals.DrawByte("Unknown 3", type, key, ref replace.Unknown3, DefaultValues.Unknown3);
-                UiGlobals.DrawByte("Unknown 4", type, key, ref replace.Unknown4, DefaultValues.Unknown4);
-                UiGlobals.DrawBool("Reverse Mouse Direction", type, key, ref replace.Unknown5, DefaultValues.Unknown5);
+                UiGlobals.DrawUShort("Tilt Rate",type, key, _activeSet.TiltParamWriter[key].Enabled, ref replace.Unknown0, DefaultValues.Unknown0);
+                UiGlobals.DrawByte("Rotation Origin Offset", type, key, _activeSet.TiltParamWriter[key].Enabled, ref replace.Unknown1, DefaultValues.Unknown1);
+                UiGlobals.DrawByte("Max Angle", type, key, _activeSet.TiltParamWriter[key].Enabled, ref replace.Unknown2, DefaultValues.Unknown2);
+                UiGlobals.DrawByte("Unknown 3", type, key, _activeSet.TiltParamWriter[key].Enabled, ref replace.Unknown3, DefaultValues.Unknown3);
+                UiGlobals.DrawByte("Unknown 4", type, key, _activeSet.TiltParamWriter[key].Enabled, ref replace.Unknown4, DefaultValues.Unknown4);
+                UiGlobals.DrawBool("Reverse Mouse Direction", type, key, _activeSet.TiltParamWriter[key].Enabled, ref replace.Unknown5, DefaultValues.Unknown5);
 
                 UiGlobals.DrawItemSeparator();
                 continue;

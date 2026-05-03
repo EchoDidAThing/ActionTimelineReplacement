@@ -56,17 +56,17 @@ public class StatusMain
 
                 //to do: show loop vfx and hit effect as strings
 
-                UiGlobals.DrawInt("Parameter Modifier", type, key, ref replace.ParamModifier, DefaultValues.ParamModifier);
-                UiGlobals.DrawUShort("Status Loop VFX ID", type, key, ref replace.StatusLoopVFX, DefaultValues.StatusLoopVFX);
-                UiGlobals.DrawByte("Unknown 0", type, key, ref replace.Unknown0, DefaultValues.Unknown0);
-                UiGlobals.DrawByte("Status Category", type, key, ref replace.StatusCategory, DefaultValues.StatusCategory);
-                UiGlobals.DrawByte("Status Hit Effect ID", type, key, ref replace.StatusHitEffect, DefaultValues.StatusHitEffect);
-                UiGlobals.DrawByte("Parameter Effect", type, key, ref replace.ParamEffect, DefaultValues.ParamEffect);
-                UiGlobals.DrawByte("Target Type", type, key, ref replace.TargetType, DefaultValues.TargetType);
-                UiGlobals.DrawByte("Flag 1", type, key, ref replace.Flags, DefaultValues.Flags);
-                UiGlobals.DrawByte("Flag 2", type, key, ref replace.Flag2, DefaultValues.Flag2);
-                UiGlobals.DrawByte("Unknown_70_1", type, key, ref replace.Unknown_70_1, DefaultValues.Unknown_70_1);
-                UiGlobals.DrawSByte("AtkType", type, key, ref replace.Unknown2, DefaultValues.Unknown2);
+                UiGlobals.DrawInt("Parameter Modifier", type, key, _activeSet.StatusWriter[key].Enabled, ref replace.ParamModifier, DefaultValues.ParamModifier);
+                UiGlobals.DrawUShort("Status Loop VFX ID", type, key, _activeSet.StatusWriter[key].Enabled, ref replace.StatusLoopVFX, DefaultValues.StatusLoopVFX);
+                UiGlobals.DrawByte("Unknown 0", type, key, _activeSet.StatusWriter[key].Enabled, ref replace.Unknown0, DefaultValues.Unknown0);
+                UiGlobals.DrawByte("Status Category", type, key, _activeSet.StatusWriter[key].Enabled, ref replace.StatusCategory, DefaultValues.StatusCategory);
+                UiGlobals.DrawByte("Status Hit Effect ID", type, key, _activeSet.StatusWriter[key].Enabled, ref replace.StatusHitEffect, DefaultValues.StatusHitEffect);
+                UiGlobals.DrawByte("Parameter Effect", type, key, _activeSet.StatusWriter[key].Enabled, ref replace.ParamEffect, DefaultValues.ParamEffect);
+                UiGlobals.DrawByte("Target Type", type, key, _activeSet.StatusWriter[key].Enabled, ref replace.TargetType, DefaultValues.TargetType);
+                UiGlobals.DrawByte("Flag 1", type, key, _activeSet.StatusWriter[key].Enabled, ref replace.Flags, DefaultValues.Flags);
+                UiGlobals.DrawByte("Flag 2", type, key, _activeSet.StatusWriter[key].Enabled, ref replace.Flag2, DefaultValues.Flag2);
+                UiGlobals.DrawByte("Unknown_70_1", type, key, _activeSet.StatusWriter[key].Enabled, ref replace.Unknown_70_1, DefaultValues.Unknown_70_1);
+                UiGlobals.DrawSByte("AtkType", type, key, _activeSet.StatusWriter[key].Enabled, ref replace.Unknown2, DefaultValues.Unknown2);
                 UiGlobals.DrawItemSeparator();
                 continue;
 

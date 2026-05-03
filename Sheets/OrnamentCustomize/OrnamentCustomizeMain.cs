@@ -53,13 +53,13 @@ public class OrnamentCustomizeMain
                 ImGui.SameLine();
                 ImGui.TextWrapped(OrnamentCustomizeManager.GetName(key));
 
-                UiGlobals.DrawUShort("Unknown 0", type, key, ref replace.Unknown0, DefaultValues.Unknown0);
-                UiGlobals.DrawShort("Unknown 1", type, key, ref replace.Unknown1, DefaultValues.Unknown1);
-                UiGlobals.DrawShort("Unknown 2", type, key, ref replace.Unknown2, DefaultValues.Unknown2);
-                UiGlobals.DrawShort("PUnknown 3", type, key, ref replace.Unknown3, DefaultValues.Unknown3);
-                UiGlobals.DrawShort("Unknown 4", type, key, ref replace.Unknown4, DefaultValues.Unknown4);
-                UiGlobals.DrawShort("Unknown 5", type, key, ref replace.Unknown5, DefaultValues.Unknown5);
-                UiGlobals.DrawShort("Unknown 6", type, key, ref replace.Unknown6, DefaultValues.Unknown6);
+                UiGlobals.DrawUShort("Unknown 0", type, key, _activeSet.OrnamentCustomizeWriter[key].Enabled, ref replace.Unknown0, DefaultValues.Unknown0);
+                UiGlobals.DrawShort("Unknown 1", type, key, _activeSet.OrnamentCustomizeWriter[key].Enabled, ref replace.Unknown1, DefaultValues.Unknown1);
+                UiGlobals.DrawShort("Unknown 2", type, key, _activeSet.OrnamentCustomizeWriter[key].Enabled, ref replace.Unknown2, DefaultValues.Unknown2);
+                UiGlobals.DrawShort("PUnknown 3", type, key, _activeSet.OrnamentCustomizeWriter[key].Enabled, ref replace.Unknown3, DefaultValues.Unknown3);
+                UiGlobals.DrawShort("Unknown 4", type, key, _activeSet.OrnamentCustomizeWriter[key].Enabled, ref replace.Unknown4, DefaultValues.Unknown4);
+                UiGlobals.DrawShort("Unknown 5", type, key, _activeSet.OrnamentCustomizeWriter[key].Enabled, ref replace.Unknown5, DefaultValues.Unknown5);
+                UiGlobals.DrawShort("Unknown 6", type, key, _activeSet.OrnamentCustomizeWriter[key].Enabled, ref replace.Unknown6, DefaultValues.Unknown6);
 
                 UiGlobals.DrawItemSeparator();
                 continue;
