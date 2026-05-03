@@ -8,22 +8,22 @@ public static unsafe partial class Setup
     public static void SetupAll(bool reset = false)
     {
         //TOSETUP: add setup here
-        LoadAction(ActionManager.AllActionIds);
-        LoadMount(MountManager.AllMountIds);
-        LoadMountCustomize(MountCustomizeManager.AllMountCustomizeIds);
-        LoadStatus(StatusManager.AllStatusIds);
-        LoadStatusLoopVFX(StatusLoopVFXManager.AllStatusLoopVFXIds);
-        LoadStatusHitEffect(StatusHitEffectManager.AllStatusHitEffectIds);
-        LoadTiltParam(TiltParamManager.AllTiltParamIds);
-        //LoadPlaceName(PlaceNameManager.AllPlaceNameIds);
-        LoadGlasses(GlassesManager.AllGlassesIds);
-        LoadGlassesStyle(GlassesStyleManager.AllGlassesStyleIds);
-        LoadOrnament(OrnamentManager.AllOrnamentIds);
-        LoadOrnamentCustomize(OrnamentCustomizeManager.AllOrnamentCustomizeIds);
-        LoadVfx(VfxManager.AllVfxIds);
-        //LoadOrnamentCustomizeGroup(OrnamentCustomizeGroupManager.AllOrnamentCustomizeGroupIds);
-        //LoadActionTimeline(ActionTimelineManager.AllActionTimelineIds); //find sigs
-        //LoadPointMenuChoice(PointMenuChoiceManager.AllPointMenuChoiceIds); //find sigs
+        LoadAction(ActionManager.AllActionIds, reset);
+        LoadMount(MountManager.AllMountIds, reset);
+        LoadMountCustomize(MountCustomizeManager.AllMountCustomizeIds, reset);
+        LoadStatus(StatusManager.AllStatusIds, reset);
+        LoadStatusLoopVFX(StatusLoopVFXManager.AllStatusLoopVFXIds, reset);
+        LoadStatusHitEffect(StatusHitEffectManager.AllStatusHitEffectIds, reset);
+        LoadTiltParam(TiltParamManager.AllTiltParamIds, reset);
+        //LoadPlaceName(PlaceNameManager.AllPlaceNameIds, reset);
+        LoadGlasses(GlassesManager.AllGlassesIds, reset);
+        LoadGlassesStyle(GlassesStyleManager.AllGlassesStyleIds, reset);
+        LoadOrnament(OrnamentManager.AllOrnamentIds, reset);
+        LoadOrnamentCustomize(OrnamentCustomizeManager.AllOrnamentCustomizeIds, reset);
+        LoadVfx(VfxManager.AllVfxIds, reset);
+        //LoadOrnamentCustomizeGroup(OrnamentCustomizeGroupManager.AllOrnamentCustomizeGroupIds, reset);
+        //LoadActionTimeline(ActionTimelineManager.AllActionTimelineIds, reset); //find sigs
+        //LoadPointMenuChoice(PointMenuChoiceManager.AllPointMenuChoiceIds, reset); //find sigs
     }
 
     public static void SetupByType(uint id, string type, bool reset = false)

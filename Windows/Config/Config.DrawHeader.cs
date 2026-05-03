@@ -1,6 +1,7 @@
 ﻿using ActionTimelineReplacement.Base.Setups;
-using Dalamud.Interface.Windowing;
 using Dalamud.Bindings.ImGui;
+using Dalamud.Interface.Windowing;
+using FFXIVClientStructs.FFXIV.Common.Lua;
 #pragma warning disable CA1416 // Validate platform compatibility
 
 namespace ActionTimelineReplacement.Windows;
@@ -11,15 +12,23 @@ public sealed partial class ConfigWindow : Window
     {
         if (ImGui.Checkbox("Enable", ref Service.Config.EnableReplacement))
         {
-            //SETUP ALL PROCESSING
-            Setup.SetupAll();
+
+            if (Service.Config.EnableReplacement)
+            {
+                Setup.SetupAll();
+            }
+            else
+            {
+                Setup.SetupAll(true);
+            }
             Service.Config.Save();
         }
         ImGui.SameLine();
 
         if (ImGui.Button("Redraw"))
         {
-            //SETUP ALL PROCESSING
+            //Resets Disables all changes, then enables all changes.
+            Setup.SetupAll(true);
             Setup.SetupAll();
         }
         /*
