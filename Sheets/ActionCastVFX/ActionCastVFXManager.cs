@@ -4,7 +4,7 @@ using System.Runtime.InteropServices;
 using Lumina.Excel.Sheets;
 
 namespace ActionTimelineReplacement.Sheets;
-public static class ActionCastVFXReplacementsManager
+public static class ActionCastVFXManager
 {
     private static Dictionary<uint, string>? _Names;
 
@@ -16,7 +16,7 @@ public static class ActionCastVFXReplacementsManager
             .ToDictionary(i => i.RowId, i => i.RowId.ToString());
 
 
-    public static IEnumerable<uint> AllCastVFXActionIds =>
+    public static IEnumerable<uint> AllActionCastVFXIds =>
         Service.Config.ReplacementSets.SelectMany(i => i.ActionCastVFXWriter.Keys);
 
     public static string GetName(uint id)

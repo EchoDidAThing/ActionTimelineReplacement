@@ -16,6 +16,7 @@ public sealed partial class ConfigWindow : Window
 
     //TOSETUP: Add new search here
     private string _searchAction = string.Empty;
+    private string _searchActionCastVFX = string.Empty;
     private string _searchMount = string.Empty;
     private string _searchMountCustomize = string.Empty;
     private string _searchTiltParam = string.Empty;
@@ -37,6 +38,8 @@ public sealed partial class ConfigWindow : Window
         {
             //TOSETUP: Add new headers here
             _AllHeaders.Add("Action", []);
+            _AllHeaders.Add("ActionCastVFX", []);
+            _AllHeaders.Add("ActionTimeline", []);
             _AllHeaders.Add("Mount", []);
             _AllHeaders.Add("MountCustomize", []);
             _AllHeaders.Add("Status", []);
@@ -46,7 +49,6 @@ public sealed partial class ConfigWindow : Window
             _AllHeaders.Add("Glasses", []);
             _AllHeaders.Add("GlassesStyle", []);
             _AllHeaders.Add("PlaceName", []);
-            _AllHeaders.Add("ActionTimeline", []);
             _AllHeaders.Add("Ornament", []);
             _AllHeaders.Add("OrnamentCustomize", []);
             _AllHeaders.Add("Vfx", []);
@@ -97,6 +99,12 @@ public sealed partial class ConfigWindow : Window
                     case "Action":
                         ActionMain.Draw(mainkey, ref _activeSet, ref _searchAction);
                         break;
+                    case "ActionCastVFX":
+                        ActionCastVFXMain.Draw(mainkey, ref _activeSet, ref _searchActionCastVFX);
+                        break;
+                    case "ActionTimeline":
+                        ActionTimelineMain.Draw(mainkey, ref _activeSet, ref _searchActionCastVFX);
+                        break;
                     case "Mount":
                         MountMain.Draw(mainkey, ref _activeSet, ref _searchMount);
                         break;
@@ -124,9 +132,6 @@ public sealed partial class ConfigWindow : Window
                     /*case "PlaceName":
                         PlaceNameMain.Draw(mainkey, ref _activeSet, ref _searchPlaceName);
                         break;*/
-                    case "ActionTimeline":
-                        ActionTimelineMain.Draw(mainkey, ref _activeSet, ref _searchActionTimeline);
-                        break;
                     case "Ornament":
                         OrnamentMain.Draw(mainkey, ref _activeSet, ref _searchOrnament);
                         break;

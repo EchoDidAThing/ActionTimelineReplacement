@@ -239,6 +239,9 @@ public class UiGlobals
             case "Action":
                 output = ActionManager.Names;
                 return output;
+            case "ActionCastVFX":
+                output = ActionCastVFXManager.Names;
+                return output;
             case "ActionTimeline":
                 output = ActionTimelineManager.Names;
                 return output;

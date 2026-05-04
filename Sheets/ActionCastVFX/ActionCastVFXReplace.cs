@@ -6,6 +6,11 @@ namespace ActionTimelineReplacement.Sheets
     {
         public bool Enabled = enabled;
         public ActionCastVFXReplace Replacement => replace;
+
+        public static ActionCastVFXConfig CreateEntry(uint key)
+        {
+            return new ActionCastVFXConfig(ActionCastVFXManager.GetOriginal(key), false);
+        }
     }
 
     public class ActionCastVFXReplace(

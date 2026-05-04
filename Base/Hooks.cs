@@ -11,6 +11,7 @@ public static unsafe class Hooks
 
     #region delegates
     private delegate ActionData* GetActionDataDelegate(uint RowId);
+    private delegate ActionCastVFXData* GetActionCastVFXDataDelegate(uint RowId);
     private delegate StatusData* GetStatusDataDelegate(uint RowId);
     private delegate StatusLoopVFXData* GetStatusLoopVFXDataDelegate(uint RowId);
     private delegate StatusHitEffectData* GetStatusHitEffectDataDelegate(uint RowId);
@@ -32,7 +33,6 @@ public static unsafe class Hooks
     //private delegate MotionTimelineData* GetMotionTimelineDataDelegate(uint RowId);
     //private delegate PointMenuChoiceData* GetPointMenuChoiceDataDelegate(float RowId);
     //private delegate ActionCastTimelineData* GetActionCastTimelineDataDelegate(uint RowId);
-    //private delegate ActionCastVFXData* GetActionCastVFXDataDelegate(uint RowId);
     //private delegate ActionTransientData* GetActionTransientDataDelegate(uint RowId);
     //private delegate StatusHitEffectData* GetStatusHitEffectDataDelegate(uint RowId);
     //private delegate MountTransientData* GetMountTransientDataDelegate(uint RowId);
@@ -41,6 +41,7 @@ public static unsafe class Hooks
     #region hooks
 
     private static GetActionDataDelegate? _getActionDataHook;
+    private static GetActionCastVFXDataDelegate? _getActionCastVFXDataHook;
     private static GetStatusDataDelegate? _getStatusDataHook;
     private static GetStatusLoopVFXDataDelegate? _getStatusLoopVFXDataHook;
     private static GetStatusLoopVFXDataDelegatepublic? _getStatusLoopVFXDataHookpublic;
@@ -76,6 +77,15 @@ public static unsafe class Hooks
         //updated for 7.4, Component::Exd::ExdModule.GetActionRow located inside Client::Game::ActionManager.GetActionStatus
 
         return _getActionDataHook(RowId);
+    }
+
+    public static ActionCastVFXData* GetActionCastVFXData(uint RowId)
+    {
+        _getActionCastVFXDataHook ??= Marshal.GetDelegateForFunctionPointer<GetActionCastVFXDataDelegate>(Service.Scanner.ScanText(
+            "E8 ?? ?? ?? ?? 48 8B F8 48 85 C0 74 ?? 48 8B 4B ?? E8"));
+        //updated for 7.5, nested in a function below Client::Game::Character::MountContainer.vf4 and Client::Game::Character::TimelineContainer.vf4
+
+        return _getActionCastVFXDataHook(RowId);
     }
 
     public static StatusData* GetStatusData(uint RowId)

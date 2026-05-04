@@ -9,6 +9,8 @@ public static unsafe partial class Setup
     {
         //TOSETUP: add setup here
         LoadAction(ActionManager.AllActionIds, reset);
+        LoadActionCastVFX(ActionCastVFXManager.AllActionCastVFXIds, reset);
+        LoadActionTimeline(ActionTimelineManager.AllActionTimelineIds, reset);
         LoadMount(MountManager.AllMountIds, reset);
         LoadMountCustomize(MountCustomizeManager.AllMountCustomizeIds, reset);
         LoadStatus(StatusManager.AllStatusIds, reset);
@@ -32,6 +34,9 @@ public static unsafe partial class Setup
         {
             case "Action":
                 SetAction(id, reset);
+                break;
+            case "ActionCastVFX":
+                SetActionCastVFX(id, reset);
                 break;
             case "ActionTimeline":
                 SetActionTimeline(id, reset);
