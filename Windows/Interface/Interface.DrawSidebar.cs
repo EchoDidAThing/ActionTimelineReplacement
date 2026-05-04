@@ -10,7 +10,7 @@ using Dalamud.Interface.Windowing;
 using Dalamud.Bindings.ImGui;
 #pragma warning disable CA1416 // Validate platform compatibility
 
-namespace ActionTimelineReplacement.Windows;
+namespace ActionTimelineReplacement.Interface;
 
 public sealed partial class ConfigWindow : Window
 {
@@ -63,6 +63,7 @@ public sealed partial class ConfigWindow : Window
                         if (_activeSet == Service.Config.ReplacementSets[i]) _activeSet = null;
                         Service.Config.ReplacementSets.Remove(set);
                         Service.Config.Save();
+                        Setup.SetupAll(true);
                         Setup.SetupAll();
                         ImGui.CloseCurrentPopup();
                     }

@@ -6,6 +6,9 @@ using Dalamud.Interface;
 using Dalamud.Interface.Utility.Raii;
 using FFXIVClientStructs.FFXIV.Common.Lua;
 using System;
+using System.Collections.Generic;
+using System.Diagnostics.Contracts;
+using System.Linq;
 using static FFXIVClientStructs.FFXIV.Client.UI.Misc.AozNoteModule;
 
 namespace ActionTimelineReplacement.Base.Global;
@@ -226,9 +229,64 @@ public class UiGlobals
             }
         }
     }
+    
 
-   
-
-
-
+    public static Dictionary<uint, string> CreateSearchList(string type)
+    {
+        Dictionary<uint, string> output = [];
+        switch (type)
+        {
+            case "Action":
+                output = ActionManager.Names;
+                return output;
+            case "ActionTimeline":
+                output = ActionTimelineManager.Names;
+                return output;
+            case "Glasses":
+                output = GlassesManager.Names;
+                return output;
+            case "GlassesStyle":
+                output = GlassesStyleManager.Names;
+                return output;
+            case "Mount":
+                output = MountManager.Names;
+                return output;
+            case "MountCustomize":
+                output = MountCustomizeManager.Names;
+                return output;
+            case "Ornament":
+                output = OrnamentManager.Names;
+                return output;
+            case "OrnamentCustomize":
+                output = OrnamentCustomizeManager.Names;
+                return output;
+            case "OrnamentCustomizeGroup":
+            //output = OrnamentCustomizeGroupManager.Names;
+            //return output;
+            case "Placename":
+            //output = PlaceNameManager.Names;
+            //return output;
+            case "PointMenuChoice":
+            //output = PointMenuManager.Names;
+            //return output;
+            case "Status":
+                output = StatusManager.Names;
+                return output;
+            case "StatusHitEffect":
+                output = StatusHitEffectManager.Names;
+                return output;
+            case "StatusLoopVFX":
+                output = StatusLoopVFXManager.Names;
+                return output;
+            case "TiltParam":
+                output = TiltParamManager.Names;
+                return output;
+            case "Vfx":
+                output = VfxManager.Names;
+                return output;
+            default:
+                Service.Log.Error("Datasheet type [{type}] is not defined in CreateSearchList", type);
+                return output;
+        }
+    }
 }

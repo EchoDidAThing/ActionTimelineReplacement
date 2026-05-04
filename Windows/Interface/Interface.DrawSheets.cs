@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using ActionTimelineReplacement.Sheets;
 #pragma warning disable CA1416 // Validate platform compatibility
 
-namespace ActionTimelineReplacement.Windows;
+namespace ActionTimelineReplacement.Interface;
 
 public sealed partial class ConfigWindow : Window
 {

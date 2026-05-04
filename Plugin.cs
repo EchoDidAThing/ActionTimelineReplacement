@@ -2,7 +2,7 @@ using Dalamud.Plugin;
 using System;
 using System.Collections.Immutable;
 using ActionTimelineReplacement.Sheets;
-using ActionTimelineReplacement.Windows;
+using ActionTimelineReplacement.Interface;
 using ActionTimelineReplacement.Base.Setups;
 
 namespace ActionTimelineReplacement;

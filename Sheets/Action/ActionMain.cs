@@ -4,7 +4,7 @@ using Dalamud.Bindings.ImGui;
 using System;
 using System.Linq;
 using ActionTimelineReplacement.Base.Setups;
-using ActionTimelineReplacement.Windows;
+using ActionTimelineReplacement.Interface;
 using ActionTimelineReplacement.Base.Global;
 #pragma warning disable CA1416 // Validate platform compatibility
 
@@ -89,8 +89,8 @@ public class ActionMain
                 foreach (var pair in ActionManager.Names.OrderBy(i =>
                 {
                     if (string.IsNullOrEmpty(localsearch)) return 0;
-                    return Math.Min(ConfigWindow.ScoreString(i.Value, localsearch),
-                        ConfigWindow.ScoreString(i.Key.ToString(), localsearch));
+                    return Math.Min(ProcessingGlobals.ScoreString(i.Value, localsearch),
+                        ProcessingGlobals.ScoreString(i.Key.ToString(), localsearch));
                 }))
                 {
                     if (ImGui.Selectable($"#{pair.Key:D5} {pair.Value}"))

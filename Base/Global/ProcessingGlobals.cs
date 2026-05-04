@@ -9,6 +9,15 @@ namespace ActionTimelineReplacement.Base.Global;
 
 public class ProcessingGlobals
 {
+
+    public static int ScoreString(string s1, string search)
+    {
+        if (s1.Contains(search, StringComparison.OrdinalIgnoreCase))
+        {
+            return s1.Length - search.Length;
+        }
+        return CalcGlobals.LevenshteinDistance(s1, search) + 20;
+    }
     public static byte PackBools(bool bool1, bool bool2 = false, bool bool3 = false, bool bool4 = false, bool bool5 = false, bool bool6 = false, bool bool7 = false, bool bool8 = false)
     {
         byte PackedBool = 0;

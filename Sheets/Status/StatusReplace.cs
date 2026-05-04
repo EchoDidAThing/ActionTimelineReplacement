@@ -6,6 +6,11 @@ public class StatusConfig(StatusReplace replace, bool enabled)
 {
     public bool Enabled = enabled;
     public StatusReplace Replacement => replace;
+
+    public static StatusConfig CreateEntry(uint key)
+    {
+        return new StatusConfig(StatusManager.GetOriginal(key), false);
+    }
 }
 
 public class StatusReplace(
@@ -46,4 +51,5 @@ public class StatusReplace(
         ptr->Unknown_70_1 = Unknown_70_1;
         ptr->Unknown2 = Unknown2;
     }
+
 }

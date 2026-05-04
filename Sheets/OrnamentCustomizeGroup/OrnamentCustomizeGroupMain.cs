@@ -6,7 +6,7 @@ using System;
 using System.Linq;
 using Dalamud.Interface.Utility;
 using ActionTimelineReplacement.Base.Setups;
-using ActionTimelineReplacement.Windows;
+using ActionTimelineReplacement.Interface;
 
 namespace ActionTimelineReplacement.Sheets;
 

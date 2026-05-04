@@ -6,7 +6,7 @@ using ActionTimelineReplacement.Base.Global;
 using Dalamud.Bindings.ImGui;
 #pragma warning disable CA1416 // Validate platform compatibility
 
-namespace ActionTimelineReplacement.Windows;
+namespace ActionTimelineReplacement.Interface;
 
 public sealed partial class ConfigWindow : Window
 {

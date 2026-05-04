@@ -4,7 +4,7 @@ using Dalamud.Bindings.ImGui;
 using System;
 using System.Linq;
 using ActionTimelineReplacement.Base.Setups;
-using ActionTimelineReplacement.Windows;
+using ActionTimelineReplacement.Interface;
 using ActionTimelineReplacement.Base.Global;
 using System.Reflection.Metadata;
 
@@ -82,8 +82,8 @@ public class VfxMain
                 using var popupChild = ImRaii.Child(searchPopup, CalcGlobals.SearchPopScale(), true);
                 foreach (var pair in VfxManager.Names.OrderBy(i =>
                 {
-                    return Math.Min(ConfigWindow.ScoreString(i.Value, localsearch),
-                        ConfigWindow.ScoreString(i.Key.ToString(), localsearch));
+                    return Math.Min(ProcessingGlobals.ScoreString(i.Value, localsearch),
+                        ProcessingGlobals.ScoreString(i.Key.ToString(), localsearch));
                 }))
                 {
                     if (ImGui.Selectable($"#{pair.Key:D5} {pair.Value}"))
