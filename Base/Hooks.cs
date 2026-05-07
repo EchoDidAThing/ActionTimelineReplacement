@@ -8,6 +8,7 @@ public static unsafe class Hooks
 {
     public const string vfxhook = "E8 ?? ?? ?? ?? 48 8B D0 48 8B CB E8 ?? ?? ?? ?? 45 84 F6"; //updated for 7.5
     public const string statusloopvfxhook = "E8 ?? ?? ?? ?? 48 8B D8 48 85 C0 74 ?? 66 39 38";//updated 7.4
+    public const string actiontimelinehook = "E8 ?? ?? ?? ?? F6 40 3E 10"; //updated for 7.5
 
     #region delegates
     private delegate ActionData* GetActionDataDelegate(uint RowId);
@@ -23,6 +24,7 @@ public static unsafe class Hooks
     private delegate GlassesStyleData* GetGlassesStyleDataDelegate(uint RowId);
     //private delegate PlaceNameData* GetPlaceNameDataDelegate(uint RowId);
     private delegate ActionTimelineData* GetActionTimelineDataDelegate(uint RowId);
+    private delegate IntPtr GetActionTimelineDataDelegatepublic(uint RowId);
     private delegate WeaponTimelineData* GetWeaponTimelineDataDelegate(uint RowId);
     private delegate OrnamentData* GetOrnamentDataDelegate(uint RowId);
     private delegate OrnamentCustomizeData* GetOrnamentCustomizeDataDelegate(uint RowId);
@@ -42,6 +44,8 @@ public static unsafe class Hooks
 
     private static GetActionDataDelegate? _getActionDataHook;
     private static GetActionCastVFXDataDelegate? _getActionCastVFXDataHook;
+    private static GetActionTimelineDataDelegate? _getActionTimelineDataHook;
+    private static GetActionTimelineDataDelegatepublic? _getActionTimelineDataHookpublic;
     private static GetStatusDataDelegate? _getStatusDataHook;
     private static GetStatusLoopVFXDataDelegate? _getStatusLoopVFXDataHook;
     private static GetStatusLoopVFXDataDelegatepublic? _getStatusLoopVFXDataHookpublic;
@@ -52,7 +56,6 @@ public static unsafe class Hooks
     private static GetGlassesDataDelegate? _getGlassesDataHook;
     private static GetGlassesStyleDataDelegate? _getGlassesStyleDataHook;
     //private static GetPlaceNameDataDelegate? _getPlaceNameDataHook;
-    private static GetActionTimelineDataDelegate? _getActionTimelineDataHook;
     private static GetWeaponTimelineDataDelegate? _getWeaponTimelineDataHook;
     private static GetOrnamentDataDelegate? _getOrnamentDataHook;
     private static GetOrnamentCustomizeDataDelegate? _getOrnamentCustomizeDataHook;
@@ -170,10 +173,18 @@ public static unsafe class Hooks
     public static ActionTimelineData* GetActionTimelineData(uint RowId)
     {
         _getActionTimelineDataHook ??= Marshal.GetDelegateForFunctionPointer<GetActionTimelineDataDelegate>(Service.Scanner.ScanText(
-            "E8 ?? ?? ?? ?? F6 40 3E 10")); 
+            actiontimelinehook)); 
 
 
         return _getActionTimelineDataHook(RowId);
+    }
+    public static IntPtr GetActionTimelineDatapublic(uint RowId)
+    {
+        _getActionTimelineDataHookpublic ??= Marshal.GetDelegateForFunctionPointer<GetActionTimelineDataDelegatepublic>(Service.Scanner.ScanText(
+            "E8 ?? ?? ?? ?? F6 40 3E 10"));
+
+
+        return _getActionTimelineDataHookpublic(RowId);
     }
     public static WeaponTimelineData* GetWeaponTimelineData(uint RowId)
     {

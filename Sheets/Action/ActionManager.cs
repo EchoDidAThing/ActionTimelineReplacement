@@ -66,6 +66,8 @@ public static class ActionManager
                 act?.Unknown4 ?? 0,
                 act?.Unknown_70 ?? 0
                 );
+            old[idx] = replacement;
+
         }
         return replacement!;
     }

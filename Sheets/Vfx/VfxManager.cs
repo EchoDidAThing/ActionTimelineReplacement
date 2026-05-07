@@ -29,23 +29,8 @@ public static class VfxManager
     public static VfxReplace GetReplacement(uint idx)
         => GetConfig(idx) ?? GetOriginal(idx);
 
-    private static VfxReplace? GetConfig(uint idx)
-    {
-        if (!Service.Config.EnableReplacement) return null;
 
-        foreach (var item in Service.Config.ReplacementSets)
-        {
-            foreach (var replacement in item.VfxWriter
-                         .Where(r => item.Enabled)
-                         .OrderByDescending(r => item.Priority))
-            {
-                return replacement.Value.Replacement;
-            }
-        }
-        return null;
-    }
-
-    public static VfxReplace GetOriginal(uint idx)
+    public static VfxReplace GetConfig(uint idx)
     {
         if (!Service.Config.EnableReplacement) return null;
 
@@ -65,5 +50,19 @@ public static class VfxManager
             return replacement.Value;
         }
         return null;
+    }
+
+    public static VfxReplace GetOriginal(uint idx)
+    {
+        ref var replacement = ref CollectionsMarshal.GetValueRefOrAddDefault(old, idx, out var exists);
+        if (!exists)
+        {
+            var act = Service.DataManager.GetExcelSheet<VFX>()?.GetRow(idx);
+            replacement = new VfxReplace(
+                 act?.RowId ?? 0,
+                 act?.Location.ToString() ?? ""
+                );
+        }
+        return replacement!;
     }
 }

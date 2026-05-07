@@ -60,7 +60,9 @@ public class GlassesMain
                 UiGlobals.DrawSByte("Unknown70_5", type, key, _activeSet.GlassesWriter[key].Enabled, ref replace.Unknown70_5, DefaultValues.Unknown70_5);
                 UiGlobals.DrawSByte("Unknown70_6", type, key, _activeSet.GlassesWriter[key].Enabled, ref replace.Unknown70_6, DefaultValues.Unknown70_6);
                 UiGlobals.DrawUInt("Unknown70_8", type, key, _activeSet.GlassesWriter[key].Enabled, ref replace.Unknown70_7, DefaultValues.Unknown70_7);
-                UiGlobals.DrawUShort("Unknown70_8", type, key, _activeSet.GlassesWriter[key].Enabled, ref replace.Unknown70_8, DefaultValues.Unknown70_8);
+
+                //REENABLE
+                //UiGlobals.DrawUShort("Unknown70_8", type, key, _activeSet.GlassesWriter[key].Enabled, ref replace.Unknown70_8, DefaultValues.Unknown70_8);
 
                 UiGlobals.DrawItemSeparator();
                 continue;

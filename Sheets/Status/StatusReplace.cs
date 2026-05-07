@@ -2,14 +2,17 @@
 
 namespace ActionTimelineReplacement.Sheets;
 
-public class StatusConfig(StatusReplace replace, bool enabled)
+public class StatusConfig(StatusReplace replace, StatusReplace original, bool enabled)
 {
     public bool Enabled = enabled;
-    public StatusReplace Replacement => replace;
+    public StatusReplace Replacement = replace;
+
+    public readonly StatusReplace Original = original;
 
     public static StatusConfig CreateEntry(uint key)
     {
-        return new StatusConfig(StatusManager.GetOriginal(key), false);
+        StatusReplace originalvalues = StatusManager.GetOriginal(key);
+        return new StatusConfig(originalvalues, originalvalues, false);
     }
 }
 

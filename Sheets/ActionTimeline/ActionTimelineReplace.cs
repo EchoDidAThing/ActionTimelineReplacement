@@ -1,4 +1,7 @@
 ﻿using ActionTimelineReplacement.Base.Structs;
+using System;
+using System.Runtime.InteropServices;
+using System.Text;
 
 namespace ActionTimelineReplacement.Sheets;
 
@@ -9,6 +12,9 @@ public class ActionTimelineConfig(ActionTimelineReplace replace, bool enabled)
 }
 
 public class ActionTimelineReplace(
+    uint rowid,
+    string animation,
+    ushort weapontimelineoffset,
     byte type,
     byte priority,
     byte stance,
@@ -22,6 +28,9 @@ public class ActionTimelineReplace(
     byte unknown1,
     byte viperBladeState)
 {
+    public uint RowId = rowid;
+    public string Animation = animation;
+    public ushort WeaponTimelineOffset = weapontimelineoffset;
     public byte Type = type;
     public byte Priority = priority;
     public byte Stance = stance;
@@ -48,5 +57,15 @@ public class ActionTimelineReplace(
         ptr->Unknown6 = Unknown6;
         ptr->Unknown1 = Unknown1;
         ptr->VPRBladeState = VPRBladeState;
-    }               
+    }
+
+
+    public unsafe void WriteSEString(IntPtr ptr)
+    {
+        var data = ptr;
+        var stringbytes = Encoding.UTF8.GetBytes(Animation);
+        var offset = Marshal.ReadByte(data);
+        Marshal.Copy(stringbytes, 0, data + offset, stringbytes.Length);
+        Marshal.WriteByte(data + offset + stringbytes.Length, 0);
+    }
 }

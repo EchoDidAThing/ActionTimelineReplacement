@@ -1,14 +1,17 @@
 ﻿using ActionTimelineReplacement;
 using ActionTimelineReplacement.Base.Setups;
+using ActionTimelineReplacement.Interface;
 using ActionTimelineReplacement.Sheets;
 using Dalamud.Bindings.ImGui;
 using Dalamud.Interface;
+using Dalamud.Interface.Utility;
 using Dalamud.Interface.Utility.Raii;
 using FFXIVClientStructs.FFXIV.Common.Lua;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.Linq;
+using System.Runtime.InteropServices;
 using static FFXIVClientStructs.FFXIV.Client.UI.Misc.AozNoteModule;
 
 namespace ActionTimelineReplacement.Base.Global;
@@ -17,13 +20,17 @@ public class UiGlobals
 {
     public static void DrawAddItem(string searchname)
     {
-        if (ImGui.Button(" + "))
+
+        using (ImRaii.PushFont(UiBuilder.IconFont))
         {
-            ImGui.OpenPopup(searchname);
-        }
-        else
-        {
-            return;
+            if (ImGui.Button($"{FontAwesomeIcon.Plus.ToIconString()}"))
+            {
+                ImGui.OpenPopup(searchname);
+            }
+            else
+            {
+                return;
+            }
         }
     }
 
@@ -34,14 +41,30 @@ public class UiGlobals
         ImGui.NewLine();
     }
 
+    public static void DrawSheetButton(string mainkey, ref string activesheet, Configuration.ReplacementSet activeset)
+    {
+        uint countvalue = GetSheetCounts(mainkey, activeset);
+        string buttontext = mainkey;
+        if (countvalue >=1)
+        {
+            buttontext += " [" + countvalue + "]"; 
+        }
+        if (activesheet == mainkey)
+        {
+            buttontext = "<<" + buttontext + ">>";
+        }
+        if (ImGui.Button(buttontext))
+        {
+            activesheet = mainkey;
+        }
+    }
+
+
     public static void DrawString(string name, string type, uint key, bool changesenabled, ref string value,
-    string defaultvalue)
+    string defaultvalue, bool sheethasindirects = false, string indirecttype = "NO")
     {
         string refname = name.Replace(" ", "");
-        ImGui.TextUnformatted(name);
-        ImGui.SetCursorPosX(ImGui.GetCursorPosX() + 15);
-        ImGui.SetNextItemWidth(110 * CalcGlobals.GlobalScale());
-        if (ImGui.InputText("##" + refname + key, ref value))
+        if (ImGui.InputText("##" + refname + key, ref value, 512, ImGuiInputTextFlags.EnterReturnsTrue))
         {
             if (changesenabled) { Setup.SetupByType(key, type); }
             Service.Config.Save();
@@ -57,16 +80,15 @@ public class UiGlobals
                 Service.Config.Save();
             }
         }
+        ImGui.SameLine();
+        ImGui.TextUnformatted(name);
     }
 
     public static void DrawSByte(string name, string type, uint key, bool changesenabled, ref sbyte value,
-    sbyte defaultvalue)
+    sbyte defaultvalue, bool sheethasindirects = false, string indirecttype = "NO")
     {
         string refname = name.Replace(" ", "");
-        ImGui.TextUnformatted(name);
-        ImGui.SetCursorPosX(ImGui.GetCursorPosX() + 15);
-        ImGui.SetNextItemWidth(110 * CalcGlobals.GlobalScale());
-        if (ImGui.InputSByte("##" + refname + key, ref value))
+        if (ImGui.InputSByte("##" + refname + key, ref value, 0, 0, default, ImGuiInputTextFlags.EnterReturnsTrue))
         {
             if (changesenabled) { Setup.SetupByType(key, type); }
             Service.Config.Save();
@@ -80,19 +102,38 @@ public class UiGlobals
                 value = defaultvalue;
                 if (changesenabled) { Setup.SetupByType(key, type); }
                 Service.Config.Save();
+            }
+        }
+        ImGui.SameLine();
+        ImGui.TextUnformatted(name);
+        if (sheethasindirects)
+        {
+            if (indirecttype == "NO")
+            {
+                ImGui.Text("");
+            }
+            else
+            {
+                ImGui.Text(GetIndirectString(indirecttype, (uint)value));
+            }
+            ImGui.SameLine();
+            using (ImRaii.PushFont(UiBuilder.IconFont))
+            {
+                if (ImGui.Button($"{FontAwesomeIcon.ClipboardList.ToIconString()}##{refname}{key}"))
+                {
+                    ImGui.SetClipboardText(GetIndirectString(indirecttype, (uint)value));
+                }
             }
         }
     }
 
 
     public static void DrawByte(string name, string type, uint key, bool changesenabled, ref byte value,
-    byte defaultvalue)
+    byte defaultvalue, bool sheethasindirects = false, string indirecttype = "NO")
     {
+        string indirecttext = "";
         string refname = name.Replace(" ", "");
-        ImGui.TextUnformatted(name);
-        ImGui.SetCursorPosX(ImGui.GetCursorPosX() + 15);
-        ImGui.SetNextItemWidth(110 * CalcGlobals.GlobalScale());
-        if (ImGui.InputByte("##" + refname + key, ref value))
+        if (ImGui.InputByte("##" + refname + key, ref value, 0, 0, default, ImGuiInputTextFlags.EnterReturnsTrue))
         {
             if (changesenabled) { Setup.SetupByType(key, type); }
             Service.Config.Save();
@@ -106,18 +147,38 @@ public class UiGlobals
                 value = defaultvalue;
                 if (changesenabled) { Setup.SetupByType(key, type); }
                 Service.Config.Save();
+            }
+        }
+        ImGui.SameLine();
+        ImGui.TextUnformatted(name);
+        if (sheethasindirects)
+        {
+            if (indirecttype == "NO")
+            {
+                ImGui.Text("");
+            }
+            else
+            {
+                ImGui.Text(GetIndirectString(indirecttype, value));
+            }
+            ImGui.SameLine();
+            using (ImRaii.PushFont(UiBuilder.IconFont))
+            {
+                if (ImGui.Button($"{FontAwesomeIcon.ClipboardList.ToIconString()}##{refname}{key}"))
+                {
+                    ImGui.SetClipboardText(GetIndirectString(indirecttype, value));
+                }
             }
         }
     }
     public static void DrawShort(string name, string type, uint key, bool changesenabled, ref short value,
-    short defaultvalue)
+    short defaultvalue, bool sheethasindirects = false, string indirecttype = "NO")
     {
         string refname = name.Replace(" ", "");
-        ImGui.TextUnformatted(name);
-        ImGui.SetCursorPosX(ImGui.GetCursorPosX() + 15);
-        ImGui.SetNextItemWidth(110 * CalcGlobals.GlobalScale());
-        if (ImGui.InputShort("##" + refname + key, ref value))
+        short relay = value;
+        if (ImGui.InputShort("##" + refname + key, ref relay, 0, 0, default, ImGuiInputTextFlags.EnterReturnsTrue))
         {
+            value = relay;
             if (changesenabled) { Setup.SetupByType(key, type); }
             Service.Config.Save();
         }
@@ -132,16 +193,35 @@ public class UiGlobals
                 Service.Config.Save();
             }
         }
+        ImGui.SameLine();
+        ImGui.TextUnformatted(name);
+        if (sheethasindirects)
+        {
+            if (indirecttype == "NO")
+            {
+                ImGui.Text("");
+            }
+            else
+            {
+                ImGui.Text(GetIndirectString(indirecttype, (uint)value));
+            }
+            ImGui.SameLine();
+            using (ImRaii.PushFont(UiBuilder.IconFont))
+            {
+                if (ImGui.Button($"{FontAwesomeIcon.ClipboardList.ToIconString()}##{refname}{key}"))
+                {
+                    ImGui.SetClipboardText(GetIndirectString(indirecttype, (uint)value));
+                }
+            }
+        }
     }
-    public static void DrawUShort(string name, string type, uint key, bool changesenabled, ref ushort value,
-    ushort defaultvalue)
+    public static void DrawUShort(string name, string type, uint key, bool changesenabled, ref ushort value, ushort defaultvalue, bool sheethasindirects = false, string indirecttype = "NO")
     {
         string refname = name.Replace(" ", "");
-        ImGui.TextUnformatted(name);
-        ImGui.SetCursorPosX(ImGui.GetCursorPosX() + 15);
-        ImGui.SetNextItemWidth(110 * CalcGlobals.GlobalScale());
-        if (ImGui.InputUShort("##" + refname + key, ref value))
+        ushort relay = value;
+        if (ImGui.InputUShort("##" + refname + key, ref relay, 0, 0, default, ImGuiInputTextFlags.EnterReturnsTrue))
         {
+            value = relay;
             if (changesenabled) { Setup.SetupByType(key, type); }
             Service.Config.Save();
         }
@@ -150,21 +230,40 @@ public class UiGlobals
         using (ImRaii.PushFont(UiBuilder.IconFont))
         {
             if (ImGui.Button($"{FontAwesomeIcon.Reply.ToIconString()}##{refname}{key}"))
-            {
+            { 
                 value = defaultvalue;
+
                 if (changesenabled) { Setup.SetupByType(key, type); }
                 Service.Config.Save();
+            }
+        }
+        ImGui.SameLine();
+        ImGui.TextUnformatted(name);
+        if (sheethasindirects)
+        {
+            if (indirecttype == "NO")
+            {
+                ImGui.Text("");
+            }
+            else
+            {
+                ImGui.Text(GetIndirectString(indirecttype, (uint)value));
+            }
+            ImGui.SameLine();
+            using (ImRaii.PushFont(UiBuilder.IconFont))
+            {
+                if (ImGui.Button($"{FontAwesomeIcon.ClipboardList.ToIconString()}##{refname}{key}"))
+                {
+                    ImGui.SetClipboardText(GetIndirectString(indirecttype, (uint)value));
+                }
             }
         }
     }
     public static void DrawInt(string name, string type, uint key, bool changesenabled, ref int value,
-    int defaultvalue)
+    int defaultvalue, bool sheethasindirects = false, string indirecttype = "NO")
     {
         string refname = name.Replace(" ", "");
-        ImGui.TextUnformatted(name);
-        ImGui.SetCursorPosX(ImGui.GetCursorPosX() + 15);
-        ImGui.SetNextItemWidth(110 * CalcGlobals.GlobalScale());
-        if (ImGui.InputInt("##" + refname + key, ref value))
+        if (ImGui.InputInt("##" + refname + key, ref value, 0, 0, default, ImGuiInputTextFlags.EnterReturnsTrue))
         {
             if (changesenabled) { Setup.SetupByType(key, type); }
             Service.Config.Save();
@@ -178,17 +277,35 @@ public class UiGlobals
                 value = defaultvalue;
                 if (changesenabled) { Setup.SetupByType(key, type); }
                 Service.Config.Save();
+            }
+        }
+        ImGui.SameLine();
+        ImGui.TextUnformatted(name);
+        if (sheethasindirects)
+        {
+            if (indirecttype == "NO")
+            {
+                ImGui.Text("");
+            }
+            else
+            {
+                ImGui.Text(GetIndirectString(indirecttype, (uint)value));
+            }
+            ImGui.SameLine();
+            using (ImRaii.PushFont(UiBuilder.IconFont))
+            {
+                if (ImGui.Button($"{FontAwesomeIcon.ClipboardList.ToIconString()}##{refname}{key}"))
+                {
+                    ImGui.SetClipboardText(GetIndirectString(indirecttype, (uint)value));
+                }
             }
         }
     }
     public static void DrawUInt(string name, string type, uint key, bool changesenabled, ref uint value,
-    uint defaultvalue)
+    uint defaultvalue, bool sheethasindirects = false, string indirecttype = "NO")
     {
         string refname = name.Replace(" ", "");
-        ImGui.TextUnformatted(name);
-        ImGui.SetCursorPosX(ImGui.GetCursorPosX() + 15);
-        ImGui.SetNextItemWidth(110 * CalcGlobals.GlobalScale());
-        if (ImGui.InputUInt("##" + refname + key, ref value))
+        if (ImGui.InputUInt("##" + refname + key, ref value, 0, 0, default, ImGuiInputTextFlags.EnterReturnsTrue))
         {
             if (changesenabled) { Setup.SetupByType(key, type); }
             Service.Config.Save();
@@ -204,14 +321,32 @@ public class UiGlobals
                 Service.Config.Save();
             }
         }
+        ImGui.SameLine();
+        ImGui.TextUnformatted(name);
+        if (sheethasindirects)
+        {
+            if (indirecttype == "NO")
+            {
+                ImGui.Text("");
+            }
+            else
+            {
+                ImGui.Text(GetIndirectString(indirecttype, (uint)value));
+            }
+            ImGui.SameLine();
+            using (ImRaii.PushFont(UiBuilder.IconFont))
+            {
+                if (ImGui.Button($"{FontAwesomeIcon.ClipboardList.ToIconString()}##{refname}{key}"))
+                {
+                    ImGui.SetClipboardText(GetIndirectString(indirecttype, (uint)value));
+                }
+            }
+        }
     }
     public static void DrawBool(string name, string type, uint key, bool changesenabled, ref bool value,
-    bool defaultvalue)
+    bool defaultvalue, bool sheethasindirects = false, string indirecttype = "NO")
     {
         string refname = name.Replace(" ", "");
-        ImGui.TextUnformatted(name);
-        ImGui.SetCursorPosX(ImGui.GetCursorPosX() + 15);
-        ImGui.SetNextItemWidth(110 * CalcGlobals.GlobalScale());
         if (ImGui.Checkbox("##" + refname + key, ref value))
         {
             if (changesenabled) { Setup.SetupByType(key, type); }
@@ -228,8 +363,10 @@ public class UiGlobals
                 Service.Config.Save();
             }
         }
+        ImGui.SameLine();
+        ImGui.TextUnformatted(name);
     }
-    
+
 
     public static Dictionary<uint, string> CreateSearchList(string type)
     {
@@ -284,11 +421,98 @@ public class UiGlobals
             case "TiltParam":
                 output = TiltParamManager.Names;
                 return output;
-            case "Vfx":
+            case "VFX":
                 output = VfxManager.Names;
                 return output;
             default:
                 Service.Log.Error("Datasheet type [{type}] is not defined in CreateSearchList", type);
+                return output;
+        }
+    }
+    public static uint GetSheetCounts(string type, Configuration.ReplacementSet activeset)
+    {
+       uint output = 0;
+        switch (type)
+        {
+            case "Action":
+                output = (uint)activeset.ActionWriter.Count();
+                return output;
+            case "ActionCastVFX":
+                output = (uint)activeset.ActionCastVFXWriter.Count();
+                return output;
+            case "ActionTimeline":
+                output = (uint)activeset.ActionTimelineWriter.Count();
+                return output;
+            case "Glasses":
+                output = (uint)activeset.GlassesWriter.Count();
+                return output;
+            case "GlassesStyle":
+                output = (uint)activeset.GlassesStyleWriter.Count();
+                return output;
+            case "Mount":
+                output = (uint)activeset.MountWriter.Count();
+                return output;
+            case "MountCustomize":
+                output = (uint)activeset.MountCustomizeWriter.Count();
+                return output;
+            case "Ornament":
+                output = (uint)activeset.OrnamentWriter.Count();
+                return output;
+            case "OrnamentCustomize":
+                output = (uint)activeset.OrnamentCustomizeWriter.Count();
+                return output;
+            case "OrnamentCustomizeGroup":
+            //output = OrnamentCustomizeGroupManager.Names;
+            //return output;
+            case "Placename":
+            //output = PlaceNameManager.Names;
+            //return output;
+            case "PointMenuChoice":
+            //output = PointMenuManager.Names;
+            //return output;
+            case "Status":
+                output = (uint)activeset.StatusWriter.Count();
+                return output;
+            case "StatusHitEffect":
+                output = (uint)activeset.StatusHitEffectWriter.Count();
+                return output;
+            case "StatusLoopVFX":
+                output = (uint)activeset.StatusLoopVFXWriter.Count();
+                return output;
+            case "TiltParam":
+                output = (uint)activeset.TiltParamWriter.Count();
+                return output;
+            case "VFX":
+                output = (uint)activeset.VfxWriter.Count();
+                return output;
+            default:
+                Service.Log.Error("Datasheet type [{type}] is not defined in GetSheetCounts", type);
+                return output;
+        }
+    }
+
+    public static String GetIndirectString(string type, uint key)
+    {
+        string output = "";
+        switch (type)
+        {
+            case "VFX":
+                output = "vfx/common/" + VfxManager.GetReplacement(key).String1 + ".avfx";
+                return output;
+            case "ActionCastVFX-VFX":
+                output = "vfx/common/" + VfxManager.GetReplacement(ActionCastVFXManager.GetReplacement(key).CastVfx).String1 + ".avfx";
+                return output;
+            case "StatusHitEffect-VFX":
+                output = "vfx/common/" + VfxManager.GetReplacement(StatusHitEffectManager.GetReplacement(key).VFX).String1 + ".avfx";
+                return output;
+            case "StatusLoopVFX-VFX":
+                output = "vfx/common/" + VfxManager.GetReplacement(StatusLoopVFXManager.GetReplacement(key).FriendlyVFX).String1 + ".avfx";
+                return output;
+            case "ActionTimeline":
+                output = ActionTimelineManager.GetReplacement(key).Animation;
+                return output;
+            default:
+                Service.Log.Error("Datasheet type [{type}] is not defined in GetIndirectString", type);
                 return output;
         }
     }

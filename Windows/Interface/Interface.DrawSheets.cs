@@ -1,10 +1,11 @@
-﻿using System.Numerics;
+﻿using ActionTimelineReplacement.Base.Global;
+using ActionTimelineReplacement.Sheets;
+using Dalamud.Bindings.ImGui;
 using Dalamud.Interface.Utility.Raii;
 using Dalamud.Interface.Windowing;
-using ActionTimelineReplacement.Base.Global;
-using Dalamud.Bindings.ImGui;
 using System.Collections.Generic;
-using ActionTimelineReplacement.Sheets;
+using System.Numerics;
+using System.Xml.Linq;
 #pragma warning disable CA1416 // Validate platform compatibility
 
 namespace ActionTimelineReplacement.Interface;
@@ -31,6 +32,7 @@ public sealed partial class ConfigWindow : Window
     private string _searchOrnamentCustomize = string.Empty;
     private string _searchVfx = string.Empty;
     //private string _searchPointMenuChoice = string.Empty;
+    private string activesheet;
 
     private void DrawSheets()
     {
@@ -48,10 +50,9 @@ public sealed partial class ConfigWindow : Window
             _AllHeaders.Add("TiltParam", []);
             _AllHeaders.Add("Glasses", []);
             _AllHeaders.Add("GlassesStyle", []);
-            _AllHeaders.Add("PlaceName", []);
             _AllHeaders.Add("Ornament", []);
             _AllHeaders.Add("OrnamentCustomize", []);
-            _AllHeaders.Add("Vfx", []);
+            _AllHeaders.Add("VFX", []);
             //_AllHeaders.Add("PointMenuChoice", []);
             foreach (var headerkey in _AllHeaders.Keys)
             {
@@ -68,88 +69,66 @@ public sealed partial class ConfigWindow : Window
 
         foreach (var mainkey in _AllHeaders.Keys)
         {
-            if (ImGui.CollapsingHeader(mainkey))
-            {
-                using (ImRaii.PushFont(GetFont(18)))
-                {
-                    if (_AllItemWidths[mainkey] != 0)
-                    {
-                        for (int i = 0; i < _AllHeaders[mainkey].Count; i++)
-                        {
-                            ImGui.SameLine();
-                            ImGui.SetCursorPosX(ImGui.GetWindowWidth() - _AllItemWidths[mainkey] * (_AllHeaders[mainkey].Count - i) / _AllHeaders[mainkey].Count);
-                            ImGui.Text(_AllHeaders[mainkey][i]);
-                        }
-                    }
-                    else
-                    {
-                        ImGui.SameLine();
-                        var headerstring = " ";
-                        for (int i = 0; i < _AllHeaders[mainkey].Count; i++)
-                        {
-                            if (i > 0) headerstring += " ";
-                            headerstring += _AllHeaders[mainkey][i];
-                        }
-                        ImGui.Text(headerstring);
-                    }
-                }
-                switch (mainkey)
-                {
-                    //TOSETUP: Add new case here to call the subsheet
-                    case "Action":
-                        ActionMain.Draw(mainkey, ref _activeSet, ref _searchAction);
-                        break;
-                    case "ActionCastVFX":
-                        ActionCastVFXMain.Draw(mainkey, ref _activeSet, ref _searchActionCastVFX);
-                        break;
-                    case "ActionTimeline":
-                        ActionTimelineMain.Draw(mainkey, ref _activeSet, ref _searchActionCastVFX);
-                        break;
-                    case "Mount":
-                        MountMain.Draw(mainkey, ref _activeSet, ref _searchMount);
-                        break;
-                    case "MountCustomize":
-                        MountCustomizeMain.Draw(mainkey, ref _activeSet, ref _searchMountCustomize);
-                        break;
-                    case "Status":
-                        StatusMain.Draw(mainkey, ref _activeSet, ref _searchStatus);
-                        break;
-                    case "StatusLoopVFX":
-                        StatusLoopVFXMain.Draw(mainkey, ref _activeSet, ref _searchStatusLoopVFX);
-                        break;
-                    case "StatusHitEffect":
-                        StatusHitEffectMain.Draw(mainkey, ref _activeSet, ref _searchStatusHitEffect);
-                        break;
-                    case "TiltParam":
-                        TiltParamMain.Draw(mainkey, ref _activeSet, ref _searchTiltParam);
-                        break;
-                    case "Glasses":
-                        GlassesMain.Draw(mainkey, ref _activeSet, ref _searchGlasses);
-                        break;
-                    case "GlassesStyle":
-                        GlassesStyleMain.Draw(mainkey, ref _activeSet, ref _searchGlassesStyle);
-                        break;
-                    /*case "PlaceName":
-                        PlaceNameMain.Draw(mainkey, ref _activeSet, ref _searchPlaceName);
-                        break;*/
-                    case "Ornament":
-                        OrnamentMain.Draw(mainkey, ref _activeSet, ref _searchOrnament);
-                        break;
-                    case "OrnamentCustomize":
-                        OrnamentCustomizeMain.Draw(mainkey, ref _activeSet, ref _searchOrnamentCustomize);
-                        break;
-                    case "Vfx":
-                        VfxMain.Draw(mainkey, ref _activeSet, ref _searchVfx);
-                        break;
-                        //case "OrnamentCustomizeGroup":
-                        //    OrnamentCustomizeGroupMain.Draw(mainkey, ref _activeSet, ref _searchOrnamentCustomizeGroup);
-                        //    break;
-                        //case "PointMenuChoice":
-                        //    PointMenuChoiceMain.Draw(mainkey, ref _activeSet, ref _searchPointMenuChoice);
-                        //    break;
-                }
+            UiGlobals.DrawSheetButton(mainkey, ref activesheet, _activeSet);
+            ImGui.SameLine();
 
-            }
+        }
+        ImGui.NewLine();
+        UiGlobals.DrawItemSeparator();
+        switch (activesheet)
+        {
+            //TOSETUP: Add new case here to call the subsheet
+            case "Action":
+                ActionMain.Draw(activesheet, ref _activeSet, ref _searchAction);
+                break;
+            case "ActionCastVFX":
+                ActionCastVFXMain.Draw(activesheet, ref _activeSet, ref _searchActionCastVFX);
+                break;
+            case "ActionTimeline":
+                ActionTimelineMain.Draw(activesheet, ref _activeSet, ref _searchActionCastVFX);
+                break;
+            case "Mount":
+                MountMain.Draw(activesheet, ref _activeSet, ref _searchMount);
+                break;
+            case "MountCustomize":
+                MountCustomizeMain.Draw(activesheet, ref _activeSet, ref _searchMountCustomize);
+                break;
+            case "Status":
+                StatusMain.Draw(activesheet, ref _activeSet, ref _searchStatus);
+                break;
+            case "StatusLoopVFX":
+                StatusLoopVFXMain.Draw(activesheet, ref _activeSet, ref _searchStatusLoopVFX);
+                break;
+            case "StatusHitEffect":
+                StatusHitEffectMain.Draw(activesheet, ref _activeSet, ref _searchStatusHitEffect);
+                break;
+            case "TiltParam":
+                TiltParamMain.Draw(activesheet, ref _activeSet, ref _searchTiltParam);
+                break;
+            case "Glasses":
+                GlassesMain.Draw(activesheet, ref _activeSet, ref _searchGlasses);
+                break;
+            case "GlassesStyle":
+                GlassesStyleMain.Draw(activesheet, ref _activeSet, ref _searchGlassesStyle);
+                break;
+            /*case "PlaceName":
+                PlaceNameMain.Draw(activesheet, ref _activeSet, ref _searchPlaceName);
+                break;*/
+            case "Ornament":
+                OrnamentMain.Draw(activesheet, ref _activeSet, ref _searchOrnament);
+                break;
+            case "OrnamentCustomize":
+                OrnamentCustomizeMain.Draw(activesheet, ref _activeSet, ref _searchOrnamentCustomize);
+                break;
+            case "Vfx":
+                VfxMain.Draw(activesheet, ref _activeSet, ref _searchVfx);
+                break;
+                //case "OrnamentCustomizeGroup":
+                //    OrnamentCustomizeGroupMain.Draw(activesheet, ref _activeSet, ref _searchOrnamentCustomizeGroup);
+                //    break;
+                //case "PointMenuChoice":
+                //    PointMenuChoiceMain.Draw(activesheet, ref _activeSet, ref _searchPointMenuChoice);
+                //    break;
         }
     }
 }

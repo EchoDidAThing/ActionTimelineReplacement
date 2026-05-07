@@ -56,10 +56,17 @@ public class StatusLoopVFXMain
 
                 //to do: show loop vfx and hit effect as strings
 
-                UiGlobals.DrawUShort("Friendly VFX ID", type, key, _activeSet.StatusLoopVFXWriter[key].Enabled, ref replace.FriendlyVFX, DefaultValues.FriendlyVFX);
-                UiGlobals.DrawUShort("Stack VFX 1 ID", type, key, _activeSet.StatusLoopVFXWriter[key].Enabled, ref replace.StackVFX1, DefaultValues.StackVFX1);
-                UiGlobals.DrawUShort("Stack VFX 2 ID", type, key, _activeSet.StatusLoopVFXWriter[key].Enabled, ref replace.StackVFX2, DefaultValues.StackVFX2);
-                UiGlobals.DrawUShort("Enemy VFX ID", type, key, _activeSet.StatusLoopVFXWriter[key].Enabled, ref replace.EnemyVFX, DefaultValues.EnemyVFX);
+                //REENABLE
+                //UiGlobals.DrawUShort("Friendly VFX ID", type, key, _activeSet.StatusLoopVFXWriter[key].Enabled, ref replace.FriendlyVFX, DefaultValues.FriendlyVFX, true, "VFX");
+
+                //REENABLE
+                //UiGlobals.DrawUShort("Stack VFX 1 ID", type, key, _activeSet.StatusLoopVFXWriter[key].Enabled, ref replace.StackVFX1, DefaultValues.StackVFX1, true, "VFX");
+
+                //REENABLE
+                //UiGlobals.DrawUShort("Stack VFX 2 ID", type, key, _activeSet.StatusLoopVFXWriter[key].Enabled, ref replace.StackVFX2, DefaultValues.StackVFX2, true, "VFX");
+
+                //REENABLE
+                //UiGlobals.DrawUShort("Enemy VFX ID", type, key, _activeSet.StatusLoopVFXWriter[key].Enabled, ref replace.EnemyVFX, DefaultValues.EnemyVFX, true, "VFX");
                 UiGlobals.DrawByte("Stack 1 Trigger", type, key, _activeSet.StatusLoopVFXWriter[key].Enabled, ref replace.StackTrigger1, DefaultValues.StackTrigger1);
                 UiGlobals.DrawByte("Stack 2 Trigger", type, key, _activeSet.StatusLoopVFXWriter[key].Enabled, ref replace.StackTrigger2, DefaultValues.StackTrigger2);
                 UiGlobals.DrawByte("Unknown 1", type, key, _activeSet.StatusLoopVFXWriter[key].Enabled, ref replace.Unknown1, DefaultValues.Unknown1);

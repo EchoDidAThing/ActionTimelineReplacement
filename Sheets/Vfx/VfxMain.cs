@@ -1,13 +1,14 @@
-﻿using Dalamud.Interface.Utility.Raii;
-using Dalamud.Interface;
-using Dalamud.Bindings.ImGui;
-using System;
-using System.Linq;
+﻿using ActionTimelineReplacement.Base.Global;
 using ActionTimelineReplacement.Base.Setups;
 using ActionTimelineReplacement.Interface;
-using ActionTimelineReplacement.Base.Global;
-using System.Reflection.Metadata;
-
+using Dalamud.Bindings.ImGui;
+using Dalamud.Interface;
+using Dalamud.Interface.Utility.Raii;
+using FFXIVClientStructs.FFXIV.Common.Lua;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using static FFXIVClientStructs.FFXIV.Client.UI.Misc.AozNoteModule;
 #pragma warning disable CA1416 // Validate platform compatibility
 
 namespace ActionTimelineReplacement.Sheets;
@@ -15,29 +16,38 @@ namespace ActionTimelineReplacement.Sheets;
 #region Main
 public class VfxMain
 {
-    const string type = "VFX";
     public static void Draw(string mainkey, ref Configuration.ReplacementSet _activeSet, ref string search)
     {
+
+        const string type = "VFX";
+        const string typename = "VFX";
+        const string typenameplural = "VFXs";
+        Dictionary<uint, VfxConfig> Writer = _activeSet.VfxWriter;
+        var GetOriginal = VfxManager.GetOriginal;
+        var GetName = VfxManager.GetName;
+        var CreateEntry = VfxConfig.CreateEntry;
+
         using var subList = ImRaii.Child(mainkey, CalcGlobals.BodyScale(), false);
         if (subList)
         {
-            const string searchPopup = "Search Vfxes";
+            const string searchPopup = "Search " + typenameplural;
             UiGlobals.DrawAddItem(searchPopup);
 
-            foreach (var key in _activeSet.VfxWriter.Keys)
+            foreach (var key in Writer.Keys)
             {
-                var replace = _activeSet.VfxWriter[key].Replacement;
-                var DefaultValues = VfxManager.GetOriginal(key);
+                var DefaultValues = GetOriginal(key);
+                var LocalWriter = Writer[key];
 
-                if (ImGui.Checkbox("##" + key, ref _activeSet.VfxWriter[key].Enabled))
+                if (ImGui.Checkbox("##" + key, ref LocalWriter.Enabled))
                 {
-                    if (_activeSet.VfxWriter[key].Enabled)
+                    //_activeSet.VfxWriter[key].Enabled = EntryEnabled;
+                    if (LocalWriter.Enabled)
                     {
-                        Setup.SetVfx(key);
+                        Setup.SetupByType(key, type);
                     }
                     else
                     {
-                        Setup.SetVfx(key, true);
+                        Setup.SetupByType(key, type, true);
                     }
                     Service.Config.Save();
                 }
@@ -45,8 +55,8 @@ public class VfxMain
 
                 if (ImGui.Button(" - ##" + key))
                 {
-                    Setup.SetVfx(key, true);
-                    _activeSet.VfxWriter.Remove(key);
+                    Setup.SetupByType(key, type, true);
+                    Writer.Remove(key);
                     Service.Config.Save();
                 }
 
@@ -54,45 +64,38 @@ public class VfxMain
                 ImGui.Text($"#{key:D5}");
 
                 ImGui.SameLine();
-                ImGui.TextWrapped(VfxManager.GetName(key));
+                ImGui.TextWrapped(GetName(key));
 
-                UiGlobals.DrawString("VFX Path", type, key, _activeSet.VfxWriter[key].Enabled, ref replace.String1, DefaultValues.String1);
-
-
+                UiGlobals.DrawString("VFX Path", type, key, LocalWriter.Enabled, ref LocalWriter.Replacement.String1, DefaultValues.String1);
                 UiGlobals.DrawItemSeparator();
                 continue;
 
                 #endregion
                 #region Items
 
-
-                
             }
 
             #endregion
             #region Search/Set
 
-            using var searchVfx = ImRaii.Popup(searchPopup);
-            if (searchVfx)
+            using var searchMenuVFX = ImRaii.Popup(searchPopup);
+            if (searchMenuVFX)
             {
                 ImGui.SetNextItemWidth(CalcGlobals.XY());
-                ImGui.InputText("##Search Vfxes", ref search, 256);
+                ImGui.InputText("##Search " + typenameplural.ToLower(), ref search, 256);
                 var localsearch = search;
 
                 using var popupChild = ImRaii.Child(searchPopup, CalcGlobals.SearchPopScale(), true);
-                foreach (var pair in VfxManager.Names.OrderBy(i =>
+                foreach (var pair in UiGlobals.CreateSearchList(type).OrderBy(i =>
                 {
+                    if (string.IsNullOrEmpty(localsearch)) return 0;
                     return Math.Min(ProcessingGlobals.ScoreString(i.Value, localsearch),
                         ProcessingGlobals.ScoreString(i.Key.ToString(), localsearch));
                 }))
                 {
                     if (ImGui.Selectable($"#{pair.Key:D5} {pair.Value}"))
                     {
-                        var original = VfxManager.GetOriginal(pair.Key);
-                        _activeSet.VfxWriter[pair.Key] =
-                            new VfxConfig(new VfxReplace(pair.Key, original.String1),
-                                false);
-                        Service.Config.Save();
+                        Writer[pair.Key] =  CreateEntry(pair.Key);
                     }
                 }
             }

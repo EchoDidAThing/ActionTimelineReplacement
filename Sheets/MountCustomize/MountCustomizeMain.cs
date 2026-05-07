@@ -55,27 +55,69 @@ public class MountCustomizeMain
                 ImGui.TextWrapped(MountCustomizeManager.GetName(key));
 
 
-                UiGlobals.DrawUShort("Midlander Male Scale", type, key, _activeSet.MountCustomizeWriter[key].Enabled, ref replace.HyurMidlanderMaleScale, DefaultValues.HyurMidlanderMaleScale);
-                UiGlobals.DrawUShort("Midlander Female Scale", type, key, _activeSet.MountCustomizeWriter[key].Enabled, ref replace.HyurMidlanderFemaleScale, DefaultValues.HyurMidlanderFemaleScale);
-                UiGlobals.DrawUShort("Highlander Male Scale", type, key, _activeSet.MountCustomizeWriter[key].Enabled, ref replace.HyurHighlanderMaleScale, DefaultValues.HyurHighlanderMaleScale);
-                UiGlobals.DrawUShort("Highlander Female Scale", type, key, _activeSet.MountCustomizeWriter[key].Enabled, ref replace.HyurHighlanderFemaleScale, DefaultValues.HyurHighlanderFemaleScale);
-                UiGlobals.DrawUShort("Elezen Male Scale", type, key, _activeSet.MountCustomizeWriter[key].Enabled, ref replace.ElezenMaleScale, DefaultValues.ElezenMaleScale);
-                UiGlobals.DrawUShort("Elezen Female Scale", type, key, _activeSet.MountCustomizeWriter[key].Enabled, ref replace.ElezenFemaleScale, DefaultValues.ElezenFemaleScale);
-                UiGlobals.DrawUShort("Lalafell Male Scale", type, key, _activeSet.MountCustomizeWriter[key].Enabled, ref replace.LalafellMaleScale, DefaultValues.LalafellMaleScale);
-                UiGlobals.DrawUShort("Lalafell Female Scale", type, key, _activeSet.MountCustomizeWriter[key].Enabled, ref replace.LalafellFemaleScale, DefaultValues.LalafellFemaleScale);
-                UiGlobals.DrawUShort("Miqote Male Scale", type, key, _activeSet.MountCustomizeWriter[key].Enabled, ref replace.MiqoteMaleScale, DefaultValues.MiqoteMaleScale);
-                UiGlobals.DrawUShort("Miqote Female Scale", type, key, _activeSet.MountCustomizeWriter[key].Enabled, ref replace.MiqoteFemaleScale, DefaultValues.MiqoteFemaleScale);
-                UiGlobals.DrawUShort("Roegadyn Male Scale", type, key, _activeSet.MountCustomizeWriter[key].Enabled, ref replace.RoegadynMaleScale, DefaultValues.RoegadynMaleScale);
-                UiGlobals.DrawUShort("Roegadyn Female Scale", type, key, _activeSet.MountCustomizeWriter[key].Enabled, ref replace.RoegadynFemaleScale, DefaultValues.RoegadynFemaleScale);
-                UiGlobals.DrawUShort("AuRa Male Scale", type, key, _activeSet.MountCustomizeWriter[key].Enabled, ref replace.AuRaMaleScale, DefaultValues.AuRaMaleScale);
-                UiGlobals.DrawUShort("AuRa Female Scale", type, key, _activeSet.MountCustomizeWriter[key].Enabled, ref replace.AuRaFemaleScale, DefaultValues.AuRaFemaleScale);
-                UiGlobals.DrawUShort("Hrothgar Male Scale", type, key, _activeSet.MountCustomizeWriter[key].Enabled, ref replace.HrothgarMaleScale, DefaultValues.HrothgarMaleScale);
-                UiGlobals.DrawUShort("Hrothgar Female Scale", type, key, _activeSet.MountCustomizeWriter[key].Enabled, ref replace.HrothgarFemaleScale, DefaultValues.HrothgarFemaleScale);
-                UiGlobals.DrawUShort("Viera Male Scale", type, key, _activeSet.MountCustomizeWriter[key].Enabled, ref replace.VieraMaleScale, DefaultValues.VieraMaleScale);
-                UiGlobals.DrawUShort("Viera Female Scale", type, key, _activeSet.MountCustomizeWriter[key].Enabled, ref replace.VieraFemaleScale, DefaultValues.VieraFemaleScale);
-                UiGlobals.DrawUShort("Midlander Male CameraHeight", type, key, _activeSet.MountCustomizeWriter[key].Enabled, ref replace.HyurMidlanderMaleCameraHeight, DefaultValues.HyurMidlanderMaleCameraHeight);
-                UiGlobals.DrawUShort("Midlander Female CameraHeight", type, key, _activeSet.MountCustomizeWriter[key].Enabled, ref replace.HyurMidlanderFemaleCameraHeight, DefaultValues.HyurMidlanderFemaleCameraHeight);
-                UiGlobals.DrawUShort("Highlander Male CameraHeight", type, key, _activeSet.MountCustomizeWriter[key].Enabled, ref replace.HyurHighlanderMaleCameraHeight, DefaultValues.HyurHighlanderMaleCameraHeight);
+
+                //REENABLE
+                //UiGlobals.DrawUShort("Midlander Male Scale", type, key, _activeSet.MountCustomizeWriter[key].Enabled, ref replace.HyurMidlanderMaleScale, DefaultValues.HyurMidlanderMaleScale);
+
+                //REENABLE
+                //UiGlobals.DrawUShort("Midlander Female Scale", type, key, _activeSet.MountCustomizeWriter[key].Enabled, ref replace.HyurMidlanderFemaleScale, DefaultValues.HyurMidlanderFemaleScale);
+
+                //REENABLE
+                //UiGlobals.DrawUShort("Highlander Male Scale", type, key, _activeSet.MountCustomizeWriter[key].Enabled, ref replace.HyurHighlanderMaleScale, DefaultValues.HyurHighlanderMaleScale);
+
+                //REENABLE
+                //UiGlobals.DrawUShort("Highlander Female Scale", type, key, _activeSet.MountCustomizeWriter[key].Enabled, ref replace.HyurHighlanderFemaleScale, DefaultValues.HyurHighlanderFemaleScale);
+
+                //REENABLE
+                //UiGlobals.DrawUShort("Elezen Male Scale", type, key, _activeSet.MountCustomizeWriter[key].Enabled, ref replace.ElezenMaleScale, DefaultValues.ElezenMaleScale);
+
+                //REENABLE
+                //UiGlobals.DrawUShort("Elezen Female Scale", type, key, _activeSet.MountCustomizeWriter[key].Enabled, ref replace.ElezenFemaleScale, DefaultValues.ElezenFemaleScale);
+
+                //REENABLE
+                //UiGlobals.DrawUShort("Lalafell Male Scale", type, key, _activeSet.MountCustomizeWriter[key].Enabled, ref replace.LalafellMaleScale, DefaultValues.LalafellMaleScale);
+
+                //REENABLE
+                //UiGlobals.DrawUShort("Lalafell Female Scale", type, key, _activeSet.MountCustomizeWriter[key].Enabled, ref replace.LalafellFemaleScale, DefaultValues.LalafellFemaleScale);
+
+                //REENABLE
+                //UiGlobals.DrawUShort("Miqote Male Scale", type, key, _activeSet.MountCustomizeWriter[key].Enabled, ref replace.MiqoteMaleScale, DefaultValues.MiqoteMaleScale);
+
+                //REENABLE
+                //UiGlobals.DrawUShort("Miqote Female Scale", type, key, _activeSet.MountCustomizeWriter[key].Enabled, ref replace.MiqoteFemaleScale, DefaultValues.MiqoteFemaleScale);
+
+                //REENABLE
+                //UiGlobals.DrawUShort("Roegadyn Male Scale", type, key, _activeSet.MountCustomizeWriter[key].Enabled, ref replace.RoegadynMaleScale, DefaultValues.RoegadynMaleScale);
+
+                //REENABLE
+                // UiGlobals.DrawUShort("Roegadyn Female Scale", type, key, _activeSet.MountCustomizeWriter[key].Enabled, ref replace.RoegadynFemaleScale, DefaultValues.RoegadynFemaleScale);
+
+                //REENABLE
+                //UiGlobals.DrawUShort("AuRa Male Scale", type, key, _activeSet.MountCustomizeWriter[key].Enabled, ref replace.AuRaMaleScale, DefaultValues.AuRaMaleScale);
+
+                //REENABLE
+                //UiGlobals.DrawUShort("AuRa Female Scale", type, key, _activeSet.MountCustomizeWriter[key].Enabled, ref replace.AuRaFemaleScale, DefaultValues.AuRaFemaleScale);
+
+                //REENABLE
+                //UiGlobals.DrawUShort("Hrothgar Male Scale", type, key, _activeSet.MountCustomizeWriter[key].Enabled, ref replace.HrothgarMaleScale, DefaultValues.HrothgarMaleScale);
+
+                //REENABLE
+                //UiGlobals.DrawUShort("Hrothgar Female Scale", type, key, _activeSet.MountCustomizeWriter[key].Enabled, ref replace.HrothgarFemaleScale, DefaultValues.HrothgarFemaleScale);
+
+                //REENABLE
+                //UiGlobals.DrawUShort("Viera Male Scale", type, key, _activeSet.MountCustomizeWriter[key].Enabled, ref replace.VieraMaleScale, DefaultValues.VieraMaleScale);
+
+                //REENABLE
+                //UiGlobals.DrawUShort("Viera Female Scale", type, key, _activeSet.MountCustomizeWriter[key].Enabled, ref replace.VieraFemaleScale, DefaultValues.VieraFemaleScale);
+
+                //REENABLE
+                //UiGlobals.DrawUShort("Midlander Male CameraHeight", type, key, _activeSet.MountCustomizeWriter[key].Enabled, ref replace.HyurMidlanderMaleCameraHeight, DefaultValues.HyurMidlanderMaleCameraHeight);
+
+                //REENABLE
+                //UiGlobals.DrawUShort("Midlander Female CameraHeight", type, key, _activeSet.MountCustomizeWriter[key].Enabled, ref replace.HyurMidlanderFemaleCameraHeight, DefaultValues.HyurMidlanderFemaleCameraHeight);
+
+                //REENABLE
+                //UiGlobals.DrawUShort("Highlander Male CameraHeight", type, key, _activeSet.MountCustomizeWriter[key].Enabled, ref replace.HyurHighlanderMaleCameraHeight, DefaultValues.HyurHighlanderMaleCameraHeight);
                 UiGlobals.DrawByte("Highlander Female CameraHeight", type, key, _activeSet.MountCustomizeWriter[key].Enabled, ref replace.HyurHighlanderFemaleCameraHeight, DefaultValues.HyurHighlanderFemaleCameraHeight);
                 UiGlobals.DrawByte("Elezen Male CameraHeight", type, key, _activeSet.MountCustomizeWriter[key].Enabled, ref replace.ElezenMaleCameraHeight, DefaultValues.ElezenMaleCameraHeight);
                 UiGlobals.DrawByte("Elezen Female CameraHeight", type, key, _activeSet.MountCustomizeWriter[key].Enabled, ref replace.ElezenFemaleCameraHeight, DefaultValues.ElezenFemaleCameraHeight);

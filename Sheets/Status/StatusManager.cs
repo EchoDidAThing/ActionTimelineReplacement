@@ -9,7 +9,7 @@ public static class StatusManager
 {
     private static Dictionary<uint, string>? _Names;
 
-    private static readonly Dictionary<uint, StatusReplace> old = [];
+    public static readonly Dictionary<uint, StatusReplace> old = [];
 
     public static Dictionary<uint, string> Names => _Names
         ??= Service.DataManager.GetExcelSheet<Status>()
@@ -46,6 +46,11 @@ public static class StatusManager
             return replacement.Value;
         }
         return null;
+    }
+    public static StatusReplace GetOriginalTest(uint idx)
+    {
+        StatusReplace Relay = GetOriginal(idx);
+        return Relay;
     }
 
     public static StatusReplace GetOriginal(uint idx)

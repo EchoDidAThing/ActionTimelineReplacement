@@ -80,7 +80,7 @@ public static unsafe partial class Setup
             case "TiltParam":
                 SetTiltParam(id, reset);
                 break;
-            case "Vfx":
+            case "VFX":
                 SetVfx(id, reset);
                 break;
             default:

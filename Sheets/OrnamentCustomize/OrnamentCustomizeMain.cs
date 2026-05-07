@@ -53,7 +53,9 @@ public class OrnamentCustomizeMain
                 ImGui.SameLine();
                 ImGui.TextWrapped(OrnamentCustomizeManager.GetName(key));
 
-                UiGlobals.DrawUShort("Unknown 0", type, key, _activeSet.OrnamentCustomizeWriter[key].Enabled, ref replace.Unknown0, DefaultValues.Unknown0);
+
+                //REENABLE
+                //UiGlobals.DrawUShort("Unknown 0", type, key, _activeSet.OrnamentCustomizeWriter[key].Enabled, ref replace.Unknown0, DefaultValues.Unknown0);
                 UiGlobals.DrawShort("Unknown 1", type, key, _activeSet.OrnamentCustomizeWriter[key].Enabled, ref replace.Unknown1, DefaultValues.Unknown1);
                 UiGlobals.DrawShort("Unknown 2", type, key, _activeSet.OrnamentCustomizeWriter[key].Enabled, ref replace.Unknown2, DefaultValues.Unknown2);
                 UiGlobals.DrawShort("PUnknown 3", type, key, _activeSet.OrnamentCustomizeWriter[key].Enabled, ref replace.Unknown3, DefaultValues.Unknown3);

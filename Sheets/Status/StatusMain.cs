@@ -2,12 +2,14 @@
 using ActionTimelineReplacement.Base.Setups;
 using ActionTimelineReplacement.Interface;
 using Dalamud.Bindings.ImGui;
+using Dalamud.Game.Config;
 using Dalamud.Interface;
 using Dalamud.Interface.Utility.Raii;
 using FFXIVClientStructs.FFXIV.Common.Lua;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Xml.Linq;
 using static FFXIVClientStructs.FFXIV.Client.UI.Misc.AozNoteModule;
 #pragma warning disable CA1416 // Validate platform compatibility
 
@@ -22,71 +24,71 @@ public class StatusMain
         const string type = "Status";
         const string typename = "Status";
         const string typenameplural = "Statuses";
-        Dictionary<uint, StatusConfig> LocalWriter = _activeSet.StatusWriter;
-        var LocalGetOriginal = StatusManager.GetOriginal;
-        var LocalGetName = StatusManager.GetName;
-        var LocalCreateEntry = StatusConfig.CreateEntry;
+        Dictionary<uint, StatusConfig> Writer = _activeSet.StatusWriter;
+        var GetName = StatusManager.GetName;
+        var CreateEntry = StatusConfig.CreateEntry;
 
-        using var subList = ImRaii.Child(mainkey, CalcGlobals.BodyScale(), false);
+        using var subList = ImRaii.Child(mainkey, CalcGlobals.BodyScale(), true);
         if (subList)
         {
             const string searchPopup = "Search " + typenameplural;
             UiGlobals.DrawAddItem(searchPopup);
 
-            foreach (var key in LocalWriter.Keys)
+            foreach (var key in Writer.Keys)
             {
-                var replace = LocalWriter[key].Replacement;
-                var DefaultValues = LocalGetOriginal(key);
-                var EntryEnabled = LocalWriter[key].Enabled;
-
-                if (ImGui.Checkbox("##" + key, ref LocalWriter[key].Enabled))
+                if (ImGui.CollapsingHeader($"#{key:D5} - " + GetName(key)))
                 {
-                    if (LocalWriter[key].Enabled)
+                    var GetOriginal = StatusManager.old[key];
+                    var LocalWriter = Writer[key];
+
+                    using (ImRaii.PushFont(UiBuilder.IconFont))
                     {
-                        Setup.SetupByType(key, type);
+                        if (ImGui.Button($"{FontAwesomeIcon.Trash.ToIconString()}##{key}"))
+                        {
+                            Setup.SetupByType(key, type, true);
+                            Writer.Remove(key);
+                            Service.Config.Save();
+                        }
                     }
-                    else
+
+                    if (ImGui.Checkbox("##" + key, ref LocalWriter.Enabled))
                     {
-                        Setup.SetupByType(key, type, true);
+                        if (LocalWriter.Enabled)
+                        {
+                            Setup.SetupByType(key, type);
+                        }
+                        else
+                        {
+                            Setup.SetupByType(key, type, true);
+                        }
+                        Service.Config.Save();
                     }
-                    Service.Config.Save();
+                    ImGui.SameLine();
+                    ImGui.TextUnformatted("Entry Enabled");
+                    UiGlobals.DrawItemSeparator();
+
+                    //to do: show loop vfx and hit effect as strings
+
+                    //Service.Log.Error("value is: [{value}] and defaultvalue is [{defaultvalue}]", _activeSet.StatusWriter[key].Replacement.StatusLoopVFX, StatusManager.GetOriginal(key).StatusLoopVFX);
+                    UiGlobals.DrawInt("Parameter Modifier", type, key, LocalWriter.Enabled, ref LocalWriter.Replacement.ParamModifier, GetOriginal.ParamModifier);
+                    UiGlobals.DrawUShort("Status Loop VFX ID", type, key, LocalWriter.Enabled, ref LocalWriter.Replacement.StatusLoopVFX, GetOriginal.StatusLoopVFX, true, "StatusLoopVFX-VFX");
+                    UiGlobals.DrawByte("Unknown 0", type, key, LocalWriter.Enabled, ref LocalWriter.Replacement.Unknown0, GetOriginal.Unknown0);
+                    UiGlobals.DrawByte("Status Category", type, key, LocalWriter.Enabled, ref LocalWriter.Replacement.StatusCategory, GetOriginal.StatusCategory);
+                    UiGlobals.DrawByte("Status Hit Effect ID", type, key, LocalWriter.Enabled, ref LocalWriter.Replacement.StatusHitEffect, GetOriginal.StatusHitEffect, true, "StatusHitEffect-VFX");
+                    UiGlobals.DrawByte("Parameter Effect", type, key, LocalWriter.Enabled, ref LocalWriter.Replacement.ParamEffect, GetOriginal.ParamEffect);
+                    UiGlobals.DrawByte("Target Type", type, key, LocalWriter.Enabled, ref LocalWriter.Replacement.TargetType, GetOriginal.TargetType);
+                    UiGlobals.DrawByte("Flag 1", type, key, LocalWriter.Enabled, ref LocalWriter.Replacement.Flags, GetOriginal.Flags);
+                    UiGlobals.DrawByte("Flag 2", type, key, LocalWriter.Enabled, ref LocalWriter.Replacement.Flag2, GetOriginal.Flag2);
+                    UiGlobals.DrawByte("Unknown_70_1", type, key, LocalWriter.Enabled, ref LocalWriter.Replacement.Unknown_70_1, GetOriginal.Unknown_70_1);
+                    UiGlobals.DrawSByte("AtkType", type, key, LocalWriter.Enabled, ref LocalWriter.Replacement.Unknown2, GetOriginal.Unknown2);
+                    UiGlobals.DrawItemSeparator();
+                    continue;
+
+                    #endregion
+                    #region Items
+
                 }
-                ImGui.SameLine();
-
-                if (ImGui.Button(" - ##" + key))
-                {
-                    Setup.SetupByType(key, type, true);
-                    LocalWriter.Remove(key);
-                    Service.Config.Save();
-                }
-
-                ImGui.SameLine();
-                ImGui.Text($"#{key:D5}");
-
-                ImGui.SameLine();
-                ImGui.TextWrapped(LocalGetName(key));
-
-                //to do: show loop vfx and hit effect as strings
-
-                UiGlobals.DrawInt("Parameter Modifier", type, key, EntryEnabled, ref replace.ParamModifier, DefaultValues.ParamModifier);
-                UiGlobals.DrawUShort("Status Loop VFX ID", type, key, EntryEnabled, ref replace.StatusLoopVFX, DefaultValues.StatusLoopVFX);
-                UiGlobals.DrawByte("Unknown 0", type, key, EntryEnabled, ref replace.Unknown0, DefaultValues.Unknown0);
-                UiGlobals.DrawByte("Status Category", type, key, EntryEnabled, ref replace.StatusCategory, DefaultValues.StatusCategory);
-                UiGlobals.DrawByte("Status Hit Effect ID", type, key, EntryEnabled, ref replace.StatusHitEffect, DefaultValues.StatusHitEffect);
-                UiGlobals.DrawByte("Parameter Effect", type, key, EntryEnabled, ref replace.ParamEffect, DefaultValues.ParamEffect);
-                UiGlobals.DrawByte("Target Type", type, key, EntryEnabled, ref replace.TargetType, DefaultValues.TargetType);
-                UiGlobals.DrawByte("Flag 1", type, key, EntryEnabled, ref replace.Flags, DefaultValues.Flags);
-                UiGlobals.DrawByte("Flag 2", type, key, EntryEnabled, ref replace.Flag2, DefaultValues.Flag2);
-                UiGlobals.DrawByte("Unknown_70_1", type, key, EntryEnabled, ref replace.Unknown_70_1, DefaultValues.Unknown_70_1);
-                UiGlobals.DrawSByte("AtkType", type, key, EntryEnabled, ref replace.Unknown2, DefaultValues.Unknown2);
-                UiGlobals.DrawItemSeparator();
-                continue;
-
-                #endregion
-                #region Items
-
             }
-
             #endregion
             #region Search/Set
 
@@ -107,7 +109,7 @@ public class StatusMain
                 {
                     if (ImGui.Selectable($"#{pair.Key:D5} {pair.Value}"))
                     {
-                        LocalWriter[pair.Key] =  LocalCreateEntry(pair.Key);
+                        Writer[pair.Key] =  CreateEntry(pair.Key);
                     }
                 }
             }

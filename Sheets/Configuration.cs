@@ -14,6 +14,7 @@ public class Configuration : IPluginConfiguration
     public class ReplacementSet(string name, bool enabled, int priority,
     Dictionary<uint, ActionConfig> actionwriter,
     Dictionary<uint, ActionCastVFXConfig> actioncastvfxwriter,
+    Dictionary<uint, ActionTimelineConfig> actiontimelinewriter,
     Dictionary<uint, MountConfig> mountwriter,
     Dictionary<uint, MountCustomizeConfig> mountcustomizewriter,
     Dictionary<uint, StatusConfig> statuswriter,
@@ -23,7 +24,6 @@ public class Configuration : IPluginConfiguration
     Dictionary<uint, GlassesConfig> glasseswriter,
     Dictionary<uint, GlassesStyleConfig> glassesstylewriter,
     //Dictionary<uint, PlaceNameConfig> placenamewriter,
-    Dictionary<uint, ActionTimelineConfig> actiontimelinewriter,
     Dictionary<uint, OrnamentConfig> ornamentwriter,
     Dictionary<uint, OrnamentCustomizeConfig> ornamentcustomizewriter,
     Dictionary<uint, VfxConfig> vfxwriter)
@@ -38,6 +38,7 @@ public class Configuration : IPluginConfiguration
         //TOSETUP: add new dictionary here
         public Dictionary<uint, ActionConfig> ActionWriter { get; set; } = actionwriter;
         public Dictionary<uint, ActionCastVFXConfig> ActionCastVFXWriter { get; set; } = actioncastvfxwriter;
+        public Dictionary<uint, ActionTimelineConfig> ActionTimelineWriter { get; set; } = actiontimelinewriter;
         public Dictionary<uint, MountConfig> MountWriter { get; set; } = mountwriter;
         public Dictionary<uint, MountCustomizeConfig> MountCustomizeWriter { get; set; } = mountcustomizewriter;
         public Dictionary<uint, TiltParamConfig> TiltParamWriter { get; set; } = tiltparamwriter;
@@ -47,7 +48,6 @@ public class Configuration : IPluginConfiguration
         public Dictionary<uint, GlassesConfig> GlassesWriter { get; set; } = glasseswriter;
         public Dictionary<uint, GlassesStyleConfig> GlassesStyleWriter { get; set; } = glassesstylewriter;
         //public Dictionary<uint, PlaceNameConfig> PlaceNameWriter { get; set; } = placenamewriter;
-        public Dictionary<uint, ActionTimelineConfig> ActionTimelineWriter { get; set; } = actiontimelinewriter;
         public Dictionary<uint, OrnamentConfig> OrnamentWriter { get; set; } = ornamentwriter;
         public Dictionary<uint, OrnamentCustomizeConfig> OrnamentCustomizeWriter { get; set; } = ornamentcustomizewriter;
         public Dictionary<uint, VfxConfig> VfxWriter { get; set; } = vfxwriter;

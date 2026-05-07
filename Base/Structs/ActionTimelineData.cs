@@ -5,11 +5,11 @@ namespace ActionTimelineReplacement.Base.Structs;
 [StructLayout(LayoutKind.Explicit)]
 public struct ActionTimelineData
 {
-    //NEW!! SETUP
+    //VERIFY THIS WORKS
     [FieldOffset(0x0)]
     public ushort AnimationOffset;
 
-    //NEW!! SETUP
+    //VERIFY THIS WORKS
     [FieldOffset(0x4)]
     public ushort WeaponTimeline;
     

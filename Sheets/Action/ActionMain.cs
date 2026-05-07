@@ -57,10 +57,16 @@ public class ActionMain
 
 
 
-                UiGlobals.DrawUShort("Cast", type, key, _activeSet.ActionWriter[key].Enabled, ref replace.CastVfx, DefaultValues.CastVfx);
-                UiGlobals.DrawUShort("Start", type, key, _activeSet.ActionWriter[key].Enabled, ref replace.AnimationStart, DefaultValues.AnimationStart);
+
+                //REENABLE
+                //UiGlobals.DrawUShort("Cast", type, key, _activeSet.ActionWriter[key].Enabled, ref replace.CastVfx, DefaultValues.CastVfx, true, "ActionCastVFX-VFX");
+
+                //REENABLE
+                //UiGlobals.DrawUShort("Start", type, key, _activeSet.ActionWriter[key].Enabled, ref replace.AnimationStart, DefaultValues.AnimationStart, true, "ActionTimeline");
                 UiGlobals.DrawShort("End", type, key, _activeSet.ActionWriter[key].Enabled, ref replace.AnimationEnd, DefaultValues.AnimationEnd);
-                UiGlobals.DrawUShort("Hit", type, key, _activeSet.ActionWriter[key].Enabled, ref replace.ActionTimelineHit, DefaultValues.ActionTimelineHit);
+
+                //REENABLE
+                // UiGlobals.DrawUShort("Hit", type, key, _activeSet.ActionWriter[key].Enabled, ref replace.ActionTimelineHit, DefaultValues.ActionTimelineHit);
                 UiGlobals.DrawByte("Unknown 1", type, key, _activeSet.ActionWriter[key].Enabled, ref replace.Unknown1, DefaultValues.Unknown1);
                 UiGlobals.DrawByte("Unknown 2", type, key, _activeSet.ActionWriter[key].Enabled, ref replace.Unknown2, DefaultValues.Unknown2);
                 UiGlobals.DrawByte("Unknown 4", type, key, _activeSet.ActionWriter[key].Enabled, ref replace.Unknown4, DefaultValues.Unknown4);

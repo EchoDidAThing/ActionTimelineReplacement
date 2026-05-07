@@ -11,6 +11,11 @@ public class VfxConfig(VfxReplace replace, bool enabled)
 {
     public bool Enabled = enabled;
     public VfxReplace Replacement => replace;
+
+    public static VfxConfig CreateEntry(uint key)
+    {
+        return new VfxConfig(VfxManager.GetOriginal(key), false);
+    }
 }
 
 public class VfxReplace(uint rowId,

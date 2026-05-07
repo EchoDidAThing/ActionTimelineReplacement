@@ -55,17 +55,39 @@ public class MountMain
                 ImGui.TextWrapped(MountManager.GetName(key));
 
 
-                UiGlobals.DrawUShort("Ride BGM ID", type, key, _activeSet.MountWriter[key].Enabled, ref replace.RideBGM, DefaultValues.RideBGM);
-                UiGlobals.DrawUShort("Ground Tilt ID", type, key, _activeSet.MountWriter[key].Enabled, ref replace.TiltParam1, DefaultValues.TiltParam1);
-                UiGlobals.DrawUShort("Fly/Swim Tilt ID", type, key, _activeSet.MountWriter[key].Enabled, ref replace.TiltParam2, DefaultValues.TiltParam2);
-                UiGlobals.DrawUShort("Unknown Tilt3 ID", type, key, _activeSet.MountWriter[key].Enabled, ref replace.TiltParam3, DefaultValues.TiltParam3);
-                UiGlobals.DrawUShort("Unknown Tilt4 ID", type, key, _activeSet.MountWriter[key].Enabled, ref replace.TiltParam4, DefaultValues.TiltParam4);
-                UiGlobals.DrawUShort("Fly Up/Down Tilt", type, key, _activeSet.MountWriter[key].Enabled, ref replace.FlyUpDownTilt, DefaultValues.FlyUpDownTilt);
-                UiGlobals.DrawUShort("Unknown 6", type, key, _activeSet.MountWriter[key].Enabled, ref replace.Unknown6, DefaultValues.Unknown6);
-                UiGlobals.DrawUShort("Unknown 7", type, key, _activeSet.MountWriter[key].Enabled, ref replace.Unknown7, DefaultValues.Unknown7);
-                UiGlobals.DrawUShort("Unknown 8", type, key, _activeSet.MountWriter[key].Enabled, ref replace.Unknown8, DefaultValues.Unknown8);
-                UiGlobals.DrawUShort("Mount Customize ID", type, key, _activeSet.MountWriter[key].Enabled, ref replace.MountCustomize, DefaultValues.MountCustomize);
-                UiGlobals.DrawUShort("Swim Animation Speed", type, key, _activeSet.MountWriter[key].Enabled, ref replace.SwimAnimSpeed, DefaultValues.SwimAnimSpeed);
+
+                //REENABLE
+                //UiGlobals.DrawUShort("Ride BGM ID", type, key, _activeSet.MountWriter[key].Enabled, ref replace.RideBGM, DefaultValues.RideBGM);
+
+                //REENABLE
+                //UiGlobals.DrawUShort("Ground Tilt ID", type, key, _activeSet.MountWriter[key].Enabled, ref replace.TiltParam1, DefaultValues.TiltParam1);
+
+                //REENABLE
+                //UiGlobals.DrawUShort("Fly/Swim Tilt ID", type, key, _activeSet.MountWriter[key].Enabled, ref replace.TiltParam2, DefaultValues.TiltParam2);
+
+                //REENABLE
+                //UiGlobals.DrawUShort("Unknown Tilt3 ID", type, key, _activeSet.MountWriter[key].Enabled, ref replace.TiltParam3, DefaultValues.TiltParam3);
+
+                //REENABLE
+                //UiGlobals.DrawUShort("Unknown Tilt4 ID", type, key, _activeSet.MountWriter[key].Enabled, ref replace.TiltParam4, DefaultValues.TiltParam4);
+
+                //REENABLE
+                //UiGlobals.DrawUShort("Fly Up/Down Tilt", type, key, _activeSet.MountWriter[key].Enabled, ref replace.FlyUpDownTilt, DefaultValues.FlyUpDownTilt);
+
+                //REENABLE
+                //UiGlobals.DrawUShort("Unknown 6", type, key, _activeSet.MountWriter[key].Enabled, ref replace.Unknown6, DefaultValues.Unknown6);
+
+                //REENABLE
+                //UiGlobals.DrawUShort("Unknown 7", type, key, _activeSet.MountWriter[key].Enabled, ref replace.Unknown7, DefaultValues.Unknown7);
+
+                //REENABLE
+                //UiGlobals.DrawUShort("Unknown 8", type, key, _activeSet.MountWriter[key].Enabled, ref replace.Unknown8, DefaultValues.Unknown8);
+
+                //REENABLE
+                //UiGlobals.DrawUShort("Mount Customize ID", type, key, _activeSet.MountWriter[key].Enabled, ref replace.MountCustomize, DefaultValues.MountCustomize);
+
+                //REENABLE
+                //UiGlobals.DrawUShort("Swim Animation Speed", type, key, _activeSet.MountWriter[key].Enabled, ref replace.SwimAnimSpeed, DefaultValues.SwimAnimSpeed);
 
 
                 //DrawByte("MountBoolSet1", "Mount Bools 1 [raw]", ref replace.MountBoolSet1, i => i.MountBoolSet1);

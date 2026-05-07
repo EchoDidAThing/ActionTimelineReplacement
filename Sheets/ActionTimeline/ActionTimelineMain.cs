@@ -55,6 +55,10 @@ public class ActionTimelineMain
                 ImGui.TextWrapped(ActionTimelineManager.GetName(key));
 
 
+                UiGlobals.DrawString("Animation Path", type, key, _activeSet.ActionTimelineWriter[key].Enabled, ref replace.Animation, DefaultValues.Animation, true, "ActionTimeline");
+
+                //REENABLE
+                //UiGlobals.DrawUShort("Weapon Timeline", type, key, _activeSet.ActionTimelineWriter[key].Enabled, ref replace.WeaponTimelineOffset, DefaultValues.WeaponTimelineOffset, true, "WeaponTimeline");
                 UiGlobals.DrawByte("Type", type, key, _activeSet.ActionTimelineWriter[key].Enabled, ref replace.Type, DefaultValues.Type);
                 UiGlobals.DrawByte("Priority", type, key, _activeSet.ActionTimelineWriter[key].Enabled, ref replace.Priority, DefaultValues.Priority);
                 UiGlobals.DrawByte("Stance", type, key, _activeSet.ActionTimelineWriter[key].Enabled, ref replace.Stance, DefaultValues.Stance);
@@ -100,6 +104,9 @@ public class ActionTimelineMain
                         var original = ActionTimelineManager.GetOriginal(pair.Key);
                         _activeSet.ActionTimelineWriter[pair.Key] =
                             new ActionTimelineConfig(new ActionTimelineReplace(
+                                    original.RowId,
+                                    original.Animation,
+                                    original.WeaponTimelineOffset,
                                     original.Type,
                                     original.Priority,
                                     original.Stance,

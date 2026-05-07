@@ -44,8 +44,8 @@ public class TiltParamMain
 
                 ImGui.SameLine();
                 ImGui.TextWrapped(TiltParamManager.GetName(key));
-
-                UiGlobals.DrawUShort("Tilt Rate",type, key, _activeSet.TiltParamWriter[key].Enabled, ref replace.Unknown0, DefaultValues.Unknown0);
+                //REENABLE
+                //UiGlobals.DrawUShort("Tilt Rate",type, key, _activeSet.TiltParamWriter[key].Enabled, ref replace.Unknown0, DefaultValues.Unknown0);
                 UiGlobals.DrawByte("Rotation Origin Offset", type, key, _activeSet.TiltParamWriter[key].Enabled, ref replace.Unknown1, DefaultValues.Unknown1);
                 UiGlobals.DrawByte("Max Angle", type, key, _activeSet.TiltParamWriter[key].Enabled, ref replace.Unknown2, DefaultValues.Unknown2);
                 UiGlobals.DrawByte("Unknown 3", type, key, _activeSet.TiltParamWriter[key].Enabled, ref replace.Unknown3, DefaultValues.Unknown3);

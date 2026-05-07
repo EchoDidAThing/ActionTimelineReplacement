@@ -26,7 +26,6 @@ public class StatusHitEffectMain
             {
                 var replace = _activeSet.StatusHitEffectWriter[key].Replacement;
                 var DefaultValues = StatusHitEffectManager.GetOriginal(key);
-
                 if (ImGui.Checkbox("##" + key, ref _activeSet.StatusHitEffectWriter[key].Enabled))
                 {
                     if (_activeSet.StatusHitEffectWriter[key].Enabled)
@@ -56,7 +55,9 @@ public class StatusHitEffectMain
 
                 //to do: show loop vfx and hit effect as strings
 
-                UiGlobals.DrawUShort("VFX Row", type, key, _activeSet.StatusHitEffectWriter[key].Enabled, ref replace.VFX, DefaultValues.VFX);
+
+                //REENABLE
+                //UiGlobals.DrawUShort("VFX Row", type, key, _activeSet.StatusHitEffectWriter[key].Enabled, ref replace.VFX, DefaultValues.VFX, true, "VFX");
 
                 UiGlobals.DrawItemSeparator();
                 continue;

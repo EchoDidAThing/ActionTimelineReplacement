@@ -67,7 +67,9 @@ public class ActionCastVFXMain
                 ImGui.TextWrapped(LocalGetName(key));
 
 
-                UiGlobals.DrawUShort("Action Cast VFX", type, key, EntryEnabled, ref replace.CastVfx, DefaultValues.CastVfx);
+
+                //REENABLE
+                //UiGlobals.DrawUShort("Action Cast VFX", type, key, EntryEnabled, ref replace.CastVfx, DefaultValues.CastVfx);
                 continue;
 
                 #endregion

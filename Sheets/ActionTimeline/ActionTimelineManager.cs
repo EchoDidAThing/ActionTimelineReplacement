@@ -56,6 +56,9 @@ public static class ActionTimelineManager
         {
             var act = Service.DataManager.GetExcelSheet<ActionTimeline>()?.GetRow(idx);
             replacement = new ActionTimelineReplace(
+                act?.RowId ?? 0,
+                act?.Key.ToString() ?? "",
+                (ushort)(act?.WeaponTimeline.RowId ?? 0),
                 act?.Type ?? 0,
                 act?.Priority ?? 0,
                 act?.Stance ?? 0,
