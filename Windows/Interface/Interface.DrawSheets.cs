@@ -67,12 +67,14 @@ public sealed partial class ConfigWindow : Window
 
         ImGui.SetCursorPosY(ImGui.GetCursorPosY() + 10 * CalcGlobals.GlobalScale());
 
+        uint i = 0;
+        List<uint> breaks = [9];
         foreach (var mainkey in _AllHeaders.Keys)
         {
             UiGlobals.DrawSheetButton(mainkey, ref activesheet, _activeSet);
-            ImGui.SameLine();
-
-        }
+            if (!breaks.Contains(i)) { ImGui.SameLine(); }
+            i += 1;
+        }   
         ImGui.NewLine();
         UiGlobals.DrawItemSeparator();
         switch (activesheet)

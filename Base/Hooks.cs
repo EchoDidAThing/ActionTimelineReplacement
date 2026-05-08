@@ -8,7 +8,7 @@ public static unsafe class Hooks
 {
     public const string vfxhook = "E8 ?? ?? ?? ?? 48 8B D0 48 8B CB E8 ?? ?? ?? ?? 45 84 F6"; //updated for 7.5
     public const string statusloopvfxhook = "E8 ?? ?? ?? ?? 48 8B D8 48 85 C0 74 ?? 66 39 38";//updated 7.4
-    public const string actiontimelinehook = "E8 ?? ?? ?? ?? F6 40 3E 10"; //updated for 7.5
+    public const string actiontimelinehook = "E8 ?? ?? ?? ?? 48 85 C0 0F 84 ?? ?? ?? ?? 80 78 ?? ?? 0F 85 ?? ?? ?? ?? 32 C0"; //updated for 7.5HF1. this was a pain to find
 
     #region delegates
     private delegate ActionData* GetActionDataDelegate(uint RowId);
@@ -181,7 +181,7 @@ public static unsafe class Hooks
     public static IntPtr GetActionTimelineDatapublic(uint RowId)
     {
         _getActionTimelineDataHookpublic ??= Marshal.GetDelegateForFunctionPointer<GetActionTimelineDataDelegatepublic>(Service.Scanner.ScanText(
-            "E8 ?? ?? ?? ?? F6 40 3E 10"));
+            actiontimelinehook));
 
 
         return _getActionTimelineDataHookpublic(RowId);
@@ -206,8 +206,8 @@ public static unsafe class Hooks
     public static OrnamentCustomizeData* GetOrnamentCustomizeData(uint RowId)
     {
         _getOrnamentCustomizeDataHook ??= Marshal.GetDelegateForFunctionPointer<GetOrnamentCustomizeDataDelegate>(Service.Scanner.ScanText(
-            "E8 ?? ?? ?? ?? 48 8B D8 48 85 C0 0F 84 ?? ?? ?? ?? 0F B7 08 0F BF 40"));
-        //Updated for 7.5 Component::Exd::ExdModule.GetOrnamentCustomizeRow located inside A nested function under Client::Game::Character::OrnamentContainer.Update
+            "E8 ?? ?? ?? ?? 48 8B D8 48 85 C0 0F 84 ?? ?? ?? ?? 0F B7 08"));
+        //Updated for 7.5HF1 Component::Exd::ExdModule.GetOrnamentCustomizeRow located inside A nested function under Client::Game::Character::OrnamentContainer.Update
         return _getOrnamentCustomizeDataHook(RowId);
     }
     

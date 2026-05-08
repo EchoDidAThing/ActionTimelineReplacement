@@ -23,7 +23,7 @@ public class ActionMain
             UiGlobals.DrawAddItem(searchPopup);
 
             foreach (var key in _activeSet.ActionWriter.Keys)
-            {
+            { 
                 var replace = _activeSet.ActionWriter[key].Replacement;
                 var DefaultValues = ActionManager.GetOriginal(key);
 
@@ -55,18 +55,13 @@ public class ActionMain
                 ImGui.SameLine();
                 ImGui.TextWrapped(ActionManager.GetName(key));
 
+                
 
 
-
-                //REENABLE
-                //UiGlobals.DrawUShort("Cast", type, key, _activeSet.ActionWriter[key].Enabled, ref replace.CastVfx, DefaultValues.CastVfx, true, "ActionCastVFX-VFX");
-
-                //REENABLE
-                //UiGlobals.DrawUShort("Start", type, key, _activeSet.ActionWriter[key].Enabled, ref replace.AnimationStart, DefaultValues.AnimationStart, true, "ActionTimeline");
+                UiGlobals.DrawUShort("Cast", type, key, _activeSet.ActionWriter[key].Enabled, ref replace.CastVfx, DefaultValues.CastVfx, true, "ActionCastVFX-VFX");
+                UiGlobals.DrawUShort("Start", type, key, _activeSet.ActionWriter[key].Enabled, ref replace.AnimationStart, DefaultValues.AnimationStart, true, "ActionTimeline");
                 UiGlobals.DrawShort("End", type, key, _activeSet.ActionWriter[key].Enabled, ref replace.AnimationEnd, DefaultValues.AnimationEnd);
-
-                //REENABLE
-                // UiGlobals.DrawUShort("Hit", type, key, _activeSet.ActionWriter[key].Enabled, ref replace.ActionTimelineHit, DefaultValues.ActionTimelineHit);
+                UiGlobals.DrawUShort("Hit", type, key, _activeSet.ActionWriter[key].Enabled, ref replace.ActionTimelineHit, DefaultValues.ActionTimelineHit);
                 UiGlobals.DrawByte("Unknown 1", type, key, _activeSet.ActionWriter[key].Enabled, ref replace.Unknown1, DefaultValues.Unknown1);
                 UiGlobals.DrawByte("Unknown 2", type, key, _activeSet.ActionWriter[key].Enabled, ref replace.Unknown2, DefaultValues.Unknown2);
                 UiGlobals.DrawByte("Unknown 4", type, key, _activeSet.ActionWriter[key].Enabled, ref replace.Unknown4, DefaultValues.Unknown4);

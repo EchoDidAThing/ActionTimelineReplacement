@@ -241,6 +241,9 @@ public class UiGlobals
         ImGui.TextUnformatted(name);
         if (sheethasindirects)
         {
+            using (ImRaii.PushFont(UiBuilder.IconFont))
+            ImGui.Text($"{FontAwesomeIcon.ArrowTurnUp.ToIconString()}");
+            ImGui.SameLine();
             if (indirecttype == "NO")
             {
                 ImGui.Text("");

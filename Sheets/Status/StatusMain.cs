@@ -40,6 +40,16 @@ public class StatusMain
                 {
                     var GetOriginal = StatusManager.old[key];
                     var LocalWriter = Writer[key];
+                    bool enablechanges = false;
+
+                    if (Service.Config.EnableReplacement && _activeSet.Enabled && LocalWriter.Enabled )
+                    {
+                        enablechanges = true;
+                    }
+                    else
+                    {
+                        enablechanges = false;
+                    }
 
                     using (ImRaii.PushFont(UiBuilder.IconFont))
                     {
@@ -53,7 +63,7 @@ public class StatusMain
 
                     if (ImGui.Checkbox("##" + key, ref LocalWriter.Enabled))
                     {
-                        if (LocalWriter.Enabled)
+                        if (enablechanges)
                         {
                             Setup.SetupByType(key, type);
                         }
@@ -70,17 +80,17 @@ public class StatusMain
                     //to do: show loop vfx and hit effect as strings
 
                     //Service.Log.Error("value is: [{value}] and defaultvalue is [{defaultvalue}]", _activeSet.StatusWriter[key].Replacement.StatusLoopVFX, StatusManager.GetOriginal(key).StatusLoopVFX);
-                    UiGlobals.DrawInt("Parameter Modifier", type, key, LocalWriter.Enabled, ref LocalWriter.Replacement.ParamModifier, GetOriginal.ParamModifier);
-                    UiGlobals.DrawUShort("Status Loop VFX ID", type, key, LocalWriter.Enabled, ref LocalWriter.Replacement.StatusLoopVFX, GetOriginal.StatusLoopVFX, true, "StatusLoopVFX-VFX");
-                    UiGlobals.DrawByte("Unknown 0", type, key, LocalWriter.Enabled, ref LocalWriter.Replacement.Unknown0, GetOriginal.Unknown0);
-                    UiGlobals.DrawByte("Status Category", type, key, LocalWriter.Enabled, ref LocalWriter.Replacement.StatusCategory, GetOriginal.StatusCategory);
-                    UiGlobals.DrawByte("Status Hit Effect ID", type, key, LocalWriter.Enabled, ref LocalWriter.Replacement.StatusHitEffect, GetOriginal.StatusHitEffect, true, "StatusHitEffect-VFX");
-                    UiGlobals.DrawByte("Parameter Effect", type, key, LocalWriter.Enabled, ref LocalWriter.Replacement.ParamEffect, GetOriginal.ParamEffect);
-                    UiGlobals.DrawByte("Target Type", type, key, LocalWriter.Enabled, ref LocalWriter.Replacement.TargetType, GetOriginal.TargetType);
-                    UiGlobals.DrawByte("Flag 1", type, key, LocalWriter.Enabled, ref LocalWriter.Replacement.Flags, GetOriginal.Flags);
-                    UiGlobals.DrawByte("Flag 2", type, key, LocalWriter.Enabled, ref LocalWriter.Replacement.Flag2, GetOriginal.Flag2);
-                    UiGlobals.DrawByte("Unknown_70_1", type, key, LocalWriter.Enabled, ref LocalWriter.Replacement.Unknown_70_1, GetOriginal.Unknown_70_1);
-                    UiGlobals.DrawSByte("AtkType", type, key, LocalWriter.Enabled, ref LocalWriter.Replacement.Unknown2, GetOriginal.Unknown2);
+                    UiGlobals.DrawInt("Parameter Modifier", type, key, enablechanges, ref LocalWriter.Replacement.ParamModifier, GetOriginal.ParamModifier);
+                    UiGlobals.DrawUShort("Status Loop VFX ID", type, key, enablechanges, ref LocalWriter.Replacement.StatusLoopVFX, GetOriginal.StatusLoopVFX, true, "StatusLoopVFX-VFX");
+                    UiGlobals.DrawByte("Unknown 0", type, key, enablechanges, ref LocalWriter.Replacement.Unknown0, GetOriginal.Unknown0);
+                    UiGlobals.DrawByte("Status Category", type, key, enablechanges, ref LocalWriter.Replacement.StatusCategory, GetOriginal.StatusCategory);
+                    UiGlobals.DrawByte("Status Hit Effect ID", type, key, enablechanges, ref LocalWriter.Replacement.StatusHitEffect, GetOriginal.StatusHitEffect, true, "StatusHitEffect-VFX");
+                    UiGlobals.DrawByte("Parameter Effect", type, key, enablechanges, ref LocalWriter.Replacement.ParamEffect, GetOriginal.ParamEffect);
+                    UiGlobals.DrawByte("Target Type", type, key, enablechanges, ref LocalWriter.Replacement.TargetType, GetOriginal.TargetType);
+                    UiGlobals.DrawByte("Flag 1", type, key, enablechanges, ref LocalWriter.Replacement.Flags, GetOriginal.Flags);
+                    UiGlobals.DrawByte("Flag 2", type, key, enablechanges, ref LocalWriter.Replacement.Flag2, GetOriginal.Flag2);
+                    UiGlobals.DrawByte("Unknown_70_1", type, key, enablechanges, ref LocalWriter.Replacement.Unknown_70_1, GetOriginal.Unknown_70_1);
+                    UiGlobals.DrawSByte("AtkType", type, key, enablechanges, ref LocalWriter.Replacement.Unknown2, GetOriginal.Unknown2);
                     UiGlobals.DrawItemSeparator();
                     continue;
 
