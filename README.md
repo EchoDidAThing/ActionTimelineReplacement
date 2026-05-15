@@ -18,17 +18,18 @@
   -status
   -statusloopvfx[added; needs verification]
   -statushiteffect
-- Try to find a way to make adding new values and sheets not a struggle.
-- add handling for multiple strings if needed.
+- add handling for multiple strings. [once again yoink from NamingWay]
 - Add codepath to create custom entries(reference field, edited fields). Saved without indexes and dynamically updated.
 - For above may need to leverage an edited EXD file for initial load to initialize the lines.
-- Redo readme
+- Redo readme.
 - Automatically generate/update mod to enable default paths for stuff.
 - More graceful configfile handling to allow for it to handle changes in data.
 - When Saving Data, Only save edited values.
 - Fix config loading to skip unknown sets.
 - Add some sort of config verification.
-- -Add copypath buttons for stuff like vfx.
+- Set up button to add an entry for an indirect field
+- Add warnings on fields that cannot be limited via Collection shenanigans.
+- Fix the reversions.
 
 #taco's to-do:
 - limit input values to prevent the log from going haywire
