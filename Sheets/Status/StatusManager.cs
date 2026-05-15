@@ -1,15 +1,23 @@
-﻿using System.Collections.Generic;
+﻿using FFXIVClientStructs.FFXIV.Common.Lua;
+using Lumina.Excel.Sheets;
+using Serilog.Formatting.Display;
+using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
-using Lumina.Excel.Sheets;
 
 namespace ActionTimelineReplacement.Sheets;
 
-public static class StatusManager
+public class StatusManager
 {
     private static Dictionary<uint, string>? _Names;
 
-    public static readonly Dictionary<uint, StatusReplace> old = [];
+    private static Dictionary<uint, StatusReplace> old  = [] ;
+
+    public static StatusReplace OldExport(uint id)
+    {
+        var output = old[id];
+        return output;
+    }
 
     public static Dictionary<uint, string> Names => _Names
         ??= Service.DataManager.GetExcelSheet<Status>()
@@ -47,17 +55,15 @@ public static class StatusManager
         }
         return null;
     }
-    public static StatusReplace GetOriginalTest(uint idx)
-    {
-        StatusReplace Relay = GetOriginal(idx);
-        return Relay;
-    }
 
     public static StatusReplace GetOriginal(uint idx)
     {
+        Service.Log.Error("Initiating GetOriginal for [{ID}]", idx);
         ref var replacement = ref CollectionsMarshal.GetValueRefOrAddDefault(old, idx, out var exists);
         if (!exists)
         {
+
+            Service.Log.Error("No value found in old, pulling fresh");
             var act = Service.DataManager.GetExcelSheet<Status>()?.GetRow(idx);
             replacement = new StatusReplace(
                 act?.ParamModifier ?? 0,
@@ -73,6 +79,7 @@ public static class StatusManager
                 act?.Unknown2 ?? 0
                 );
         }
+        Service.Log.Error("exporting value [{statusloopvfx}]for id [{ID}]", replacement!.StatusLoopVFX, idx);
         return replacement!;
     }
 }

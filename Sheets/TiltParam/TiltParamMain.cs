@@ -1,11 +1,17 @@
-﻿using Dalamud.Interface.Utility.Raii;
-using Dalamud.Interface;
-using Dalamud.Bindings.ImGui;
-using System;
-using System.Linq;
+﻿using ActionTimelineReplacement.Base.Global;
 using ActionTimelineReplacement.Base.Setups;
 using ActionTimelineReplacement.Interface;
-using ActionTimelineReplacement.Base.Global;
+using Dalamud.Bindings.ImGui;
+using Dalamud.Game.Config;
+using Dalamud.Interface;
+using Dalamud.Interface.Utility.Raii;
+using FFXIVClientStructs.FFXIV.Common.Lua;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Xml.Linq;
+using static FFXIVClientStructs.FFXIV.Client.System.String.Utf8String.Delegates;
+using static FFXIVClientStructs.FFXIV.Client.UI.Misc.AozNoteModule;
 #pragma warning disable CA1416 // Validate platform compatibility
 
 namespace ActionTimelineReplacement.Sheets;
@@ -14,66 +20,80 @@ namespace ActionTimelineReplacement.Sheets;
 public class TiltParamMain
 {
     const string type = "TiltParam";
+    const string typename = "Tilt Parameter";
+    const string typenameplural = "Tilt Parameters";
     public static void Draw(string mainkey, ref Configuration.ReplacementSet _activeSet, ref string search)
     {
-        using var subList = ImRaii.Child(mainkey, CalcGlobals.BodyScale(), false);
+
+        Dictionary<uint, TiltParamConfig> Writer = _activeSet.TiltParamWriter;
+        var GetName = TiltParamManager.GetName;
+        var CreateEntry = TiltParamConfig.CreateEntry;
+
+        using var subList = ImRaii.Child(mainkey, CalcGlobals.BodyScale(), true);
         if (subList)
         {
-            const string searchPopup = "Search tilts";
+            const string searchPopup = "Search " + typenameplural;
             UiGlobals.DrawAddItem(searchPopup);
 
-            foreach (var key in _activeSet.TiltParamWriter.Keys)
+            foreach (var key in Writer.Keys)
             {
-                var replace = _activeSet.TiltParamWriter[key].Replacement;
-                var DefaultValues = TiltParamManager.GetOriginal(key);
-
-                if (ImGui.Checkbox("##" + key, ref _activeSet.TiltParamWriter[key].Enabled))
+                if (ImGui.CollapsingHeader($"#{key:D5} - " + GetName(key)))
                 {
-                    Setup.SetTiltParam(key);
-                    Service.Config.Save();
+                    var LocalWriter = Writer[key];
+                    var DefaultValues = TiltParamManager.GetOriginal(key);
+                    bool enablechanges = UiGlobals.CheckIsEnabled(Service.Config.EnableReplacement, _activeSet.Enabled, LocalWriter.Enabled);
+
+                    using (ImRaii.PushFont(UiBuilder.IconFont))
+                    {
+                        if (UiGlobals.DrawDeleteEntryButton($"{FontAwesomeIcon.Trash.ToIconString()}##{key}"))
+                        {
+                            Setup.SetupByType(key, type, true);
+                            Writer.Remove(key);
+                            Service.Config.Save();
+                        }
+                    }
+                    if (ImGui.Checkbox("##" + key, ref LocalWriter.Enabled))
+                    {
+                        enablechanges = UiGlobals.CheckIsEnabled(Service.Config.EnableReplacement, _activeSet.Enabled, LocalWriter.Enabled);
+                        if (enablechanges) Setup.SetupByType(key, type);
+                        else Setup.SetupByType(key, type, true);
+                        Service.Config.Save();
+                    }
+                    ImGui.SameLine();
+                    ImGui.TextUnformatted("Entry Enabled");
+                    UiGlobals.DrawItemSeparator();
+
+
+
+
+                    #region Datainputs
+                    UiGlobals.DrawUShort("Tilt Rate", type, key, enablechanges, ref LocalWriter.Replacement.Unknown0, DefaultValues.Unknown0);
+                    UiGlobals.DrawByte("Rotation Origin Offset", type, key, enablechanges, ref LocalWriter.Replacement.Unknown1, DefaultValues.Unknown1);
+                    UiGlobals.DrawByte("Max Angle", type, key, enablechanges, ref LocalWriter.Replacement.Unknown2, DefaultValues.Unknown2);
+                    UiGlobals.DrawByte("Unknown 3", type, key, enablechanges, ref LocalWriter.Replacement.Unknown3, DefaultValues.Unknown3);
+                    UiGlobals.DrawByte("Unknown 4", type, key, enablechanges, ref LocalWriter.Replacement.Unknown4, DefaultValues.Unknown4);
+                    UiGlobals.DrawBool("Reverse Mouse Direction", type, key, enablechanges, ref LocalWriter.Replacement.Unknown5, DefaultValues.Unknown5);
+                    UiGlobals.DrawItemSeparator();
+                    continue;
+
+                    #endregion
+
                 }
-                ImGui.SameLine();
-
-                if (ImGui.Button(" - ##" + key))
-                {
-                    _activeSet.TiltParamWriter.Remove(key);
-                }
-
-                ImGui.SameLine();
-                ImGui.Text($"#{key:D5}");
-
-                ImGui.SameLine();
-                ImGui.TextWrapped(TiltParamManager.GetName(key));
-                //REENABLE
-                //UiGlobals.DrawUShort("Tilt Rate",type, key, _activeSet.TiltParamWriter[key].Enabled, ref replace.Unknown0, DefaultValues.Unknown0);
-                UiGlobals.DrawByte("Rotation Origin Offset", type, key, _activeSet.TiltParamWriter[key].Enabled, ref replace.Unknown1, DefaultValues.Unknown1);
-                UiGlobals.DrawByte("Max Angle", type, key, _activeSet.TiltParamWriter[key].Enabled, ref replace.Unknown2, DefaultValues.Unknown2);
-                UiGlobals.DrawByte("Unknown 3", type, key, _activeSet.TiltParamWriter[key].Enabled, ref replace.Unknown3, DefaultValues.Unknown3);
-                UiGlobals.DrawByte("Unknown 4", type, key, _activeSet.TiltParamWriter[key].Enabled, ref replace.Unknown4, DefaultValues.Unknown4);
-                UiGlobals.DrawBool("Reverse Mouse Direction", type, key, _activeSet.TiltParamWriter[key].Enabled, ref replace.Unknown5, DefaultValues.Unknown5);
-
-                UiGlobals.DrawItemSeparator();
-                continue;
-
-                #endregion
-                #region Items
-
-                
             }
 
-            #endregion
+
+#endregion
             #region Search/Set
 
-            using var searchTiltParam = ImRaii.Popup(searchPopup);
-            if (searchTiltParam)
+            using var searchMenu = ImRaii.Popup(searchPopup);
+            if (searchMenu)
             {
                 ImGui.SetNextItemWidth(CalcGlobals.XY());
-                ImGui.InputText("##Search tilt parameters", ref search, 256);
+                ImGui.InputText("##Search " + typenameplural.ToLower(), ref search, 256);
                 var localsearch = search;
 
                 using var popupChild = ImRaii.Child(searchPopup, CalcGlobals.SearchPopScale(), true);
-                foreach (var pair in TiltParamManager.Names.OrderBy(i =>
-                {
+                foreach (var pair in UiGlobals.CreateSearchList(type).OrderBy(i => {
                     if (string.IsNullOrEmpty(localsearch)) return 0;
                     return Math.Min(ProcessingGlobals.ScoreString(i.Value, localsearch),
                         ProcessingGlobals.ScoreString(i.Key.ToString(), localsearch));
@@ -81,17 +101,7 @@ public class TiltParamMain
                 {
                     if (ImGui.Selectable($"#{pair.Key:D5} {pair.Value}"))
                     {
-                        var original = TiltParamManager.GetOriginal(pair.Key);
-                        _activeSet.TiltParamWriter[pair.Key] =
-                            new TiltParamConfig(new TiltParamReplace(
-                                    original.Unknown0,
-                                    original.Unknown1,
-                                    original.Unknown2,
-                                    original.Unknown3,
-                                    original.Unknown4,
-                                    original.Unknown5),
-                                false);
-                        Service.Config.Save();
+                        Writer[pair.Key] = CreateEntry(pair.Key);
                     }
                 }
             }

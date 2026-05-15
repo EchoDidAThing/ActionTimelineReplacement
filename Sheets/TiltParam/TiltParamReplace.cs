@@ -7,6 +7,13 @@ public class TiltParamConfig(TiltParamReplace replace, bool enabled)
 {
     public bool Enabled = enabled;
     public TiltParamReplace Replacement => replace;
+
+
+    public static TiltParamConfig CreateEntry(uint key)
+    {
+        TiltParamReplace originalvalues = TiltParamManager.GetOriginal(key);
+        return new TiltParamConfig(originalvalues, false);
+    }
 }
 
 public class TiltParamReplace(

@@ -9,7 +9,7 @@ public static class StatusHitEffectManager
 {
     private static Dictionary<uint, string>? _Names;
 
-    private static readonly Dictionary<uint, StatusHitEffectReplace> old = [];
+    public static readonly Dictionary<uint, StatusHitEffectReplace> old = [];
 
     public static Dictionary<uint, string> Names => _Names
         ??= Service.DataManager.GetExcelSheet<StatusHitEffect>()

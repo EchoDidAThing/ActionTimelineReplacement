@@ -1,11 +1,17 @@
-﻿using Dalamud.Interface.Utility.Raii;
-using Dalamud.Interface;
-using Dalamud.Bindings.ImGui;
-using System;
-using System.Linq;
+﻿using ActionTimelineReplacement.Base.Global;
 using ActionTimelineReplacement.Base.Setups;
 using ActionTimelineReplacement.Interface;
-using ActionTimelineReplacement.Base.Global;
+using Dalamud.Bindings.ImGui;
+using Dalamud.Game.Config;
+using Dalamud.Interface;
+using Dalamud.Interface.Utility.Raii;
+using FFXIVClientStructs.FFXIV.Common.Lua;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Xml.Linq;
+using static FFXIVClientStructs.FFXIV.Client.System.String.Utf8String.Delegates;
+using static FFXIVClientStructs.FFXIV.Client.UI.Misc.AozNoteModule;
 #pragma warning disable CA1416 // Validate platform compatibility
 
 namespace ActionTimelineReplacement.Sheets;
@@ -14,73 +20,78 @@ namespace ActionTimelineReplacement.Sheets;
 public class StatusHitEffectMain
 {
     const string type = "StatusHitEffect";
+    const string typename = "Status Hit Effect";
+    const string typenameplural = "Status Hit Effects";
     public static void Draw(string mainkey, ref Configuration.ReplacementSet _activeSet, ref string search)
     {
-        using var subList = ImRaii.Child(mainkey, CalcGlobals.BodyScale(), false);
+
+        Dictionary<uint, StatusHitEffectConfig> Writer = _activeSet.StatusHitEffectWriter;
+        var GetName = StatusHitEffectManager.GetName;
+        var CreateEntry = StatusHitEffectConfig.CreateEntry;
+
+        using var subList = ImRaii.Child(mainkey, CalcGlobals.BodyScale(), true);
         if (subList)
         {
-            const string searchPopup = "Search StatusHitEffects";
+            const string searchPopup = "Search " + typenameplural;
             UiGlobals.DrawAddItem(searchPopup);
 
-            foreach (var key in _activeSet.StatusHitEffectWriter.Keys)
+            foreach (var key in Writer.Keys)
             {
-                var replace = _activeSet.StatusHitEffectWriter[key].Replacement;
-                var DefaultValues = StatusHitEffectManager.GetOriginal(key);
-                if (ImGui.Checkbox("##" + key, ref _activeSet.StatusHitEffectWriter[key].Enabled))
+                if (ImGui.CollapsingHeader($"#{key:D5} - " + GetName(key)))
                 {
-                    if (_activeSet.StatusHitEffectWriter[key].Enabled)
+                    var LocalWriter = Writer[key];
+                    var DefaultValues = StatusHitEffectManager.GetOriginal(key);
+                    bool enablechanges = UiGlobals.CheckIsEnabled(Service.Config.EnableReplacement, _activeSet.Enabled, LocalWriter.Enabled);
+
+                    using (ImRaii.PushFont(UiBuilder.IconFont))
                     {
-                        Setup.SetStatusHitEffect(key);
+                        if (UiGlobals.DrawDeleteEntryButton($"{FontAwesomeIcon.Trash.ToIconString()}##{key}"))
+                        {
+                            Setup.SetupByType(key, type, true);
+                            Writer.Remove(key);
+                            Service.Config.Save();
+                        }
                     }
-                    else 
+                    if (ImGui.Checkbox("##" + key, ref LocalWriter.Enabled))
                     {
-                        Setup.SetStatusHitEffect(key, true);
+                        enablechanges = UiGlobals.CheckIsEnabled(Service.Config.EnableReplacement, _activeSet.Enabled, LocalWriter.Enabled);
+                        if (enablechanges) Setup.SetupByType(key, type);
+                        else Setup.SetupByType(key, type, true);
+                        Service.Config.Save();
                     }
-                    Service.Config.Save();
+                    ImGui.SameLine();
+                    ImGui.TextUnformatted("Entry Enabled");
+                    UiGlobals.DrawItemSeparator();
+
+
+
+
+                    #region Datainputs
+
+
+                    UiGlobals.DrawUShort("VFX Row", type, key, enablechanges, ref LocalWriter.Replacement.VFX, DefaultValues.VFX, true, "VFX");
+
+                    UiGlobals.DrawItemSeparator();
+                    continue;
+
+                    #endregion
+
                 }
-                ImGui.SameLine();
-
-                if (ImGui.Button(" - ##" + key))
-                {
-                    Setup.SetStatusHitEffect(key, true);
-                    _activeSet.StatusHitEffectWriter.Remove(key);
-                    Service.Config.Save();
-                }
-
-                ImGui.SameLine();
-                ImGui.Text($"#{key:D5}");
-
-                ImGui.SameLine();
-                ImGui.TextWrapped(StatusHitEffectManager.GetName(key));
-
-                //to do: show loop vfx and hit effect as strings
-
-
-                //REENABLE
-                //UiGlobals.DrawUShort("VFX Row", type, key, _activeSet.StatusHitEffectWriter[key].Enabled, ref replace.VFX, DefaultValues.VFX, true, "VFX");
-
-                UiGlobals.DrawItemSeparator();
-                continue;
-
-                #endregion
-                #region Items
-
-                
             }
 
-            #endregion
+
+#endregion
             #region Search/Set
 
-            using var searchStatusHitEffect = ImRaii.Popup(searchPopup);
-            if (searchStatusHitEffect)
+            using var searchMenu = ImRaii.Popup(searchPopup);
+            if (searchMenu)
             {
                 ImGui.SetNextItemWidth(CalcGlobals.XY());
-                ImGui.InputText("##Search StatusHitEffects", ref search, 256);
+                ImGui.InputText("##Search " + typenameplural.ToLower(), ref search, 256);
                 var localsearch = search;
 
                 using var popupChild = ImRaii.Child(searchPopup, CalcGlobals.SearchPopScale(), true);
-                foreach (var pair in StatusHitEffectManager.Names.OrderBy(i =>
-                {
+                foreach (var pair in UiGlobals.CreateSearchList(type).OrderBy(i => {
                     if (string.IsNullOrEmpty(localsearch)) return 0;
                     return Math.Min(ProcessingGlobals.ScoreString(i.Value, localsearch),
                         ProcessingGlobals.ScoreString(i.Key.ToString(), localsearch));
@@ -88,12 +99,7 @@ public class StatusHitEffectMain
                 {
                     if (ImGui.Selectable($"#{pair.Key:D5} {pair.Value}"))
                     {
-                        var original = StatusHitEffectManager.GetOriginal(pair.Key);
-                        _activeSet.StatusHitEffectWriter[pair.Key] =
-                            new StatusHitEffectConfig(new StatusHitEffectReplace(
-                                    original.VFX),
-                                false);
-                        Service.Config.Save();
+                        Writer[pair.Key] = CreateEntry(pair.Key);
                     }
                 }
             }

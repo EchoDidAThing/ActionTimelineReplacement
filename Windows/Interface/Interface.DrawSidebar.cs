@@ -1,21 +1,26 @@
-﻿using System;
-using System.Numerics;
-using System.Runtime.InteropServices;
-using ActionTimelineReplacement.Base.Global;
+﻿using ActionTimelineReplacement.Base.Global;
 using ActionTimelineReplacement.Base.Setups;
 using ActionTimelineReplacement.Sheets;
+using Dalamud.Bindings.ImGui;
 using Dalamud.Interface.Colors;
 using Dalamud.Interface.Utility.Raii;
 using Dalamud.Interface.Windowing;
-using Dalamud.Bindings.ImGui;
+using Lumina.Excel.Sheets;
+using System;
+using System.Linq;
+using System.Numerics;
+using System.Runtime.InteropServices;
 #pragma warning disable CA1416 // Validate platform compatibility
 
 namespace ActionTimelineReplacement.Interface;
 
 public sealed partial class ConfigWindow : Window
 {
+
+    private string CreateName = string.Empty;
     private void DrawSidebar()
     {
+
         using var windowPadding = ImRaii.PushStyle(ImGuiStyleVar.WindowPadding, Vector2.Zero);
 
         using var child = ImRaii.Child("Sidebar", -Vector2.One, true);
@@ -82,10 +87,7 @@ public sealed partial class ConfigWindow : Window
 
             if (ImGui.Button("Create", buttonSize))
             {
-                var randomset = new Random().Next(1, 100).ToString();
-                //TOSETUP: add new config bracket set here
-                Service.Config.ReplacementSets.Add(new Configuration.ReplacementSet("Set " + randomset, true, 0, [], [], [], [], [], [], [], [], [], [], [], [], [], []));
-                Service.Config.Save();
+                ImGui.OpenPopup("##CreateSet");
             }
             ImGui.SameLine();
 
@@ -105,5 +107,27 @@ public sealed partial class ConfigWindow : Window
             }
             ImGui.PopItemWidth();
         }
+
+
+        using var createMenu = ImRaii.Popup("##CreateSet");
+        if (createMenu)
+        {
+            ImGui.SetNextItemWidth(CalcGlobals.XY());
+            if (ImGui.InputText("##Create", ref CreateName, 512, ImGuiInputTextFlags.EnterReturnsTrue))
+            {
+                var localname = CreateName;
+                var exists = false;
+                if (string.IsNullOrEmpty(localname)) { return; }
+                foreach (var set in Service.Config.ReplacementSets) { if (set.Name == localname) { exists = true; break; } }
+                if (exists) { return; }
+                Service.Config.ReplacementSets.Add(new Configuration.ReplacementSet((string)localname, true, 0, [], [], [], [], [], [], [], [], [], [], [], [], [], []));
+                CreateName = "";
+                Service.Config.Save();
+
+            }
+
+        }
     }
 }
+
+

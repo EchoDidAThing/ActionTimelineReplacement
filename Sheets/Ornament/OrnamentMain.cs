@@ -55,15 +55,7 @@ public class OrnamentMain
 
 
                 UiGlobals.DrawSByte("Unknown 0", type, key, _activeSet.OrnamentWriter[key].Enabled, ref replace.Unknown0, DefaultValues.Unknown0);
-
-                //REENABLE
-                //UiGlobals.DrawUShort("Model", type, key, _activeSet.OrnamentWriter[key].Enabled, ref replace.Model, DefaultValues.Model);
-
-                //REENABLE
-                //UiGlobals.DrawUShort("Action Row ID", type, key, _activeSet.OrnamentWriter[key].Enabled, ref replace.Action, DefaultValues.Action);
-
-                //REENABLE
-                //UiGlobals.DrawUShort("Transient [unknown]", type, key, _activeSet.OrnamentWriter[key].Enabled, ref replace.Transient, DefaultValues.Transient);
+                UiGlobals.DrawUShort("Model", type, key, _activeSet.OrnamentWriter[key].Enabled, ref replace.Model, DefaultValues.Model);UiGlobals.DrawUShort("Action Row ID", type, key, _activeSet.OrnamentWriter[key].Enabled, ref replace.Action, DefaultValues.Action);UiGlobals.DrawUShort("Transient [unknown]", type, key, _activeSet.OrnamentWriter[key].Enabled, ref replace.Transient, DefaultValues.Transient);
                 UiGlobals.DrawByte("Attachment Point", type, key, _activeSet.OrnamentWriter[key].Enabled, ref replace.AttachmentPoint, DefaultValues.AttachmentPoint);
                 UiGlobals.DrawByte("Ornament Hide State", type, key, _activeSet.OrnamentWriter[key].Enabled, ref replace.Unknown3, DefaultValues.Unknown3);
                 UiGlobals.DrawByte("Idle Pose Group", type, key, _activeSet.OrnamentWriter[key].Enabled, ref replace.Unknown4, DefaultValues.Unknown4);

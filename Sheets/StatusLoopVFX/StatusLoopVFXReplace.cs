@@ -11,6 +11,10 @@ public class StatusLoopVFXConfig(StatusLoopVFXReplace replace, bool enabled)
 {
     public bool Enabled = enabled;
     public StatusLoopVFXReplace Replacement => replace;
+    public static StatusLoopVFXConfig CreateEntry(uint key) {
+        StatusLoopVFXReplace originalvalues = StatusLoopVFXManager.GetOriginal(key);
+        return new StatusLoopVFXConfig(originalvalues, false);
+    }
 }
 
 public class StatusLoopVFXReplace(

@@ -11,6 +11,12 @@ public class StatusHitEffectConfig(StatusHitEffectReplace replace, bool enabled)
 {
     public bool Enabled = enabled;
     public StatusHitEffectReplace Replacement => replace;
+
+    public static StatusHitEffectConfig CreateEntry(uint key)
+    {
+        StatusHitEffectReplace originalvalues = StatusHitEffectManager.GetOriginal(key);
+        return new StatusHitEffectConfig(originalvalues, false);
+    }
 }
 
 public class StatusHitEffectReplace(

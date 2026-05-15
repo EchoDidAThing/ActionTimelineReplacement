@@ -39,7 +39,7 @@ public struct OrnamentData
 
     [FieldOffset(0x16)]
     public ushort Transient;
-    //whoever managed the sheet apparently knows what this does, but I don't
+    //This is the rowid that is references OrnamentTransient, it controls tooltip description
 
     [FieldOffset(0x1A)]
     public byte AttachmentPoint;
@@ -54,4 +54,6 @@ public struct OrnamentData
     [FieldOffset(0x1C)]
     public byte Unknown4;
     //changes cpose animation while using the ornament
+
+    //Echos note: at some point, we should add a quick jump to the action transient data for names/desc/whatevs
 }

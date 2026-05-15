@@ -11,6 +11,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.Linq;
+using System.Numerics;
 using System.Runtime.InteropServices;
 using static FFXIVClientStructs.FFXIV.Client.UI.Misc.AozNoteModule;
 
@@ -18,6 +19,21 @@ namespace ActionTimelineReplacement.Base.Global;
 
 public class UiGlobals
 {
+    public static readonly Vector4 RED_COLOR = new(0.89098039216f, 0.30549019608f, 0.28980392157f, 1.0f);
+
+    public static readonly Vector4 GREEN_COLOR = new(0.36078431373f, 0.72156862745f, 0.36078431373f, 1.0f);
+
+    public static readonly Vector4 DARK_GREEN = new(0.0f, 0.493f, 0.019f, 1.0f);
+    public static readonly Vector4 FADED_DARK_GREEN = new(0.0f, 0.493f, 0.019f, .5f);
+
+    public static readonly Vector4 DARK_GRAY = new(0.21764705882f, 0.21764705882f, 0.21764705882f, 1);
+
+    public static readonly Vector4 FADED_WHITE = new(1f, 1f, 1f, .25f);
+    public static readonly Vector4 LESS_FADED_WHITE = new(1f, 1f, 1f, .5f);
+    public static readonly Vector4 FULL_WHITE = new(1f, 1f, 1f, 1f);
+    public static readonly Vector4 NO_ALPHA = new(1f, 1f, 1f, 0f);
+    public static readonly Vector4 BASE_ALPHA = new(1f, 1f, 1f, .1f);
+
     public static void DrawAddItem(string searchname)
     {
 
@@ -41,21 +57,94 @@ public class UiGlobals
         ImGui.NewLine();
     }
 
+    public static bool CheckIsEnabled(bool global, bool set, bool local)
+    {
+        if ((global) && (set) && (local))
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+
+    public static bool DrawDeleteEntryButton(string label, bool small = false) => ColorButton(label, RED_COLOR, small);
+
+    public static bool ColorButton(string label, Vector4 color, bool small)
+    {
+        using var style = ImRaii.PushColor(ImGuiCol.Button, color);
+        return small ? ImGui.SmallButton(label) : ImGui.Button(label);
+    }
+    
+    public static bool DrawResetCellButton(string label, bool enabled, bool small = false) {
+        ImRaii.ColorDisposable styletype = new ImRaii.ColorDisposable();
+        styletype.Pop();
+        if (!enabled) {
+            styletype.Push(ImGuiCol.Text, FADED_WHITE);
+            styletype.Push(ImGuiCol.ButtonHovered, NO_ALPHA);
+        }
+        using var style = styletype;
+        return small ? ImGui.SmallButton(label) : ImGui.Button(label);
+    }
+
+
     public static void DrawSheetButton(string mainkey, ref string activesheet, Configuration.ReplacementSet activeset)
     {
+        ImRaii.ColorDisposable styletype = new ImRaii.ColorDisposable();
+        styletype.Pop();
         uint countvalue = GetSheetCounts(mainkey, activeset);
         string buttontext = mainkey;
         if (countvalue >=1)
         {
-            buttontext += " [" + countvalue + "]"; 
+            buttontext += " [" + countvalue + "]";
         }
-        if (activesheet == mainkey)
+        else
         {
-            buttontext = "<<" + buttontext + ">>";
+            styletype.Pop();
+            styletype.Push(ImGuiCol.Text, FADED_WHITE);
+            styletype.Push(ImGuiCol.Button, NO_ALPHA);
         }
+        if (mainkey == activesheet)
+        {
+            styletype.Pop();
+            styletype.Push(ImGuiCol.Button, DARK_GREEN);
+            styletype.Push(ImGuiCol.Text, FULL_WHITE);
+        }
+        else
+        {
+            styletype.Push(ImGuiCol.Button, BASE_ALPHA);
+        }
+        styletype.Push(ImGuiCol.ButtonHovered, FADED_DARK_GREEN);
+        using var style = styletype;
         if (ImGui.Button(buttontext))
         {
             activesheet = mainkey;
+        }
+    }
+
+    public static void ResolveIndirectDraw(string indirecttype, string refname, uint key, uint curvalue)
+    {
+
+        using (ImRaii.PushFont(UiBuilder.IconFont))
+        ImGui.Text($"{FontAwesomeIcon.ArrowTurnUp.ToIconString()}");
+        ImGui.SameLine();
+        if (indirecttype == "NO")
+        {
+            ImGui.Text("");
+        }
+        else
+        {
+            ImGui.Text(GetIndirectString(indirecttype, (uint)curvalue));
+        }
+        ImGui.SameLine();
+        using (ImRaii.PushFont(UiBuilder.IconFont))
+        {
+            if (ImGui.Button($"{FontAwesomeIcon.ClipboardList.ToIconString()}##{refname}{key}"))
+            {
+                ImGui.SetClipboardText(GetIndirectString(indirecttype, (uint)curvalue));
+            }
         }
     }
 
@@ -108,22 +197,7 @@ public class UiGlobals
         ImGui.TextUnformatted(name);
         if (sheethasindirects)
         {
-            if (indirecttype == "NO")
-            {
-                ImGui.Text("");
-            }
-            else
-            {
-                ImGui.Text(GetIndirectString(indirecttype, (uint)value));
-            }
-            ImGui.SameLine();
-            using (ImRaii.PushFont(UiBuilder.IconFont))
-            {
-                if (ImGui.Button($"{FontAwesomeIcon.ClipboardList.ToIconString()}##{refname}{key}"))
-                {
-                    ImGui.SetClipboardText(GetIndirectString(indirecttype, (uint)value));
-                }
-            }
+            ResolveIndirectDraw(indirecttype, refname, key, (uint)value);
         }
     }
 
@@ -153,22 +227,7 @@ public class UiGlobals
         ImGui.TextUnformatted(name);
         if (sheethasindirects)
         {
-            if (indirecttype == "NO")
-            {
-                ImGui.Text("");
-            }
-            else
-            {
-                ImGui.Text(GetIndirectString(indirecttype, value));
-            }
-            ImGui.SameLine();
-            using (ImRaii.PushFont(UiBuilder.IconFont))
-            {
-                if (ImGui.Button($"{FontAwesomeIcon.ClipboardList.ToIconString()}##{refname}{key}"))
-                {
-                    ImGui.SetClipboardText(GetIndirectString(indirecttype, value));
-                }
-            }
+            ResolveIndirectDraw(indirecttype, refname, key, (uint)value);
         }
     }
     public static void DrawShort(string name, string type, uint key, bool changesenabled, ref short value,
@@ -197,71 +256,38 @@ public class UiGlobals
         ImGui.TextUnformatted(name);
         if (sheethasindirects)
         {
-            if (indirecttype == "NO")
-            {
-                ImGui.Text("");
-            }
-            else
-            {
-                ImGui.Text(GetIndirectString(indirecttype, (uint)value));
-            }
-            ImGui.SameLine();
-            using (ImRaii.PushFont(UiBuilder.IconFont))
-            {
-                if (ImGui.Button($"{FontAwesomeIcon.ClipboardList.ToIconString()}##{refname}{key}"))
-                {
-                    ImGui.SetClipboardText(GetIndirectString(indirecttype, (uint)value));
-                }
-            }
+            ResolveIndirectDraw(indirecttype, refname, key, (uint)value);
         }
     }
     public static void DrawUShort(string name, string type, uint key, bool changesenabled, ref ushort value, ushort defaultvalue, bool sheethasindirects = false, string indirecttype = "NO")
     {
+        ushort DefaultValue = defaultvalue;
         string refname = name.Replace(" ", "");
-        ushort relay = value;
-        if (ImGui.InputUShort("##" + refname + key, ref relay, 0, 0, default, ImGuiInputTextFlags.EnterReturnsTrue))
+        if (ImGui.InputUShort("##" + refname + key, ref value, 0, 0, default, ImGuiInputTextFlags.EnterReturnsTrue))
         {
-            value = relay;
             if (changesenabled) { Setup.SetupByType(key, type); }
+            Service.Log.Error("old value is[{new}] new value is[{old}] ", defaultvalue,value);
             Service.Config.Save();
         }
         ImGui.SameLine();
-
         using (ImRaii.PushFont(UiBuilder.IconFont))
         {
-            if (ImGui.Button($"{FontAwesomeIcon.Reply.ToIconString()}##{refname}{key}"))
-            { 
-                value = defaultvalue;
-
+            if (DrawResetCellButton($"{FontAwesomeIcon.Reply.ToIconString()}##{refname}{key}", value==defaultvalue))
+            {
+                value = DefaultValue;
                 if (changesenabled) { Setup.SetupByType(key, type); }
                 Service.Config.Save();
             }
         }
+
         ImGui.SameLine();
         ImGui.TextUnformatted(name);
         if (sheethasindirects)
         {
-            using (ImRaii.PushFont(UiBuilder.IconFont))
-            ImGui.Text($"{FontAwesomeIcon.ArrowTurnUp.ToIconString()}");
-            ImGui.SameLine();
-            if (indirecttype == "NO")
-            {
-                ImGui.Text("");
-            }
-            else
-            {
-                ImGui.Text(GetIndirectString(indirecttype, (uint)value));
-            }
-            ImGui.SameLine();
-            using (ImRaii.PushFont(UiBuilder.IconFont))
-            {
-                if (ImGui.Button($"{FontAwesomeIcon.ClipboardList.ToIconString()}##{refname}{key}"))
-                {
-                    ImGui.SetClipboardText(GetIndirectString(indirecttype, (uint)value));
-                }
-            }
+            ResolveIndirectDraw(indirecttype, refname, key, (uint)value);
         }
     }
+    
     public static void DrawInt(string name, string type, uint key, bool changesenabled, ref int value,
     int defaultvalue, bool sheethasindirects = false, string indirecttype = "NO")
     {
@@ -286,22 +312,7 @@ public class UiGlobals
         ImGui.TextUnformatted(name);
         if (sheethasindirects)
         {
-            if (indirecttype == "NO")
-            {
-                ImGui.Text("");
-            }
-            else
-            {
-                ImGui.Text(GetIndirectString(indirecttype, (uint)value));
-            }
-            ImGui.SameLine();
-            using (ImRaii.PushFont(UiBuilder.IconFont))
-            {
-                if (ImGui.Button($"{FontAwesomeIcon.ClipboardList.ToIconString()}##{refname}{key}"))
-                {
-                    ImGui.SetClipboardText(GetIndirectString(indirecttype, (uint)value));
-                }
-            }
+            ResolveIndirectDraw(indirecttype, refname, key, (uint)value);
         }
     }
     public static void DrawUInt(string name, string type, uint key, bool changesenabled, ref uint value,
@@ -328,22 +339,7 @@ public class UiGlobals
         ImGui.TextUnformatted(name);
         if (sheethasindirects)
         {
-            if (indirecttype == "NO")
-            {
-                ImGui.Text("");
-            }
-            else
-            {
-                ImGui.Text(GetIndirectString(indirecttype, (uint)value));
-            }
-            ImGui.SameLine();
-            using (ImRaii.PushFont(UiBuilder.IconFont))
-            {
-                if (ImGui.Button($"{FontAwesomeIcon.ClipboardList.ToIconString()}##{refname}{key}"))
-                {
-                    ImGui.SetClipboardText(GetIndirectString(indirecttype, (uint)value));
-                }
-            }
+            ResolveIndirectDraw(indirecttype, refname, key, (uint)value);
         }
     }
     public static void DrawBool(string name, string type, uint key, bool changesenabled, ref bool value,

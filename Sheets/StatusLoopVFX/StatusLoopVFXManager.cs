@@ -9,7 +9,7 @@ public static class StatusLoopVFXManager
 {
     private static Dictionary<uint, string>? _Names;
 
-    private static readonly Dictionary<uint, StatusLoopVFXReplace> old = [];
+    public static readonly Dictionary<uint, StatusLoopVFXReplace> old = [];
 
     public static Dictionary<uint, string> Names => _Names
         ??= Service.DataManager.GetExcelSheet<StatusLoopVFX>()

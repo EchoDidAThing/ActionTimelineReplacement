@@ -1,11 +1,16 @@
-﻿using Dalamud.Interface.Utility.Raii;
-using Dalamud.Interface;
-using Dalamud.Bindings.ImGui;
-using System;
-using System.Linq;
+﻿using ActionTimelineReplacement.Base.Global;
 using ActionTimelineReplacement.Base.Setups;
 using ActionTimelineReplacement.Interface;
-using ActionTimelineReplacement.Base.Global;
+using Dalamud.Bindings.ImGui;
+using Dalamud.Game.Config;
+using Dalamud.Interface;
+using Dalamud.Interface.Utility.Raii;
+using FFXIVClientStructs.FFXIV.Common.Lua;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Xml.Linq;
+using static FFXIVClientStructs.FFXIV.Client.UI.Misc.AozNoteModule;
 #pragma warning disable CA1416 // Validate platform compatibility
 
 namespace ActionTimelineReplacement.Sheets;
@@ -14,90 +19,85 @@ namespace ActionTimelineReplacement.Sheets;
 public class StatusLoopVFXMain
 {
     const string type = "StatusLoopVFX";
+    const string typename = "Status Loop VFX";
+    const string typenameplural = "Status Loop VFXs";
     public static void Draw(string mainkey, ref Configuration.ReplacementSet _activeSet, ref string search)
     {
-        using var subList = ImRaii.Child(mainkey, CalcGlobals.BodyScale(), false);
+
+        Dictionary<uint, StatusLoopVFXConfig> Writer = _activeSet.StatusLoopVFXWriter;
+        var GetName = StatusLoopVFXManager.GetName;
+        var CreateEntry = StatusLoopVFXConfig.CreateEntry;
+
+        using var subList = ImRaii.Child(mainkey, CalcGlobals.BodyScale(), true);
         if (subList)
         {
-            const string searchPopup = "Search statusloopvfxs";
+            const string searchPopup = "Search " + typenameplural;
             UiGlobals.DrawAddItem(searchPopup);
 
-            foreach (var key in _activeSet.StatusLoopVFXWriter.Keys)
+            foreach (var key in Writer.Keys)
             {
-                var replace = _activeSet.StatusLoopVFXWriter[key].Replacement;
-                var DefaultValues = StatusLoopVFXManager.GetOriginal(key);
-
-                if (ImGui.Checkbox("##" + key, ref _activeSet.StatusLoopVFXWriter[key].Enabled))
+                if (ImGui.CollapsingHeader($"#{key:D5} - " + GetName(key)))
                 {
-                    if (_activeSet.StatusLoopVFXWriter[key].Enabled)
+                    var LocalWriter = Writer[key];
+                    var GetOriginal = StatusLoopVFXManager.GetOriginal(key);
+                    bool enablechanges = UiGlobals.CheckIsEnabled(Service.Config.EnableReplacement, _activeSet.Enabled, LocalWriter.Enabled);
+
+                    using (ImRaii.PushFont(UiBuilder.IconFont))
                     {
-                        Setup.SetStatusLoopVFX(key);
+                        if (UiGlobals.DrawDeleteEntryButton($"{FontAwesomeIcon.Trash.ToIconString()}##{key}"))
+                        {
+                            Setup.SetupByType(key, type, true);
+                            Writer.Remove(key);
+                            Service.Config.Save();
+                        }
                     }
-                    else 
+                    if (ImGui.Checkbox("##" + key, ref LocalWriter.Enabled))
                     {
-                        Setup.SetStatusLoopVFX(key, true);
+                        enablechanges = UiGlobals.CheckIsEnabled(Service.Config.EnableReplacement, _activeSet.Enabled, LocalWriter.Enabled);
+                        if (enablechanges) Setup.SetupByType(key, type);
+                        else Setup.SetupByType(key, type, true);
+                        Service.Config.Save();
                     }
-                    Service.Config.Save();
+                    ImGui.SameLine();
+                    ImGui.TextUnformatted("Entry Enabled");
+                    UiGlobals.DrawItemSeparator();
+
+
+
+
+                    #region Datainputs
+                    UiGlobals.DrawUShort("Friendly VFX ID", type, key, enablechanges, ref LocalWriter.Replacement.FriendlyVFX, GetOriginal.FriendlyVFX, true, "VFX");
+                    UiGlobals.DrawUShort("Stack VFX 1 ID", type, key, enablechanges, ref LocalWriter.Replacement.StackVFX1, GetOriginal.StackVFX1, true, "VFX");
+                    UiGlobals.DrawUShort("Stack VFX 2 ID", type, key, enablechanges, ref LocalWriter.Replacement.StackVFX2, GetOriginal.StackVFX2, true, "VFX");
+                    UiGlobals.DrawUShort("Enemy VFX ID", type, key, enablechanges, ref LocalWriter.Replacement.EnemyVFX, GetOriginal.EnemyVFX, true, "VFX");
+                    UiGlobals.DrawByte("Stack 1 Trigger", type, key, enablechanges, ref LocalWriter.Replacement.StackTrigger1, GetOriginal.StackTrigger1);
+                    UiGlobals.DrawByte("Stack 2 Trigger", type, key, enablechanges, ref LocalWriter.Replacement.StackTrigger2, GetOriginal.StackTrigger2);
+                    UiGlobals.DrawByte("Unknown 1", type, key, enablechanges, ref LocalWriter.Replacement.Unknown1, GetOriginal.Unknown1);
+                    UiGlobals.DrawByte("Unknown 2", type, key, enablechanges, ref LocalWriter.Replacement.Unknown2, GetOriginal.Unknown2);
+                    UiGlobals.DrawBool("Unknown 3", type, key, enablechanges, ref LocalWriter.Replacement.Unknown3, GetOriginal.Unknown3);
+                    UiGlobals.DrawBool("Unknown 4", type, key, enablechanges, ref LocalWriter.Replacement.Unknown4, GetOriginal.Unknown4);
+                    UiGlobals.DrawBool("Unknown 5", type, key, enablechanges, ref LocalWriter.Replacement.Unknown5, GetOriginal.Unknown5);
+                    UiGlobals.DrawItemSeparator();
+                    continue;
+
+                    #endregion
+
                 }
-                ImGui.SameLine();
-
-                if (ImGui.Button(" - ##" + key))
-                {
-                    Setup.SetStatusLoopVFX(key, true);
-                    _activeSet.StatusLoopVFXWriter.Remove(key);
-                    Service.Config.Save();
-                }
-
-                ImGui.SameLine();
-                ImGui.Text($"#{key:D5}");
-
-                ImGui.SameLine();
-                ImGui.TextWrapped(StatusLoopVFXManager.GetName(key));
-
-                //to do: show loop vfx and hit effect as strings
-
-                //REENABLE
-                //UiGlobals.DrawUShort("Friendly VFX ID", type, key, _activeSet.StatusLoopVFXWriter[key].Enabled, ref replace.FriendlyVFX, DefaultValues.FriendlyVFX, true, "VFX");
-
-                //REENABLE
-                //UiGlobals.DrawUShort("Stack VFX 1 ID", type, key, _activeSet.StatusLoopVFXWriter[key].Enabled, ref replace.StackVFX1, DefaultValues.StackVFX1, true, "VFX");
-
-                //REENABLE
-                //UiGlobals.DrawUShort("Stack VFX 2 ID", type, key, _activeSet.StatusLoopVFXWriter[key].Enabled, ref replace.StackVFX2, DefaultValues.StackVFX2, true, "VFX");
-
-                //REENABLE
-                //UiGlobals.DrawUShort("Enemy VFX ID", type, key, _activeSet.StatusLoopVFXWriter[key].Enabled, ref replace.EnemyVFX, DefaultValues.EnemyVFX, true, "VFX");
-                UiGlobals.DrawByte("Stack 1 Trigger", type, key, _activeSet.StatusLoopVFXWriter[key].Enabled, ref replace.StackTrigger1, DefaultValues.StackTrigger1);
-                UiGlobals.DrawByte("Stack 2 Trigger", type, key, _activeSet.StatusLoopVFXWriter[key].Enabled, ref replace.StackTrigger2, DefaultValues.StackTrigger2);
-                UiGlobals.DrawByte("Unknown 1", type, key, _activeSet.StatusLoopVFXWriter[key].Enabled, ref replace.Unknown1, DefaultValues.Unknown1);
-                UiGlobals.DrawByte("Unknown 2", type, key, _activeSet.StatusLoopVFXWriter[key].Enabled, ref replace.Unknown2, DefaultValues.Unknown2);
-                UiGlobals.DrawBool("Unknown 3", type, key, _activeSet.StatusLoopVFXWriter[key].Enabled, ref replace.Unknown3, DefaultValues.Unknown3);
-                UiGlobals.DrawBool("Unknown 4", type, key, _activeSet.StatusLoopVFXWriter[key].Enabled, ref replace.Unknown4, DefaultValues.Unknown4);
-                UiGlobals.DrawBool("Unknown 5", type, key, _activeSet.StatusLoopVFXWriter[key].Enabled, ref replace.Unknown5, DefaultValues.Unknown5);
-
-                UiGlobals.DrawItemSeparator();
-                continue;
-
-                #endregion
-                #region Items
-
-                
-                
             }
 
-            #endregion
+
+#endregion
             #region Search/Set
 
-            using var searchStatusLoopVFX = ImRaii.Popup(searchPopup);
-            if (searchStatusLoopVFX)
+            using var searchMenu = ImRaii.Popup(searchPopup);
+            if (searchMenu)
             {
                 ImGui.SetNextItemWidth(CalcGlobals.XY());
-                ImGui.InputText("##Search statusLoopVFXs", ref search, 256);
+                ImGui.InputText("##Search " + typenameplural.ToLower(), ref search, 256);
                 var localsearch = search;
 
                 using var popupChild = ImRaii.Child(searchPopup, CalcGlobals.SearchPopScale(), true);
-                foreach (var pair in StatusLoopVFXManager.Names.OrderBy(i =>
-                {
+                foreach (var pair in UiGlobals.CreateSearchList(type).OrderBy(i => {
                     if (string.IsNullOrEmpty(localsearch)) return 0;
                     return Math.Min(ProcessingGlobals.ScoreString(i.Value, localsearch),
                         ProcessingGlobals.ScoreString(i.Key.ToString(), localsearch));
@@ -105,22 +105,7 @@ public class StatusLoopVFXMain
                 {
                     if (ImGui.Selectable($"#{pair.Key:D5} {pair.Value}"))
                     {
-                        var original = StatusLoopVFXManager.GetOriginal(pair.Key);
-                        _activeSet.StatusLoopVFXWriter[pair.Key] =
-                            new StatusLoopVFXConfig(new StatusLoopVFXReplace(
-                                    original.FriendlyVFX,
-                                    original.StackVFX1,
-                                    original.StackVFX2,
-                                    original.EnemyVFX,
-                                    original.StackTrigger1,
-                                    original.StackTrigger2,
-                                    original.Unknown1,
-                                    original.Unknown2,
-                                    original.Unknown3,
-                                    original.Unknown4,
-                                    original.Unknown5),
-                                false);
-                        Service.Config.Save();
+                        Writer[pair.Key] = CreateEntry(pair.Key);
                     }
                 }
             }

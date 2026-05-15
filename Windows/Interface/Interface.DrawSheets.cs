@@ -68,7 +68,7 @@ public sealed partial class ConfigWindow : Window
         ImGui.SetCursorPosY(ImGui.GetCursorPosY() + 10 * CalcGlobals.GlobalScale());
 
         uint i = 0;
-        List<uint> breaks = [9];
+        List<uint> breaks = [7];
         foreach (var mainkey in _AllHeaders.Keys)
         {
             UiGlobals.DrawSheetButton(mainkey, ref activesheet, _activeSet);
@@ -122,7 +122,7 @@ public sealed partial class ConfigWindow : Window
             case "OrnamentCustomize":
                 OrnamentCustomizeMain.Draw(activesheet, ref _activeSet, ref _searchOrnamentCustomize);
                 break;
-            case "Vfx":
+            case "VFX":
                 VfxMain.Draw(activesheet, ref _activeSet, ref _searchVfx);
                 break;
                 //case "OrnamentCustomizeGroup":
