@@ -60,10 +60,10 @@ public class StatusMain
                     
                     #region Datainputs
                     UiGlobals.DrawInt("Parameter Modifier", type, key, enablechanges, ref LocalWriter.Replacement.ParamModifier, old.ParamModifier);
-                    UiGlobals.DrawUShort("Status Loop VFX ID", type, key, enablechanges, ref LocalWriter.Replacement.StatusLoopVFX, old.StatusLoopVFX, true, "StatusLoopVFX-VFX");
+                    UiGlobals.DrawUShort("Status Loop VFX ID", type, key, enablechanges, ref LocalWriter.Replacement.StatusLoopVFX, old.StatusLoopVFX, true, ["StatusLoopVFX-VFX"]);
                     UiGlobals.DrawByte("Unknown 0", type, key, enablechanges, ref LocalWriter.Replacement.Unknown0, old.Unknown0);
                     UiGlobals.DrawByte("Status Category", type, key, enablechanges, ref LocalWriter.Replacement.StatusCategory, old.StatusCategory);
-                    UiGlobals.DrawByte("Status Hit Effect ID", type, key, enablechanges, ref LocalWriter.Replacement.StatusHitEffect, old.StatusHitEffect, true, "StatusHitEffect-VFX");
+                    UiGlobals.DrawByte("Status Hit Effect ID", type, key, enablechanges, ref LocalWriter.Replacement.StatusHitEffect, old.StatusHitEffect, true, ["StatusHitEffect-VFX"]);
                     UiGlobals.DrawByte("Parameter Effect", type, key, enablechanges, ref LocalWriter.Replacement.ParamEffect, old.ParamEffect);
                     UiGlobals.DrawByte("Target Type", type, key, enablechanges, ref LocalWriter.Replacement.TargetType, old.TargetType);
                     UiGlobals.DrawByte("Flag 1", type, key, enablechanges, ref LocalWriter.Replacement.Flags, old.Flags);

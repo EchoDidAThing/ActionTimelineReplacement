@@ -78,10 +78,10 @@ public class StatusLoopVFXMainOLD
                     ImGui.TextUnformatted("Entry Enabled");
                     UiGlobals.DrawItemSeparator();
 
-                    UiGlobals.DrawUShort("Friendly VFX ID", type, key, _activeSet.StatusLoopVFXWriter[key].Enabled, ref LocalWriter.Replacement.FriendlyVFX, GetOriginal.FriendlyVFX, true, "VFX");
-                    UiGlobals.DrawUShort("Stack VFX 1 ID", type, key, _activeSet.StatusLoopVFXWriter[key].Enabled, ref LocalWriter.Replacement.StackVFX1, GetOriginal.StackVFX1, true, "VFX");
-                    UiGlobals.DrawUShort("Stack VFX 2 ID", type, key, _activeSet.StatusLoopVFXWriter[key].Enabled, ref LocalWriter.Replacement.StackVFX2, GetOriginal.StackVFX2, true, "VFX");
-                    UiGlobals.DrawUShort("Enemy VFX ID", type, key, _activeSet.StatusLoopVFXWriter[key].Enabled, ref LocalWriter.Replacement.EnemyVFX, GetOriginal.EnemyVFX, true, "VFX");
+                    //UiGlobals.DrawUShort("Friendly VFX ID", type, key, _activeSet.StatusLoopVFXWriter[key].Enabled, ref LocalWriter.Replacement.FriendlyVFX, GetOriginal.FriendlyVFX, true, "VFX");
+                    //UiGlobals.DrawUShort("Stack VFX 1 ID", type, key, _activeSet.StatusLoopVFXWriter[key].Enabled, ref LocalWriter.Replacement.StackVFX1, GetOriginal.StackVFX1, true, "VFX");
+                    //UiGlobals.DrawUShort("Stack VFX 2 ID", type, key, _activeSet.StatusLoopVFXWriter[key].Enabled, ref LocalWriter.Replacement.StackVFX2, GetOriginal.StackVFX2, true, "VFX");
+                    //UiGlobals.DrawUShort("Enemy VFX ID", type, key, _activeSet.StatusLoopVFXWriter[key].Enabled, ref LocalWriter.Replacement.EnemyVFX, GetOriginal.EnemyVFX, true, "VFX");
                     UiGlobals.DrawByte("Stack 1 Trigger", type, key, _activeSet.StatusLoopVFXWriter[key].Enabled, ref LocalWriter.Replacement.StackTrigger1, GetOriginal.StackTrigger1);
                     UiGlobals.DrawByte("Stack 2 Trigger", type, key, _activeSet.StatusLoopVFXWriter[key].Enabled, ref LocalWriter.Replacement.StackTrigger2, GetOriginal.StackTrigger2);
                     UiGlobals.DrawByte("Unknown 1", type, key, _activeSet.StatusLoopVFXWriter[key].Enabled, ref LocalWriter.Replacement.Unknown1, GetOriginal.Unknown1);

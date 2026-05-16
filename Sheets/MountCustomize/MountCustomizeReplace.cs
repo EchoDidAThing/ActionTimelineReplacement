@@ -6,6 +6,11 @@ public class MountCustomizeConfig(MountCustomizeReplace replace, bool enabled)
 {
     public bool Enabled = enabled;
     public MountCustomizeReplace Replacement => replace;
+    public static MountCustomizeConfig CreateEntry(uint key)
+    {
+        MountCustomizeReplace originalvalues = MountCustomizeManager.GetOriginal(key);
+        return new MountCustomizeConfig(originalvalues, false);
+    }
 }
 
 public class MountCustomizeReplace(

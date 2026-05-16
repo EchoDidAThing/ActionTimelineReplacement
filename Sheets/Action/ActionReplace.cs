@@ -6,6 +6,11 @@ public class ActionConfig(ActionReplace replace, bool enabled)
 {
     public bool Enabled = enabled;
     public ActionReplace Replacement => replace;
+
+    public static ActionConfig CreateEntry(uint key)
+    {
+        return new ActionConfig(ActionManager.GetOriginal(key), false);
+    }
 }
 
 public class ActionReplace(

@@ -9,6 +9,11 @@ public class ActionTimelineConfig(ActionTimelineReplace replace, bool enabled)
 {
     public bool Enabled = enabled;
     public ActionTimelineReplace Replacement => replace;
+    public static ActionTimelineConfig CreateEntry(uint key)
+    {
+        ActionTimelineReplace originalvalues = ActionTimelineManager.GetOriginal(key);
+        return new ActionTimelineConfig(originalvalues, false);
+    }
 }
 
 public class ActionTimelineReplace(

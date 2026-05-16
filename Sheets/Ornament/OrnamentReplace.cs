@@ -6,6 +6,11 @@ public class OrnamentConfig(OrnamentReplace replace, bool enabled)
 {
     public bool Enabled = enabled;
     public OrnamentReplace Replacement => replace;
+    public static OrnamentConfig CreateEntry(uint key)
+    {
+        OrnamentReplace originalvalues = OrnamentManager.GetOriginal(key);
+        return new OrnamentConfig(originalvalues, false);
+    }
 }
 
 public class OrnamentReplace(

@@ -7,6 +7,7 @@ using Dalamud.Interface;
 using Dalamud.Interface.Utility;
 using Dalamud.Interface.Utility.Raii;
 using FFXIVClientStructs.FFXIV.Common.Lua;
+using Lumina.Excel.Sheets;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
@@ -124,33 +125,39 @@ public class UiGlobals
         }
     }
 
-    public static void ResolveIndirectDraw(string indirecttype, string refname, uint key, uint curvalue)
+    public static void ResolveIndirectDraw(List<string> indirecttype, string refname, uint key, uint curvalue)
     {
-
-        using (ImRaii.PushFont(UiBuilder.IconFont))
-        ImGui.Text($"{FontAwesomeIcon.ArrowTurnUp.ToIconString()}");
-        ImGui.SameLine();
-        if (indirecttype == "NO")
+        bool copyenabled = false;
+        foreach (string entry in indirecttype)
         {
-            ImGui.Text("");
-        }
-        else
-        {
-            ImGui.Text(GetIndirectString(indirecttype, (uint)curvalue));
-        }
-        ImGui.SameLine();
-        using (ImRaii.PushFont(UiBuilder.IconFont))
-        {
-            if (ImGui.Button($"{FontAwesomeIcon.ClipboardList.ToIconString()}##{refname}{key}"))
+            using (ImRaii.PushFont(UiBuilder.IconFont))
+            ImGui.Text($"{FontAwesomeIcon.ArrowTurnUp.ToIconString()}");
+            ImGui.SameLine();
+            if (entry == "NO")
             {
-                ImGui.SetClipboardText(GetIndirectString(indirecttype, (uint)curvalue));
+                ImGui.Text("");
+            }
+            else
+            {
+                ImGui.Text(GetIndirectString(entry, (uint)curvalue, ref copyenabled));
+            }
+            if (copyenabled)
+            {
+                ImGui.SameLine();
+                using (ImRaii.PushFont(UiBuilder.IconFont))
+                {
+                    if (ImGui.Button($"{FontAwesomeIcon.ClipboardList.ToIconString()}##{refname}{key}"))
+                    {
+                        ImGui.SetClipboardText(GetIndirectString(entry, (uint)curvalue, ref copyenabled));
+                    }
+                }
             }
         }
     }
 
 
     public static void DrawString(string name, string type, uint key, bool changesenabled, ref string value,
-    string defaultvalue, bool sheethasindirects = false, string indirecttype = "NO")
+    string defaultvalue)
     {
         string refname = name.Replace(" ", "");
         if (ImGui.InputText("##" + refname + key, ref value, 512, ImGuiInputTextFlags.EnterReturnsTrue))
@@ -174,8 +181,9 @@ public class UiGlobals
     }
 
     public static void DrawSByte(string name, string type, uint key, bool changesenabled, ref sbyte value,
-    sbyte defaultvalue, bool sheethasindirects = false, string indirecttype = "NO")
+    sbyte defaultvalue, bool sheethasindirects = false, List<string> indirecttype = null)
     {
+        if (indirecttype == null) { indirecttype = ["NO"]; }
         string refname = name.Replace(" ", "");
         if (ImGui.InputSByte("##" + refname + key, ref value, 0, 0, default, ImGuiInputTextFlags.EnterReturnsTrue))
         {
@@ -203,9 +211,9 @@ public class UiGlobals
 
 
     public static void DrawByte(string name, string type, uint key, bool changesenabled, ref byte value,
-    byte defaultvalue, bool sheethasindirects = false, string indirecttype = "NO")
+    byte defaultvalue, bool sheethasindirects = false, List<string> indirecttype = null)
     {
-        string indirecttext = "";
+        if (indirecttype == null) { indirecttype = ["NO"]; }
         string refname = name.Replace(" ", "");
         if (ImGui.InputByte("##" + refname + key, ref value, 0, 0, default, ImGuiInputTextFlags.EnterReturnsTrue))
         {
@@ -231,8 +239,9 @@ public class UiGlobals
         }
     }
     public static void DrawShort(string name, string type, uint key, bool changesenabled, ref short value,
-    short defaultvalue, bool sheethasindirects = false, string indirecttype = "NO")
+    short defaultvalue, bool sheethasindirects = false, List<string> indirecttype = null)
     {
+        if (indirecttype == null) { indirecttype = ["NO"]; }
         string refname = name.Replace(" ", "");
         short relay = value;
         if (ImGui.InputShort("##" + refname + key, ref relay, 0, 0, default, ImGuiInputTextFlags.EnterReturnsTrue))
@@ -259,8 +268,9 @@ public class UiGlobals
             ResolveIndirectDraw(indirecttype, refname, key, (uint)value);
         }
     }
-    public static void DrawUShort(string name, string type, uint key, bool changesenabled, ref ushort value, ushort defaultvalue, bool sheethasindirects = false, string indirecttype = "NO")
+    public static void DrawUShort(string name, string type, uint key, bool changesenabled, ref ushort value, ushort defaultvalue, bool sheethasindirects = false, List<string> indirecttype = null)
     {
+        if (indirecttype == null) { indirecttype = ["NO"]; }
         ushort DefaultValue = defaultvalue;
         string refname = name.Replace(" ", "");
         if (ImGui.InputUShort("##" + refname + key, ref value, 0, 0, default, ImGuiInputTextFlags.EnterReturnsTrue))
@@ -289,8 +299,9 @@ public class UiGlobals
     }
     
     public static void DrawInt(string name, string type, uint key, bool changesenabled, ref int value,
-    int defaultvalue, bool sheethasindirects = false, string indirecttype = "NO")
+    int defaultvalue, bool sheethasindirects = false, List<string> indirecttype = null)
     {
+        if (indirecttype == null) { indirecttype = ["NO"]; }
         string refname = name.Replace(" ", "");
         if (ImGui.InputInt("##" + refname + key, ref value, 0, 0, default, ImGuiInputTextFlags.EnterReturnsTrue))
         {
@@ -316,8 +327,9 @@ public class UiGlobals
         }
     }
     public static void DrawUInt(string name, string type, uint key, bool changesenabled, ref uint value,
-    uint defaultvalue, bool sheethasindirects = false, string indirecttype = "NO")
+    uint defaultvalue, bool sheethasindirects = false, List<string> indirecttype = null)
     {
+        if (indirecttype == null) { indirecttype = ["NO"]; }
         string refname = name.Replace(" ", "");
         if (ImGui.InputUInt("##" + refname + key, ref value, 0, 0, default, ImGuiInputTextFlags.EnterReturnsTrue))
         {
@@ -343,7 +355,7 @@ public class UiGlobals
         }
     }
     public static void DrawBool(string name, string type, uint key, bool changesenabled, ref bool value,
-    bool defaultvalue, bool sheethasindirects = false, string indirecttype = "NO")
+    bool defaultvalue)
     {
         string refname = name.Replace(" ", "");
         if (ImGui.Checkbox("##" + refname + key, ref value))
@@ -490,25 +502,41 @@ public class UiGlobals
         }
     }
 
-    public static String GetIndirectString(string type, uint key)
+    public static String GetIndirectString(string type, uint key, ref bool copyenabled)
     {
+        copyenabled = true;
         string output = "";
         switch (type)
         {
-            case "VFX":
+            case "VFX_Path":
                 output = "vfx/common/" + VfxManager.GetReplacement(key).String1 + ".avfx";
                 return output;
-            case "ActionCastVFX-VFX":
+            case "ActionCastVFX-VFX_Path":
                 output = "vfx/common/" + VfxManager.GetReplacement(ActionCastVFXManager.GetReplacement(key).CastVfx).String1 + ".avfx";
                 return output;
-            case "StatusHitEffect-VFX":
+            case "ActionCastVFX_Index":
+                output = "ActionCastVFX Entry#" + key;
+                copyenabled = false;
+                return output;
+            case "BGM_Path":
+                //output = BGMManager.GetReplacement(key).String1;
+                output = "BGM Not Implemented";
+                return output;
+            case "StatusHitEffect-VFX_Path":
                 output = "vfx/common/" + VfxManager.GetReplacement(StatusHitEffectManager.GetReplacement(key).VFX).String1 + ".avfx";
                 return output;
-            case "StatusLoopVFX-VFX":
+            case "StatusLoopVFX-VFX_Path":
                 output = "vfx/common/" + VfxManager.GetReplacement(StatusLoopVFXManager.GetReplacement(key).FriendlyVFX).String1 + ".avfx";
                 return output;
-            case "ActionTimeline":
-                output = ActionTimelineManager.GetReplacement(key).Animation;
+            case "TiltParam_Index":
+                output = "TiltParam Entry#" + key;
+                copyenabled = false;
+                return output;
+            case "ActionTimeline_Path":
+                output = "chara/action/" + ActionTimelineManager.GetReplacement(key).Animation + ".tmb";
+                return output;
+            case "WeaponTimeline_Path":
+                output = "chara/action/" + ActionTimelineManager.GetReplacement(key).Animation + ".tmb";
                 return output;
             default:
                 Service.Log.Error("Datasheet type [{type}] is not defined in GetIndirectString", type);

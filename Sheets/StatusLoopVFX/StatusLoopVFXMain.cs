@@ -66,10 +66,10 @@ public class StatusLoopVFXMain
 
 
                     #region Datainputs
-                    UiGlobals.DrawUShort("Friendly VFX ID", type, key, enablechanges, ref LocalWriter.Replacement.FriendlyVFX, GetOriginal.FriendlyVFX, true, "VFX");
-                    UiGlobals.DrawUShort("Stack VFX 1 ID", type, key, enablechanges, ref LocalWriter.Replacement.StackVFX1, GetOriginal.StackVFX1, true, "VFX");
-                    UiGlobals.DrawUShort("Stack VFX 2 ID", type, key, enablechanges, ref LocalWriter.Replacement.StackVFX2, GetOriginal.StackVFX2, true, "VFX");
-                    UiGlobals.DrawUShort("Enemy VFX ID", type, key, enablechanges, ref LocalWriter.Replacement.EnemyVFX, GetOriginal.EnemyVFX, true, "VFX");
+                    UiGlobals.DrawUShort("Friendly VFX ID", type, key, enablechanges, ref LocalWriter.Replacement.FriendlyVFX, GetOriginal.FriendlyVFX, true, ["VFX"]);
+                    UiGlobals.DrawUShort("Stack VFX 1 ID", type, key, enablechanges, ref LocalWriter.Replacement.StackVFX1, GetOriginal.StackVFX1, true, ["VFX"]);
+                    UiGlobals.DrawUShort("Stack VFX 2 ID", type, key, enablechanges, ref LocalWriter.Replacement.StackVFX2, GetOriginal.StackVFX2, true, ["VFX"]);
+                    UiGlobals.DrawUShort("Enemy VFX ID", type, key, enablechanges, ref LocalWriter.Replacement.EnemyVFX, GetOriginal.EnemyVFX, true, ["VFX"]);
                     UiGlobals.DrawByte("Stack 1 Trigger", type, key, enablechanges, ref LocalWriter.Replacement.StackTrigger1, GetOriginal.StackTrigger1);
                     UiGlobals.DrawByte("Stack 2 Trigger", type, key, enablechanges, ref LocalWriter.Replacement.StackTrigger2, GetOriginal.StackTrigger2);
                     UiGlobals.DrawByte("Unknown 1", type, key, enablechanges, ref LocalWriter.Replacement.Unknown1, GetOriginal.Unknown1);

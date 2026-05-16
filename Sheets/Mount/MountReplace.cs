@@ -6,6 +6,11 @@ public class MountConfig(MountReplace replace, bool enabled)
 {
     public bool Enabled = enabled;
     public MountReplace Replacement => replace;
+    public static MountConfig CreateEntry(uint key)
+    {
+        MountReplace originalvalues = MountManager.GetOriginal(key);
+        return new MountConfig(originalvalues, false);
+    }
 }
 
 public class MountReplace(

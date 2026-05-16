@@ -1,11 +1,18 @@
-﻿using Dalamud.Interface.Utility.Raii;
-using Dalamud.Interface;
-using Dalamud.Bindings.ImGui;
-using System;
-using System.Linq;
+﻿using ActionTimelineReplacement.Base.Global;
 using ActionTimelineReplacement.Base.Setups;
 using ActionTimelineReplacement.Interface;
-using ActionTimelineReplacement.Base.Global;
+using Dalamud.Bindings.ImGui;
+using Dalamud.Game.Config;
+using Dalamud.Interface;
+using Dalamud.Interface.Utility.Raii;
+using FFXIVClientStructs.FFXIV.Common.Lua;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Xml.Linq;
+using static FFXIVClientStructs.FFXIV.Client.System.String.Utf8String.Delegates;
+using static FFXIVClientStructs.FFXIV.Client.UI.Misc.AozNoteModule;
+#pragma warning disable CA1416 // Validate platform compatibility
 
 namespace ActionTimelineReplacement.Sheets;
 
@@ -13,79 +20,73 @@ namespace ActionTimelineReplacement.Sheets;
 public class GlassesMain
 {
     const string type = "Glasses";
-    public static void Draw(string mainkey, ref Configuration.ReplacementSet _activeSet, ref string search)
-    {
-        using var subList = ImRaii.Child(mainkey, CalcGlobals.BodyScale(), false);
-        if (subList)
-        {
-            const string searchPopup = "Search glasses";
+    const string typename = "Glasses";
+    const string typenameplural = "Glasses";
+    public static void Draw(string mainkey, ref Configuration.ReplacementSet _activeSet, ref string search) {
+
+        Dictionary<uint, GlassesConfig> Writer = _activeSet.GlassesWriter;
+        var GetName = GlassesManager.GetName;
+        var CreateEntry = GlassesConfig.CreateEntry;
+
+        using var subList = ImRaii.Child(mainkey, CalcGlobals.BodyScale(), true);
+        if (subList) {
+            const string searchPopup = "Search " + typenameplural;
             UiGlobals.DrawAddItem(searchPopup);
 
-            foreach (var key in _activeSet.GlassesWriter.Keys)
-            {
-                var replace = _activeSet.GlassesWriter[key].Replacement;
-                var DefaultValues = GlassesManager.GetOriginal(key);
+            foreach (var key in Writer.Keys) {
+                if (ImGui.CollapsingHeader($"#{key:D5} - " + GetName(key))) {
+                    var LocalWriter = Writer[key];
+                    var old = GlassesManager.GetOriginal(key);
+                    bool enablechanges = UiGlobals.CheckIsEnabled(Service.Config.EnableReplacement, _activeSet.Enabled, LocalWriter.Enabled);
 
-                if (ImGui.Checkbox("##" + key, ref _activeSet.GlassesWriter[key].Enabled))
-                {
-                    if (_activeSet.GlassesWriter[key].Enabled)
-                    {
-                        Setup.SetGlasses(key);
+                    using (ImRaii.PushFont(UiBuilder.IconFont)) {
+                        if (UiGlobals.DrawDeleteEntryButton($"{FontAwesomeIcon.Trash.ToIconString()}##{key}")) {
+                            Setup.SetupByType(key, type, true);
+                            Writer.Remove(key);
+                            Service.Config.Save();
+                        }
                     }
-                    else
-                    {
-                        Setup.SetGlasses(key, true);
+                    if (ImGui.Checkbox("##" + key, ref LocalWriter.Enabled)) {
+                        enablechanges = UiGlobals.CheckIsEnabled(Service.Config.EnableReplacement, _activeSet.Enabled, LocalWriter.Enabled);
+                        if (enablechanges) Setup.SetupByType(key, type); 
+                        else Setup.SetupByType(key, type, true);
+                        Service.Config.Save();
                     }
-                    Service.Config.Save();
+                    ImGui.SameLine();
+                    ImGui.TextUnformatted("Entry Enabled");
+                    UiGlobals.DrawItemSeparator();
+
+
+
+
+                    #region Datainputs
+                    UiGlobals.DrawSByte("Adjective", type, key, enablechanges, ref LocalWriter.Replacement.Unknown70_1, old.Unknown70_1);
+                    UiGlobals.DrawSByte("PosessivePronoun", type, key, enablechanges, ref LocalWriter.Replacement.Unknown70_2, old.Unknown70_2);
+                    UiGlobals.DrawSByte("StartsWithVowel", type, key, enablechanges, ref LocalWriter.Replacement.Unknown70_3, old.Unknown70_3);
+                    UiGlobals.DrawSByte("Unknown70_4", type, key, enablechanges, ref LocalWriter.Replacement.Unknown70_4, old.Unknown70_4);
+                    UiGlobals.DrawSByte("Pronoun", type, key, enablechanges, ref LocalWriter.Replacement.Unknown70_5, old.Unknown70_5);
+                    UiGlobals.DrawSByte("Article", type, key, enablechanges, ref LocalWriter.Replacement.Unknown70_6, old.Unknown70_6);
+                    UiGlobals.DrawUInt("Model", type, key, enablechanges, ref LocalWriter.Replacement.Unknown70_7, old.Unknown70_7);
+                    UiGlobals.DrawItemSeparator();
+                    continue;
+
+                    #endregion
+
                 }
-                ImGui.SameLine();
-                if (ImGui.Button(" - ##" + key))
-                {
-                    Setup.SetGlasses(key, true);
-                    _activeSet.GlassesWriter.Remove(key);
-                    Service.Config.Save();
-                }
-
-                ImGui.SameLine();
-                ImGui.Text($"#{key:D5}");
-
-                ImGui.SameLine();
-                ImGui.TextWrapped(GlassesManager.GetName(key));
-
-
-                UiGlobals.DrawSByte("Unknown70_1", type, key, _activeSet.GlassesWriter[key].Enabled, ref replace.Unknown70_1, DefaultValues.Unknown70_1);
-                UiGlobals.DrawSByte("Unknown70_2", type, key, _activeSet.GlassesWriter[key].Enabled, ref replace.Unknown70_2, DefaultValues.Unknown70_2);
-                UiGlobals.DrawSByte("Unknown70_3", type, key, _activeSet.GlassesWriter[key].Enabled, ref replace.Unknown70_3, DefaultValues.Unknown70_3);
-                UiGlobals.DrawSByte("Unknown70_4", type, key, _activeSet.GlassesWriter[key].Enabled, ref replace.Unknown70_4, DefaultValues.Unknown70_4);
-                UiGlobals.DrawSByte("Unknown70_5", type, key, _activeSet.GlassesWriter[key].Enabled, ref replace.Unknown70_5, DefaultValues.Unknown70_5);
-                UiGlobals.DrawSByte("Unknown70_6", type, key, _activeSet.GlassesWriter[key].Enabled, ref replace.Unknown70_6, DefaultValues.Unknown70_6);
-                UiGlobals.DrawUInt("Unknown70_8", type, key, _activeSet.GlassesWriter[key].Enabled, ref replace.Unknown70_7, DefaultValues.Unknown70_7);
-
-                //REENABLE
-                //UiGlobals.DrawUShort("Unknown70_8", type, key, _activeSet.GlassesWriter[key].Enabled, ref replace.Unknown70_8, DefaultValues.Unknown70_8);
-
-                UiGlobals.DrawItemSeparator();
-                continue;
-
-                #endregion
-                #region Items
-                
-             
             }
-                            
-            #endregion
+
+
+#endregion
             #region Search/Set
 
-            using var searchGlasses = ImRaii.Popup(searchPopup);
-            if (searchGlasses)
-            {
+            using var searchMenu = ImRaii.Popup(searchPopup);
+            if (searchMenu) {
                 ImGui.SetNextItemWidth(CalcGlobals.XY());
-                ImGui.InputText("##Search glasses", ref search, 256);
+                ImGui.InputText("##Search " + typenameplural.ToLower(), ref search, 256);
                 var localsearch = search;
 
                 using var popupChild = ImRaii.Child(searchPopup, CalcGlobals.SearchPopScale(), true);
-                foreach (var pair in GlassesManager.Names.OrderBy(i =>
-                {
+                foreach (var pair in UiGlobals.CreateSearchList(type).OrderBy(i => {
                     if (string.IsNullOrEmpty(localsearch)) return 0;
                     return Math.Min(ProcessingGlobals.ScoreString(i.Value, localsearch),
                         ProcessingGlobals.ScoreString(i.Key.ToString(), localsearch));
@@ -93,19 +94,7 @@ public class GlassesMain
                 {
                     if (ImGui.Selectable($"#{pair.Key:D5} {pair.Value}"))
                     {
-                        var original = GlassesManager.GetOriginal(pair.Key);
-                        _activeSet.GlassesWriter[pair.Key] = // can this be moved out into a cased thing? 
-                            new GlassesConfig(new GlassesReplace(
-                                    original.Unknown70_1,
-                                    original.Unknown70_2,
-                                    original.Unknown70_3,
-                                    original.Unknown70_4,
-                                    original.Unknown70_5,
-                                    original.Unknown70_6,
-                                    original.Unknown70_7,
-                                    original.Unknown70_8),
-                                false);
-                        Service.Config.Save();
+                        Writer[pair.Key] =  CreateEntry(pair.Key);
                     }
                 }
             }

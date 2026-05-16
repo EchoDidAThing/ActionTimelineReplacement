@@ -69,7 +69,7 @@ public class StatusHitEffectMain
                     #region Datainputs
 
 
-                    UiGlobals.DrawUShort("VFX Row", type, key, enablechanges, ref LocalWriter.Replacement.VFX, DefaultValues.VFX, true, "VFX");
+                    UiGlobals.DrawUShort("VFX Row", type, key, enablechanges, ref LocalWriter.Replacement.VFX, DefaultValues.VFX, true, ["VFX_Path"]);
 
                     UiGlobals.DrawItemSeparator();
                     continue;

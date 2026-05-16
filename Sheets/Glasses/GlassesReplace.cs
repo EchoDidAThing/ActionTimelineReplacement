@@ -5,7 +5,12 @@ namespace ActionTimelineReplacement.Sheets
     public class GlassesConfig(GlassesReplace replace, bool enabled)
     {
         public bool Enabled = enabled;
-        public GlassesReplace Replacement => replace; //{get;}=
+        public GlassesReplace Replacement => replace;
+        public static GlassesConfig CreateEntry(uint key)
+        {
+            GlassesReplace originalvalues = GlassesManager.GetOriginal(key);
+            return new GlassesConfig(originalvalues, false);
+        }
     }
 
     public class GlassesReplace(
