@@ -232,6 +232,7 @@ public static unsafe class Hooks
         return _getVFXDataHookpublic(RowId);
     }
 
+
     /*
     public static PointMenuChoiceData* GetPointMenuChoiceData(float RowId)
     {
