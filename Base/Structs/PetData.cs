@@ -6,7 +6,7 @@ namespace ActionTimelineReplacement.Base.Structs;
 [StructLayout(LayoutKind.Explicit)]
 public struct PetData
 {
-    //ALL NEW!! SETUP
+    //Covered by petscale????
     [FieldOffset(0x0E)]
     public ushort SmallScalePercentage;
 

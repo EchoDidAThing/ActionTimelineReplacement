@@ -9,6 +9,6 @@ public struct ActionCastTimelineData
     [FieldOffset(0x0)]
     public ushort ActionTimeline;
 
-    [FieldOffset(0x0)]
-    public ushort Vfx;
+    [FieldOffset(0x02)]
+    public ushort CastVfx;
 }

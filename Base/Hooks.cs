@@ -12,6 +12,7 @@ public static unsafe class Hooks
 
     #region delegates
     private delegate ActionData* GetActionDataDelegate(uint RowId);
+    private delegate ActionCastTimelineData* GetActionCastTimelineDataDelegate(uint RowId);
     private delegate ActionCastVFXData* GetActionCastVFXDataDelegate(uint RowId);
     private delegate StatusData* GetStatusDataDelegate(uint RowId);
     private delegate StatusLoopVFXData* GetStatusLoopVFXDataDelegate(uint RowId);
@@ -34,7 +35,6 @@ public static unsafe class Hooks
 
     //private delegate MotionTimelineData* GetMotionTimelineDataDelegate(uint RowId);
     //private delegate PointMenuChoiceData* GetPointMenuChoiceDataDelegate(float RowId);
-    //private delegate ActionCastTimelineData* GetActionCastTimelineDataDelegate(uint RowId);
     //private delegate ActionTransientData* GetActionTransientDataDelegate(uint RowId);
     //private delegate StatusHitEffectData* GetStatusHitEffectDataDelegate(uint RowId);
     //private delegate MountTransientData* GetMountTransientDataDelegate(uint RowId);
@@ -43,6 +43,7 @@ public static unsafe class Hooks
     #region hooks
 
     private static GetActionDataDelegate? _getActionDataHook;
+    private static GetActionCastTimelineDataDelegate? _getActionCastTimelineDataHook;
     private static GetActionCastVFXDataDelegate? _getActionCastVFXDataHook;
     private static GetActionTimelineDataDelegate? _getActionTimelineDataHook;
     private static GetActionTimelineDataDelegatepublic? _getActionTimelineDataHookpublic;
@@ -64,7 +65,6 @@ public static unsafe class Hooks
     private static GetVFXDataDelegatepublic? _getVFXDataHookpublic;
 
     //private static GetPointMenuChoiceDataDelegate? _getPointMenuChoiceDataHook;
-    //private static GetActionCastTimelineDataDelegate? _getActionCastTimelineDataHook;
     //private static GetActionCastVFXDataDelegate? _getActionCastVFXDataHook;
     //private static GetActionTransientDataDelegate? _getActionTransientDataHook;
     //private static GetStatusHitEffectDataDelegate? _getStatusHitEffectDataHook;
@@ -89,6 +89,22 @@ public static unsafe class Hooks
         //updated for 7.5, nested in a function below Client::Game::Character::MountContainer.vf4 and Client::Game::Character::TimelineContainer.vf4
 
         return _getActionCastVFXDataHook(RowId);
+    }
+    public static ActionCastTimelineData* GetActionCastTimelineData(uint RowId)
+    {
+        _getActionCastVFXDataHook ??= Marshal.GetDelegateForFunctionPointer<GetActionCastVFXDataDelegate>(Service.Scanner.ScanText(
+            "E8 ?? ?? ?? ?? 48 85 C0 0F 84 ?? ?? ?? ?? 0F B7 08 66 85 C9"));
+        //updated for 7.5, nested in a function below Client::Game::Character::MountContainer.vf4 and Client::Game::Character::TimelineContainer.vf4
+
+        return _getActionCastTimelineDataHook(RowId);
+    }
+    public static ActionCastTimelineData* GetBGMData(uint RowId)
+    {
+        _getActionCastVFXDataHook ??= Marshal.GetDelegateForFunctionPointer<GetActionCastVFXDataDelegate>(Service.Scanner.ScanText(
+            "E8 ?? ?? ?? ?? 48 85 C0 0F 84 ?? ?? ?? ?? 0F B7 08 66 85 C9"));
+        //updated for 7.5, nested in a function below Client::Game::Character::MountContainer.vf4 and Client::Game::Character::TimelineContainer.vf4
+
+        return _getActionCastTimelineDataHook(RowId);
     }
 
     public static StatusData* GetStatusData(uint RowId)

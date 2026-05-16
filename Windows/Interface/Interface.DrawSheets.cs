@@ -40,6 +40,7 @@ public sealed partial class ConfigWindow : Window
         {
             //TOSETUP: Add new headers here
             _AllHeaders.Add("Action", []);
+            _AllHeaders.Add("ActionCastTimeline", []);
             _AllHeaders.Add("ActionCastVFX", []);
             _AllHeaders.Add("ActionTimeline", []);
             _AllHeaders.Add("Mount", []);
@@ -82,6 +83,9 @@ public sealed partial class ConfigWindow : Window
             //TOSETUP: Add new case here to call the subsheet
             case "Action":
                 ActionMain.Draw(activesheet, ref _activeSet, ref _searchAction);
+                break;
+            case "ActionCastTimeline":
+                ActionCastTimelineMain.Draw(activesheet, ref _activeSet, ref _searchActionCastVFX);
                 break;
             case "ActionCastVFX":
                 ActionCastVFXMain.Draw(activesheet, ref _activeSet, ref _searchActionCastVFX);

@@ -35,6 +35,9 @@ public static unsafe partial class Setup
             case "Action":
                 SetAction(id, reset);
                 break;
+            case "ActionCastTimeline":
+                SetActionCastTimeline(id, reset);
+                break;
             case "ActionCastVFX":
                 SetActionCastVFX(id, reset);
                 break;

@@ -14,6 +14,7 @@ public class Configuration : IPluginConfiguration
     public class ReplacementSet(string name, bool enabled, int priority,
     Dictionary<uint, ActionConfig> actionwriter,
     Dictionary<uint, ActionCastVFXConfig> actioncastvfxwriter,
+    Dictionary<uint, ActionCastTimelineConfig> actioncasttimelinewriter,
     Dictionary<uint, ActionTimelineConfig> actiontimelinewriter,
     Dictionary<uint, MountConfig> mountwriter,
     Dictionary<uint, MountCustomizeConfig> mountcustomizewriter,
@@ -38,6 +39,7 @@ public class Configuration : IPluginConfiguration
         //TOSETUP: add new dictionary here
         public Dictionary<uint, ActionConfig> ActionWriter { get; set; } = actionwriter;
         public Dictionary<uint, ActionCastVFXConfig> ActionCastVFXWriter { get; set; } = actioncastvfxwriter;
+        public Dictionary<uint, ActionCastTimelineConfig> ActionCastTimelineWriter { get; set; } = actioncasttimelinewriter;
         public Dictionary<uint, ActionTimelineConfig> ActionTimelineWriter { get; set; } = actiontimelinewriter;
         public Dictionary<uint, MountConfig> MountWriter { get; set; } = mountwriter;
         public Dictionary<uint, MountCustomizeConfig> MountCustomizeWriter { get; set; } = mountcustomizewriter;
