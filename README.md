@@ -30,6 +30,7 @@
 - Set up button to add an entry for an indirect field
 - Add warnings on fields that cannot be limited via Collection shenanigans.
 - Fix the reversions.
+- maybe look into footprints
 
 #taco's to-do:
 - limit input values to prevent the log from going haywire
