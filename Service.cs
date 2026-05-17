@@ -21,4 +21,5 @@ internal class Service
     [PluginService] internal static IGameInteropProvider GameInteropProvider { get; set; } = null!;
     [PluginService] internal static IFramework Framework { get; set; } = null!;
     [PluginService] public static IPluginLog Log { get; set; } = null!;
+    [PluginService] public static IAddonLifecycle AddonLifecycle { get; set; } = null!;
 }
