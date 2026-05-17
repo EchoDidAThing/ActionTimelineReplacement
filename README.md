@@ -31,6 +31,7 @@
 - Add warnings on fields that cannot be limited via Collection shenanigans.
 - Fix the reversions.
 - maybe look into footprints
+- look at vanilla plus and simpletweaks for hook shenanigans
 
 #taco's to-do:
 - limit input values to prevent the log from going haywire
