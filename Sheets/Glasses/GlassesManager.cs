@@ -35,10 +35,16 @@ public static class GlassesManager
 
         foreach (var item in Service.Config.ReplacementSets)
         {
-            foreach (var replacement in item.GlassesWriter
-                         .Where(r => item.Enabled))
+            if (item.CharacterName != Service.PlayerState.CharacterName) continue;
+            if (item.HomeWorld != Service.PlayerState.HomeWorld.RowId) continue;
+            if (!item.Jobs.CheckJob(Service.PlayerState.ClassJob.Value.Abbreviation.ToString())) continue;
+            if (!item.Enabled) continue;
+            foreach (var replacement in item.GlassesWriter)
             {
+                if (replacement.Key != idx) continue;
+                if (!replacement.Value.Enabled) continue;
                 replacements.Add(new KeyValuePair<int, GlassesReplace>(item.Priority, replacement.Value.Replacement));
+
             }
         }
         foreach (var replacement in replacements

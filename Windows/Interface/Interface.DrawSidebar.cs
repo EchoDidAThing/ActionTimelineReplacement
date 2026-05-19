@@ -120,7 +120,7 @@ public sealed partial class ConfigWindow : Window
                 if (string.IsNullOrEmpty(localname)) { return; }
                 foreach (var set in Service.Config.ReplacementSets) { if (set.Name == localname) { exists = true; break; } }
                 if (exists) { return; }
-                Service.Config.ReplacementSets.Add(new Configuration.ReplacementSet((string)localname, true, 0, [], [], [], [], [], [], [], [], [], [], [], [], [], []));
+                Service.Config.ReplacementSets.Add(new Configuration.ReplacementSet((string)localname, true, 0, new Configuration.JobArray(), "", 0,  [],  [], [], [], [], [], [], [], [], [], [], [], [], [], []));
                 CreateName = "";
                 Service.Config.Save();
 

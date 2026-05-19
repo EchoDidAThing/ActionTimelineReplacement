@@ -12,14 +12,15 @@ public sealed partial class ConfigWindow : Window
 {
     public override void Draw()
     {
-        DrawHeader();
 
-        using var table = ImRaii.Table("Main table", 2, ImGuiTableFlags.Resizable);
+        using var table = ImRaii.Table("Main table", 2);
         if (!table) return;
+        ImGui.TableSetupColumn("Main table", ImGuiTableColumnFlags.NoResize, 25);
 
-        ImGui.TableSetupColumn("Sidebar", ImGuiTableColumnFlags.WidthFixed, 100 * CalcGlobals.GlobalScale());
+        ImGui.TableSetupColumn("Sidebar", ImGuiTableColumnFlags.NoResize, 100 * CalcGlobals.GlobalScale());
         ImGui.TableNextColumn();
 
+        DrawHeader();
         try
         {
             using var style = ImRaii.PushStyle(ImGuiStyleVar.SelectableTextAlign, new Vector2(0.5f, 0.5f));
@@ -41,6 +42,14 @@ public sealed partial class ConfigWindow : Window
             Service.Log.Warning(ex, "Main body error");
         }
 
+        try
+        {
+            DrawSheetButtons();
+        }
+        catch (Exception ex)
+        {
+            Service.Log.Warning(ex, "Sheetbuttons error");
+        }
         try
         {
             DrawSheets();

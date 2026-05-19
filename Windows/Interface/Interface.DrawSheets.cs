@@ -3,6 +3,8 @@ using ActionTimelineReplacement.Sheets;
 using Dalamud.Bindings.ImGui;
 using Dalamud.Interface.Utility.Raii;
 using Dalamud.Interface.Windowing;
+using FFXIVClientStructs.FFXIV.Client.LayoutEngine.Node;
+using System;
 using System.Collections.Generic;
 using System.Numerics;
 using System.Xml.Linq;
@@ -18,6 +20,7 @@ public sealed partial class ConfigWindow : Window
     //TOSETUP: Add new search here
     private string _searchAction = string.Empty;
     private string _searchActionCastVFX = string.Empty;
+    private string _searchActionTransients = string.Empty;
     private string _searchMount = string.Empty;
     private string _searchMountCustomize = string.Empty;
     private string _searchTiltParam = string.Empty;
@@ -42,6 +45,7 @@ public sealed partial class ConfigWindow : Window
             _AllHeaders.Add("Action", []);
             _AllHeaders.Add("ActionCastVFX", []);
             _AllHeaders.Add("ActionTimeline", []);
+            _AllHeaders.Add("ActionTransients", []);
             _AllHeaders.Add("Mount", []);
             _AllHeaders.Add("MountCustomize", []);
             _AllHeaders.Add("Status", []);
@@ -64,19 +68,9 @@ public sealed partial class ConfigWindow : Window
         using var child = ImRaii.Child("Sheets", new Vector2(-1f, -1f), false);
         if (!child) return;
         if (_activeSet is null) return;
+        
+        //ImGui.SetCursorPosY(ImGui.GetCursorPosY() + 10 * CalcGlobals.GlobalScale());
 
-        ImGui.SetCursorPosY(ImGui.GetCursorPosY() + 10 * CalcGlobals.GlobalScale());
-
-        uint i = 0;
-        List<uint> breaks = [7];
-        foreach (var mainkey in _AllHeaders.Keys)
-        {
-            UiGlobals.DrawSheetButton(mainkey, ref activesheet, _activeSet);
-            if (!breaks.Contains(i)) { ImGui.SameLine(); }
-            i += 1;
-        }   
-        ImGui.NewLine();
-        UiGlobals.DrawItemSeparator();
         switch (activesheet)
         {
             //TOSETUP: Add new case here to call the subsheet
@@ -87,7 +81,10 @@ public sealed partial class ConfigWindow : Window
                 ActionCastVFXMain.Draw(activesheet, ref _activeSet, ref _searchActionCastVFX);
                 break;
             case "ActionTimeline":
-                ActionTimelineMain.Draw(activesheet, ref _activeSet, ref _searchActionCastVFX);
+                ActionTimelineMain.Draw(activesheet, ref _activeSet, ref _searchActionTimeline);
+                break;
+            case "ActionTransients":
+                ActionTransientsMain.Draw(activesheet, ref _activeSet, ref _searchActionTransients);
                 break;
             case "Mount":
                 MountMain.Draw(activesheet, ref _activeSet, ref _searchMount);

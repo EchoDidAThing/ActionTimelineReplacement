@@ -1,4 +1,5 @@
-﻿using ActionTimelineReplacement.Base.Detours;
+﻿using ActionTimelineReplace.Base.Detours;
+using ActionTimelineReplacement.Base.Detours;
 using Dalamud.Plugin.Services;
 using System;
 using System.Collections.Generic;
@@ -9,10 +10,8 @@ namespace ActionTimelineReplacement.Base;
 
 internal class HookHandler : IDisposable
 {
-
-    private HoverDetour _HoverHook;
-    private PlayTimelineDetour _PlayTimelineHook;
-    private VFXDetour _VFXHook;
+    private ScrollDetour _ScrollHook;
+    private ShowTooltipDetour _ShowTooltipHook;
     public HookHandler()
     {
         _Register();
@@ -20,21 +19,14 @@ internal class HookHandler : IDisposable
 
     private void _Register()
     {
-       // _PlayTimelineHook = new PlayTimelineDetour();
-        //_PlayTimelineHook.Init();
-
-
-        //_HoverHook = new HoverDetour();
-        //_HoverHook.Init();
-        _VFXHook = new VFXDetour();
-        _VFXHook.Init();
+        _ShowTooltipHook = new ShowTooltipDetour();
+        _ScrollHook = new ScrollDetour();
     }
 
     public void Dispose()
     {
-        //_PlayTimelineHook?.Dispose();
-        //_HoverHook?.Dispose();
-        _VFXHook?.Dispose();
+        _ShowTooltipHook?.Dispose();
+        _ScrollHook.Dispose();
     }
 
 }

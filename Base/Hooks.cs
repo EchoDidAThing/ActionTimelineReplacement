@@ -10,6 +10,13 @@ public static unsafe class Hooks
     public const string statusloopvfxhook = "E8 ?? ?? ?? ?? 48 8B D8 48 85 C0 74 ?? 66 39 38";//updated 7.4
     public const string actiontimelinehook = "E8 ?? ?? ?? ?? 48 85 C0 0F 84 ?? ?? ?? ?? 80 78 ?? ?? 0F 85 ?? ?? ?? ?? 32 C0"; //updated for 7.5HF1. this was a pain to find
 
+    public const string HandleItemHover = "E8 ?? ?? ?? ?? 48 8B 5C 24 ?? 33 C0 48 8B 6C 24 ?? 48 8B B4 24 ?? ?? ?? ?? 41 89 04 24";//updated 7.5, Client::UI::Agent::AgentItemDetail.HandleItemHover
+
+
+    //yoinked from Simpletweaks
+    public const string itemhoveredhook = "E8 ?? ?? ?? ?? 84 C0 0F 84 ?? ?? ?? ?? 48 89 9C 24 ?? ?? ?? ?? 4C 89 A4 24";
+
+
     #region delegates
     private delegate ActionData* GetActionDataDelegate(uint RowId);
     private delegate ActionCastVFXData* GetActionCastVFXDataDelegate(uint RowId);

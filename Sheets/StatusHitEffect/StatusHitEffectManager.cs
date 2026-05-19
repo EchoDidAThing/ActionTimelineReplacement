@@ -34,10 +34,16 @@ public static class StatusHitEffectManager
 
         foreach (var item in Service.Config.ReplacementSets)
         {
-            foreach (var replacement in item.StatusHitEffectWriter
-                         .Where(r => item.Enabled))
+            if (item.CharacterName != Service.PlayerState.CharacterName) continue;
+            if (item.HomeWorld != Service.PlayerState.HomeWorld.RowId) continue;
+            if (!item.Jobs.CheckJob(Service.PlayerState.ClassJob.Value.Abbreviation.ToString())) continue;
+            if (!item.Enabled) continue;
+            foreach (var replacement in item.StatusHitEffectWriter)
             {
+                if (replacement.Key != idx) continue;
+                if (!replacement.Value.Enabled) continue;
                 replacements.Add(new KeyValuePair<int, StatusHitEffectReplace>(item.Priority, replacement.Value.Replacement));
+
             }
         }
         foreach (var replacement in replacements

@@ -34,10 +34,16 @@ public static class TiltParamManager
 
         foreach (var item in Service.Config.ReplacementSets)
         {
-            foreach (var replacement in item.TiltParamWriter
-                         .Where(r => item.Enabled))
+            if (item.CharacterName != Service.PlayerState.CharacterName) continue;
+            if (item.HomeWorld != Service.PlayerState.HomeWorld.RowId) continue;
+            if (!item.Jobs.CheckJob(Service.PlayerState.ClassJob.Value.Abbreviation.ToString())) continue;
+            if (!item.Enabled) continue;
+            foreach (var replacement in item.TiltParamWriter)
             {
+                if (replacement.Key != idx) continue;
+                if (!replacement.Value.Enabled) continue;
                 replacements.Add(new KeyValuePair<int, TiltParamReplace>(item.Priority, replacement.Value.Replacement));
+
             }
         }
         foreach (var replacement in replacements

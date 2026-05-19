@@ -19,9 +19,9 @@ public sealed class Plugin : IDalamudPlugin
     private readonly ImmutableArray<IDisposable> _disposables;
     public Plugin(IDalamudPluginInterface pluginInterface)
     {
-        HookHandler = new HookHandler();
 
         pluginInterface.Create<Service>();
+        HookHandler = new HookHandler();
 
         //用于读取Config
         Service.Config = pluginInterface.GetPluginConfig() as Configuration ?? new Configuration();
