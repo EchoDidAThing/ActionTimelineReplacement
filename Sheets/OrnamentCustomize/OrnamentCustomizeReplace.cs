@@ -5,7 +5,7 @@ namespace ActionTimelineReplacement.Sheets;
 public class OrnamentCustomizeConfig(OrnamentCustomizeReplace replace, bool enabled)
 {
     public bool Enabled = enabled;
-    public OrnamentCustomizeReplace Replacement => replace;
+    public OrnamentCustomizeReplace Replacement = replace;
     public static OrnamentCustomizeConfig CreateEntry(uint key)
     {
         OrnamentCustomizeReplace originalvalues = OrnamentCustomizeManager.GetOriginal(key);

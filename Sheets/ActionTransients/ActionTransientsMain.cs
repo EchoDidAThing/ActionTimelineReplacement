@@ -60,7 +60,8 @@ public class ActionTransientsMain
 
 
 
-                    
+                    Service.Log.Error("cur value is " + LocalWriter.Replacement.Icon);
+                    Service.Log.Error("cur value is " + old.Icon);
                     #region Datainputs
                     UiGlobals.DrawUShort("Icon", type, key, enablechanges, ref LocalWriter.Replacement.Icon, old.Icon, true, ["ICON"]);
                     UiGlobals.DrawString("Name", type, key, enablechanges, ref LocalWriter.Replacement.ActionName, old.ActionName);
@@ -107,7 +108,11 @@ public class ActionTransientsMain
                 }
                 foreach (var pair in SearchList)
                 {
-                    if (ImGui.Selectable($"#{pair.Key:D5} {pair.Value}")) { Writer[pair.Key] = CreateEntry(pair.Key); }
+                    if (ImGui.Selectable($"#{pair.Key:D5} {pair.Value}"))
+                    {
+                        Writer[pair.Key] = CreateEntry(pair.Key);
+                        Service.Config.Save();
+                    }
                 }
             }
             #endregion

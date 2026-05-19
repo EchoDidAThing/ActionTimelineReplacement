@@ -112,7 +112,11 @@ public class VfxMain
                 }
                 foreach (var pair in SearchList)
                 {
-                    if (ImGui.Selectable($"#{pair.Key:D5} {pair.Value}")) { Writer[pair.Key] = CreateEntry(pair.Key); }
+                    if (ImGui.Selectable($"#{pair.Key:D5} {pair.Value}"))
+                    {
+                        Writer[pair.Key] = CreateEntry(pair.Key);
+                        Service.Config.Save();
+                    }
                 }
             }
             #endregion

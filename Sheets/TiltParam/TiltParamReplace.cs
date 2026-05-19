@@ -6,7 +6,7 @@ namespace ActionTimelineReplacement.Sheets;
 public class TiltParamConfig(TiltParamReplace replace, bool enabled)
 {
     public bool Enabled = enabled;
-    public TiltParamReplace Replacement => replace;
+    public TiltParamReplace Replacement = replace;
 
 
     public static TiltParamConfig CreateEntry(uint key)

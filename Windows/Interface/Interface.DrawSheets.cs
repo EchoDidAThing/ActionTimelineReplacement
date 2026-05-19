@@ -69,7 +69,6 @@ public sealed partial class ConfigWindow : Window
         if (!child) return;
         if (_activeSet is null) return;
         
-        //ImGui.SetCursorPosY(ImGui.GetCursorPosY() + 10 * CalcGlobals.GlobalScale());
 
         switch (activesheet)
         {

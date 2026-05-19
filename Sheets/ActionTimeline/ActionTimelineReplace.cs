@@ -8,7 +8,7 @@ namespace ActionTimelineReplacement.Sheets;
 public class ActionTimelineConfig(ActionTimelineReplace replace, bool enabled)
 {
     public bool Enabled = enabled;
-    public ActionTimelineReplace Replacement => replace;
+    public ActionTimelineReplace Replacement = replace;
     public static ActionTimelineConfig CreateEntry(uint key)
     {
         ActionTimelineReplace originalvalues = ActionTimelineManager.GetOriginal(key);

@@ -5,7 +5,7 @@ namespace ActionTimelineReplacement.Sheets;
 public class ActionTransientsConfig(ActionTransientsReplace replace, bool enabled)
 {
     public bool Enabled = enabled;
-    public ActionTransientsReplace Replacement => replace;
+    public ActionTransientsReplace Replacement = replace;
 
     public static ActionTransientsConfig CreateEntry(uint key)
     {

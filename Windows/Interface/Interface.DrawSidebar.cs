@@ -28,16 +28,17 @@ public sealed partial class ConfigWindow : Window
 
         using (ImRaii.Child("Items", CalcGlobals.BodyScale(), false))
         {
-            var span = CollectionsMarshal.AsSpan(Service.Config.ReplacementSets);
-            for (var i = 0; i < span.Length; i++)
+            //var span = CollectionsMarshal.AsSpan(Service.Config.ReplacementSets);
+            for (var i = 0; i < Service.Config.ReplacementSets.Count(); i++)
             {
-                var set = span[i];
+                var set = Service.Config.ReplacementSets[i];
                 // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
                 if (set is null) continue;
                 using var style = !Service.Config.ReplacementSets[i].Enabled ? ImRaii.PushColor(ImGuiCol.Text, ImGuiColors.DalamudGrey) : null;
                 if (ImGui.Selectable($"{Service.Config.ReplacementSets[i].Name}## {i}", _activeSet == Service.Config.ReplacementSets[i]))
                 {
                     _activeSet = Service.Config.ReplacementSets[i];
+                    //Service.Log.Error("activeset is " + _activeSet.ActionTransientsWriter[0].Replacement.ActionName);
                 }
 
                 var popupId = $"Set{i}Popup";
@@ -53,17 +54,18 @@ public sealed partial class ConfigWindow : Window
                         new Vector2(80 * CalcGlobals.GlobalScale(), 60 * CalcGlobals.GlobalScale()),
                         true);
 
-                    if (ImGui.Selectable("Export"))
+                    if (ImGui.Selectable("Export##"+i))
                     {
-                        _dialogManager.SaveFileDialog("Save", ".json", Service.Config.ReplacementSets[i].Name, ".json", (b, file) =>
+                        var setid = i;
+                        _dialogManager.SaveFileDialog("Save", ".json", Service.Config.ReplacementSets[setid].Name, ".json", (b, file) =>
                         {
+                            Service.Log.Error("savepath is" + file);
                             if (!b) return;
-                            //FIXME
-                            //set.Save(file);
+                            Configuration.ReplacementSet.Save(file, setid);
                         });
                     }
 
-                    if (ImGui.Selectable("Delete"))
+                    if (ImGui.Selectable("Delete##"+i))
                     {
                         if (_activeSet == Service.Config.ReplacementSets[i]) _activeSet = null;
                         Service.Config.ReplacementSets.Remove(set);
@@ -120,7 +122,7 @@ public sealed partial class ConfigWindow : Window
                 if (string.IsNullOrEmpty(localname)) { return; }
                 foreach (var set in Service.Config.ReplacementSets) { if (set.Name == localname) { exists = true; break; } }
                 if (exists) { return; }
-                Service.Config.ReplacementSets.Add(new Configuration.ReplacementSet((string)localname, true, 0, new Configuration.JobArray(), "", 0,  [],  [], [], [], [], [], [], [], [], [], [], [], [], [], []));
+                Service.Config.ReplacementSets.Add(new Configuration.ReplacementSet((string)localname, true, 0, new Configuration.JobArray(), Service.PlayerState.CharacterName, Service.PlayerState.HomeWorld.RowId,  [],  [], [], [], [], [], [], [], [], [], [], [], [], [], []));
                 CreateName = "";
                 Service.Config.Save();
 

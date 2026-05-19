@@ -199,6 +199,9 @@ public class Configuration : IPluginConfiguration
 
                 if (replacements == null) return null;
 
+                replacements.CharacterName = Service.PlayerState.CharacterName;
+                replacements.HomeWorld = Service.PlayerState.HomeWorld.RowId;
+
                 return replacements;
             }
             catch
@@ -209,14 +212,19 @@ public class Configuration : IPluginConfiguration
 
         public static bool Save(string jsonFile, int index)
         {
+            //scrub out player name and homeworld to prevent leakage
+            ReplacementSet replacements = Service.Config.ReplacementSets[index];
+            replacements.CharacterName = "";
+            replacements.HomeWorld = 0;
+            Service.Log.Error("index is " + index);
             try
             {
-                File.WriteAllText(jsonFile, JsonConvert.SerializeObject(Service.Config.ReplacementSets[index]));
-
+                File.WriteAllText(jsonFile, JsonConvert.SerializeObject(replacements));
                 return true;
             }
             catch
             {
+                Service.Log.Error("savefailed");
                 return false;
             }
         }
@@ -230,8 +238,16 @@ public class Configuration : IPluginConfiguration
 
     public List<ReplacementSet> ReplacementSets { get; set; } = [];
 
+    /*internal void Load()
+    {
+        Service.Config =
+                    JsonConvert.DeserializeObject<Configuration>(
+                        File.ReadAllText(Service.PluginInterface.ConfigFile.FullName));
+    }*/
     internal void Save()
     {
+        //File.WriteAllText(Service.PluginInterface.ConfigFile.FullName, JsonConvert.SerializeObject(Service.Config));
+
         Service.PluginInterface.SavePluginConfig(this);
     }
 }

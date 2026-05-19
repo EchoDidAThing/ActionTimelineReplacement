@@ -10,7 +10,7 @@ namespace ActionTimelineReplacement.Sheets;
 public class StatusHitEffectConfig(StatusHitEffectReplace replace, bool enabled)
 {
     public bool Enabled = enabled;
-    public StatusHitEffectReplace Replacement => replace;
+    public StatusHitEffectReplace Replacement = replace;
 
     public static StatusHitEffectConfig CreateEntry(uint key)
     {

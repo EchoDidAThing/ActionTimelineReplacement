@@ -5,7 +5,7 @@ namespace ActionTimelineReplacement.Sheets;
 public class MountCustomizeConfig(MountCustomizeReplace replace, bool enabled)
 {
     public bool Enabled = enabled;
-    public MountCustomizeReplace Replacement => replace;
+    public MountCustomizeReplace Replacement = replace;
     public static MountCustomizeConfig CreateEntry(uint key)
     {
         MountCustomizeReplace originalvalues = MountCustomizeManager.GetOriginal(key);

@@ -5,7 +5,7 @@ namespace ActionTimelineReplacement.Sheets;
 public class OrnamentCustomizeGroupConfig(OrnamentCustomizeGroupReplace replace, bool enabled)
 {
     public bool Enabled = enabled;
-    public OrnamentCustomizeGroupReplace Replacement => replace;
+    public OrnamentCustomizeGroupReplace Replacement = replace;
 }
 
 public class OrnamentCustomizeGroupReplace()

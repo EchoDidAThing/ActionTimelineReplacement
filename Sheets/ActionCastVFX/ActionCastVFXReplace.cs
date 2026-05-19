@@ -5,7 +5,7 @@ namespace ActionTimelineReplacement.Sheets
     public class ActionCastVFXConfig(ActionCastVFXReplace replace, bool enabled)
     {
         public bool Enabled = enabled;
-        public ActionCastVFXReplace Replacement => replace;
+        public ActionCastVFXReplace Replacement = replace;
 
         public static ActionCastVFXConfig CreateEntry(uint key)
         {

@@ -4,6 +4,7 @@ using ActionTimelineReplacement.Interface;
 using ActionTimelineReplacement.Sheets;
 using Dalamud.Plugin;
 using Dalamud.Plugin.Services;
+using FFXIVClientStructs.FFXIV.Client.UI;
 using System;
 using System.Collections.Immutable;
 using System.Collections.Specialized;
@@ -24,8 +25,13 @@ public sealed class Plugin : IDalamudPlugin
         HookHandler = new HookHandler();
 
         //用于读取Config
+        Service.Log.Error("cur value is " + Service.PluginInterface.ConfigFile.FullName);
         Service.Config = pluginInterface.GetPluginConfig() as Configuration ?? new Configuration();
+        //Service.Config.Load();
+        //Service.Log.Error("cur value is " + Service.Config.ReplacementSets[0].ActionTransientsWriter[30].Replacement);
+        Service.Config.Save();
         
+
         _disposables = [new WindowManager()];
 
         Setup.SetupAll();
