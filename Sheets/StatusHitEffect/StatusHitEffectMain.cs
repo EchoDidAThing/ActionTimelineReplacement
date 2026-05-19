@@ -22,6 +22,9 @@ public class StatusHitEffectMain
     const string type = "StatusHitEffect";
     const string typename = "Status Hit Effect";
     const string typenameplural = "Status Hit Effects";
+    private static string lastsearch = "";
+    private static string localsearch = "";
+    private static Dictionary<uint, string> SearchList = UiGlobals.CreateSearchList(type);
     public static void Draw(string mainkey, ref Configuration.ReplacementSet _activeSet, ref string search)
     {
 
@@ -86,21 +89,33 @@ public class StatusHitEffectMain
             using var searchMenu = ImRaii.Popup(searchPopup);
             if (searchMenu)
             {
-                ImGui.SetNextItemWidth(CalcGlobals.XY());
-                ImGui.InputText("##Search " + typenameplural.ToLower(), ref search, 256);
-                var localsearch = search;
+                ImGui.SetNextItemWidth(200);
+                if (ImGui.InputText("##Search " + typenameplural.ToLower(), ref search, 256)) { localsearch = search; }
+                ImGui.SameLine();
+                using (ImRaii.PushFont(UiBuilder.IconFont))
+                {
+                    if (ImGui.Button($"{FontAwesomeIcon.Undo.ToIconString()}##{typenameplural.ToLower()}searchreset"))
+                    {
+                        search = "";
+                        localsearch = search;
+                    }
+                }
 
                 using var popupChild = ImRaii.Child(searchPopup, CalcGlobals.SearchPopScale(), true);
-                foreach (var pair in UiGlobals.CreateSearchList(type).OrderBy(i => {
-                    if (string.IsNullOrEmpty(localsearch)) return 0;
-                    return Math.Min(ProcessingGlobals.ScoreString(i.Value, localsearch),
-                        ProcessingGlobals.ScoreString(i.Key.ToString(), localsearch));
-                }))
+                if (localsearch == "" && localsearch != lastsearch) { SearchList = UiGlobals.CreateSearchList(type); }
+                if (localsearch != lastsearch)
                 {
-                    if (ImGui.Selectable($"#{pair.Key:D5} {pair.Value}"))
-                    {
-                        Writer[pair.Key] = CreateEntry(pair.Key);
-                    }
+                    var tempSearchList = UiGlobals.CreateSearchList(type).OrderBy(i => {
+                        if (string.IsNullOrEmpty(localsearch)) return 0;
+                        return Math.Min(ProcessingGlobals.ScoreString(i.Value, localsearch),
+                            ProcessingGlobals.ScoreString(i.Key.ToString(), localsearch));
+                    });
+                    SearchList = tempSearchList.ToDictionary<uint, string>();
+                    lastsearch = localsearch;
+                }
+                foreach (var pair in SearchList)
+                {
+                    if (ImGui.Selectable($"#{pair.Key:D5} {pair.Value}")) { Writer[pair.Key] = CreateEntry(pair.Key); }
                 }
             }
             #endregion

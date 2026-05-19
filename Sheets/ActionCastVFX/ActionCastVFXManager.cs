@@ -1,7 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using FFXIVClientStructs.FFXIV.Common.Lua;
+using Lumina.Excel.Sheets;
+using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
-using Lumina.Excel.Sheets;
 
 namespace ActionTimelineReplacement.Sheets;
 public static class ActionCastVFXManager
@@ -13,7 +14,7 @@ public static class ActionCastVFXManager
     public static Dictionary<uint, string> Names => _Names
         ??= Service.DataManager.GetExcelSheet<ActionCastVFX>()
             .Where(i => !string.IsNullOrEmpty(i.RowId.ToString()))
-            .ToDictionary(i => i.RowId, i => i.RowId.ToString());
+            .ToDictionary(i => i.RowId, i => VfxManager.GetOriginal(i.VFX.RowId).String1);
 
 
     public static IEnumerable<uint> AllActionCastVFXIds =>

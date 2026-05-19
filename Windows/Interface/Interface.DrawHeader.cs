@@ -27,7 +27,7 @@ public sealed partial class ConfigWindow : Window
 
         if (ImGui.Button("Redraw"))
         {
-            //Resets Disables all changes, then enables all changes.
+            //Resets: Disables all changes, then enables all changes.
             Setup.SetupAll(true);
             Setup.SetupAll();
         }

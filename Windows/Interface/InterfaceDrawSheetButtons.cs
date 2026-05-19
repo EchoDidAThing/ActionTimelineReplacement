@@ -17,6 +17,7 @@ public sealed partial class ConfigWindow : Window
     {
         using var child = ImRaii.Child("SheetButtons body", new Vector2(-1f, 100f), false);
         if (!child) return;
+        if (_activeSet is null) return;
         ImGui.Columns(5, "###SheetButtonsSelector", false);
         bool firstrun = true;
         foreach (var mainkey in _AllHeaders.Keys)
