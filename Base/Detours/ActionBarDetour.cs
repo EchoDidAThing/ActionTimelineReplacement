@@ -37,7 +37,7 @@ using static System.Net.Mime.MediaTypeNames;
 
 namespace ActionTimelineReplace.Base.Detours;
 
-public unsafe class ShowTooltipDetour : IDisposable
+public unsafe class ShowActionbarDetour : IDisposable
 {
     public class HoveredActionInfo
     {
@@ -153,20 +153,27 @@ public unsafe class ShowTooltipDetour : IDisposable
     private ushort lastParentId = ushort.MaxValue;
     private bool isAllowedPreDraw = false;
 
-    public ShowTooltipDetour()
+    public ShowActionbarDetour()
     {
-        _ActionHoveredHook = Service.GameInteropProvider.HookFromAddress<AgentActionDetail.Delegates.HandleActionHover>(AgentActionDetail.Addresses.HandleActionHover.Value, ActionHoveredDetour);
-        _ItemHoveredHook = Service.GameInteropProvider.HookFromSignature<ItemHoveredDelegate>(Hooks.itemhoveredhook, ItemHoveredDetour);
-        _ShowTooltipHook = Service.GameInteropProvider.HookFromAddress<AtkTooltipManager.Delegates.ShowTooltip>(AtkTooltipManager.Addresses.ShowTooltip.Value, AtkTooltipManagerShowTooltipDetour);
+        //ItemDragDropInitHook = Service.GameInteropProvider.HookFromAddress<AtkComponentDragDrop.Delegates.GetIconId>(AtkComponentDragDrop.Addresses.LoadIcon.Value, IconLoadedDetour);
+        //_ItemHoveredHook = Service.GameInteropProvider.HookFromSignature<ItemHoveredDelegate>(Hooks.itemhoveredhook, ItemHoveredDetour);
+        //_ShowTooltipHook = Service.GameInteropProvider.HookFromAddress<AtkTooltipManager.Delegates.ShowTooltip>(AtkTooltipManager.Addresses.ShowTooltip.Value, AtkTooltipManagerShowTooltipDetour);
 
-        this._ActionHoveredHook.Enable();
-        this._ItemHoveredHook.Enable();
-        this._ShowTooltipHook.Enable();
+        //this._ActionHoveredHook.Enable();
+        //this._ItemHoveredHook.Enable();
+        //this._ShowTooltipHook.Enable();
 
-        Service.AddonLifecycle.RegisterListener(AddonEvent.PostRequestedUpdate, "Tooltip", OnTooltipRequestedUpdate);
-        Service.AddonLifecycle.RegisterListener(AddonEvent.PreDraw, "Tooltip", OnTooltipPreDraw);
-        Service.AddonLifecycle.RegisterListener(AddonEvent.PostRequestedUpdate, "ActionDetail", OnActionTooltipRequestedUpdate);
-        Service.AddonLifecycle.RegisterListener(AddonEvent.PreRequestedUpdate, "ActionDetail", OnActionTooltipRequestedUpdate);
+        //Service.AddonLifecycle.RegisterListener(AddonEvent.PostRequestedUpdate, "Tooltip", OnTooltipRequestedUpdate);
+        //Service.AddonLifecycle.RegisterListener(AddonEvent.PreDraw, "Tooltip", OnTooltipPreDraw);
+        //Service.AddonLifecycle.RegisterListener(AddonEvent.PostRequestedUpdate, "ActionDetail", OnActionTooltipRequestedUpdate);
+        //Service.AddonLifecycle.RegisterListener(AddonEvent.PostShow, "_ActionBar07", OnActionBarShow);
+        
+    }
+
+    private void OnActionBarShow(AddonEvent addonEvent, AddonArgs addonArgs)
+    {
+        AtkUnitBase* addonToolbar = (AtkUnitBase*)addonArgs.Addon.Address;
+        Service.Log.Error("Actionbarlistener popped");
         
     }
 
@@ -595,12 +602,12 @@ public unsafe class ShowTooltipDetour : IDisposable
     public void Dispose()
     {
         // When we're done, disable the hook again and clean up. Dispose does this in one go!
-        this._ShowTooltipHook.Dispose();
-        this._ItemHoveredHook.Dispose();
-        this._ActionHoveredHook.Dispose();
+        //this._ShowTooltipHook.Dispose();
+        //this._ItemHoveredHook.Dispose();
+        //this._ActionHoveredHook.Dispose();
 
-        Service.AddonLifecycle.UnregisterListener(OnTooltipPreDraw);
-        Service.AddonLifecycle.UnregisterListener(OnTooltipRequestedUpdate);
-        Service.AddonLifecycle.UnregisterListener(OnActionTooltipRequestedUpdate);
+        //Service.AddonLifecycle.UnregisterListener(OnTooltipPreDraw);
+        //Service.AddonLifecycle.UnregisterListener(OnTooltipRequestedUpdate);
+        //Service.AddonLifecycle.UnregisterListener(OnActionBarRequestedUpdate);
     }
 }

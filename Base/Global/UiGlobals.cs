@@ -213,7 +213,7 @@ public class UiGlobals
     {
         string relay = value;
         string refname = name.Replace(" ", "");
-        if (ImGui.InputText("##" + refname + key, ref value, 512, ImGuiInputTextFlags.EnterReturnsTrue))
+        if (ImGui.InputTextMultiline("##" + refname + key, ref value, 512, new Vector2(800, 100),  ImGuiInputTextFlags.EnterReturnsTrue))
         {
             value = relay;
             if (changesenabled) { Setup.SetupByType(key, type); }
@@ -462,6 +462,9 @@ public class UiGlobals
             case "ActionTransients":
                 output = ActionTransientsManager.Names;
                 return output;
+            case "CompanionTransients":
+                output = CompanionTransientsManager.Names;
+                return output;
             case "Glasses":
                 output = GlassesManager.Names;
                 return output;
@@ -473,6 +476,9 @@ public class UiGlobals
                 return output;
             case "MountCustomize":
                 output = MountCustomizeManager.Names;
+                return output;
+            case "MountTransients":
+                output = MountTransientsManager.Names;
                 return output;
             case "Ornament":
                 output = OrnamentManager.Names;
@@ -526,6 +532,9 @@ public class UiGlobals
             case "ActionTransients":
                 output = (uint)activeset.ActionTransientsWriter.Count();
                 return output;
+            case "CompanionTransients":
+                output = (uint)activeset.CompanionTransientsWriter.Count();
+                return output;
             case "Glasses":
                 output = (uint)activeset.GlassesWriter.Count();
                 return output;
@@ -537,6 +546,9 @@ public class UiGlobals
                 return output;
             case "MountCustomize":
                 output = (uint)activeset.MountCustomizeWriter.Count();
+                return output;
+            case "MountTransients":
+                output = (uint)activeset.MountTransientsWriter.Count();
                 return output;
             case "Ornament":
                 output = (uint)activeset.OrnamentWriter.Count();
@@ -595,8 +607,7 @@ public class UiGlobals
                 output = "BGM Not Implemented";
                 return output;
             case "ICON":
-                string iconstring = key.ToString().PadLeft(6, '0');
-                output = "ui/icon/" + iconstring.Substring(0,3).PadRight(6,'0')+ "/" + iconstring + ".tex";
+                output = "ui/icon/" + key.ToString().Substring(0,3).PadRight(6,'0')+ "/" + key.ToString().PadLeft(6, '0') + ".tex";
                 return output;
             case "StatusHitEffect-VFX_Path":
                 output = "vfx/common/" + VfxManager.GetReplacement(StatusHitEffectManager.GetReplacement(key).VFX).String1 + ".avfx";

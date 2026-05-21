@@ -15,14 +15,15 @@ namespace ActionTimelineReplacement.Interface;
 public sealed partial class ConfigWindow : Window
 {
     private Dictionary<string, List<string>> _AllHeaders = [];
-    private Dictionary<string, float> _AllItemWidths = [];
 
     //TOSETUP: Add new search here
     private string _searchAction = string.Empty;
     private string _searchActionCastVFX = string.Empty;
     private string _searchActionTransients = string.Empty;
+    private string _searchCompanionTransients = string.Empty;
     private string _searchMount = string.Empty;
     private string _searchMountCustomize = string.Empty;
+    private string _searchMountTransients = string.Empty;
     private string _searchTiltParam = string.Empty;
     private string _searchStatus = string.Empty;
     private string _searchStatusLoopVFX = string.Empty;
@@ -35,19 +36,21 @@ public sealed partial class ConfigWindow : Window
     private string _searchOrnamentCustomize = string.Empty;
     private string _searchVfx = string.Empty;
     //private string _searchPointMenuChoice = string.Empty;
-    private string activesheet;
+    private string activesheet = "NONE";
 
     private void DrawSheets()
     {
-        if (!_AllItemWidths.ContainsKey("Action"))
+        if (!_AllHeaders.ContainsKey("Action"))
         {
             //TOSETUP: Add new headers here
             _AllHeaders.Add("Action", []);
             _AllHeaders.Add("ActionCastVFX", []);
             _AllHeaders.Add("ActionTimeline", []);
             _AllHeaders.Add("ActionTransients", []);
+            _AllHeaders.Add("CompanionTransients", []);
             _AllHeaders.Add("Mount", []);
             _AllHeaders.Add("MountCustomize", []);
+            _AllHeaders.Add("MountTransients", []);
             _AllHeaders.Add("Status", []);
             _AllHeaders.Add("StatusLoopVFX", []);
             _AllHeaders.Add("StatusHitEffect", []);
@@ -58,10 +61,6 @@ public sealed partial class ConfigWindow : Window
             _AllHeaders.Add("OrnamentCustomize", []);
             _AllHeaders.Add("VFX", []);
             //_AllHeaders.Add("PointMenuChoice", []);
-            foreach (var headerkey in _AllHeaders.Keys)
-            {
-                _AllItemWidths.Add(headerkey, 0f);
-            }
 
         }
 
@@ -85,11 +84,17 @@ public sealed partial class ConfigWindow : Window
             case "ActionTransients":
                 ActionTransientsMain.Draw(activesheet, ref _activeSet, ref _searchActionTransients);
                 break;
+            case "CompanionTransients":
+                CompanionTransientsMain.Draw(activesheet, ref _activeSet, ref _searchCompanionTransients);
+                break;
             case "Mount":
                 MountMain.Draw(activesheet, ref _activeSet, ref _searchMount);
                 break;
             case "MountCustomize":
                 MountCustomizeMain.Draw(activesheet, ref _activeSet, ref _searchMountCustomize);
+                break;
+            case "MountTransients":
+                MountTransientsMain.Draw(activesheet, ref _activeSet, ref _searchMountTransients);
                 break;
             case "Status":
                 StatusMain.Draw(activesheet, ref _activeSet, ref _searchStatus);
@@ -120,6 +125,11 @@ public sealed partial class ConfigWindow : Window
                 break;
             case "VFX":
                 VfxMain.Draw(activesheet, ref _activeSet, ref _searchVfx);
+                break;
+            case "NONE":
+                break;
+            default:
+                Service.Log.Error(activesheet + " is not defined in DrawSheets");
                 break;
                 //case "OrnamentCustomizeGroup":
                 //    OrnamentCustomizeGroupMain.Draw(activesheet, ref _activeSet, ref _searchOrnamentCustomizeGroup);

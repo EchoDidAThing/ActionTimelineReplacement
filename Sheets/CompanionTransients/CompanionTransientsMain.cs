@@ -16,27 +16,27 @@ using static FFXIVClientStructs.FFXIV.Client.UI.Misc.AozNoteModule;
 namespace ActionTimelineReplacement.Sheets;
 
 #region Main
-public class ActionTransientsMain
+public class CompanionTransientsMain
 {
-    const string type = "ActionTransients";
-    const string typename = "Action Transient";
-    const string typenameplural = "Action Transients";
+    const string type = "CompanionTransients";
+    const string typename = "Companion Transient";
+    const string typenameplural = "Companion Transients";
     const string searchPopup = "Search " + typenameplural;
     private static string lastsearch = "";
     private static string localsearch = "";
     private static Dictionary<uint, string> SearchList = UiGlobals.CreateSearchList(type);
     public static void Draw(string mainkey, ref Configuration.ReplacementSet _activeSet, ref string search) {
 
-        Dictionary<uint, ActionTransientsConfig> Writer = _activeSet.ActionTransientsWriter;
-        var GetName = ActionTransientsManager.GetName;
-        var CreateEntry = ActionTransientsConfig.CreateEntry;
+        Dictionary<uint, CompanionTransientsConfig> Writer = _activeSet.CompanionTransientsWriter;
+        var GetName = CompanionTransientsManager.GetName;
+        var CreateEntry = CompanionTransientsConfig.CreateEntry;
 
         using var subList = ImRaii.Child(mainkey, CalcGlobals.BodyScale(), true);
         if (subList) {
             UiGlobals.DrawAddItem(searchPopup);
             foreach (var key in Writer.Keys)
             {
-                var old = ActionTransientsManager.GetOriginal(key);
+                var old = CompanionTransientsManager.GetOriginal(key);
                 if (ImGui.CollapsingHeader($"#{key:D5} - " + GetName(key))) {
                     var LocalWriter = Writer[key];
                     bool enablechanges = UiGlobals.CheckIsEnabled(Service.Config.EnableReplacement, _activeSet.Enabled, LocalWriter.Enabled);
@@ -58,11 +58,17 @@ public class ActionTransientsMain
                     ImGui.TextUnformatted("Entry Enabled");
                     UiGlobals.DrawItemSeparator();
 
+
+
                     #region Datainputs
                     UiGlobals.DrawUShort("Icon", type, key, enablechanges, ref LocalWriter.Replacement.Icon, old.Icon, true, ["ICON"]);
-                    UiGlobals.DrawString("Name", type, key, enablechanges, ref LocalWriter.Replacement.ActionName, old.ActionName);
+                    UiGlobals.DrawString("Singular", type, key, enablechanges, ref LocalWriter.Replacement.Singular, old.Singular);
+                    UiGlobals.DrawString("Plural", type, key, enablechanges, ref LocalWriter.Replacement.Plural, old.Plural);
+                    UiGlobals.DrawMultiString("Description", type, key, enablechanges, ref LocalWriter.Replacement.Description, old.Description);
+                    UiGlobals.DrawMultiString("DescriptionEnhanced", type, key, enablechanges, ref LocalWriter.Replacement.DescriptionEnhanced, old.DescriptionEnhanced);
+                    UiGlobals.DrawMultiString("Tooltip", type, key, enablechanges, ref LocalWriter.Replacement.Tooltip, old.Tooltip);
                     //This needs better implementation to handle the multiline.. no idea. 
-                    UiGlobals.DrawMultiString("Description", type, key, enablechanges, ref LocalWriter.Replacement.ActionDesc, old.ActionDesc);
+                    //UiGlobals.DrawString("Description", type, key, enablechanges, ref LocalWriter.Replacement.ActionDesc, old.ActionDesc);
                     UiGlobals.DrawItemSeparator();
                     continue;
 

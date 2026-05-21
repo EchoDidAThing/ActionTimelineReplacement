@@ -59,7 +59,6 @@ public sealed partial class ConfigWindow : Window
                         var setid = i;
                         _dialogManager.SaveFileDialog("Save", ".json", Service.Config.ReplacementSets[setid].Name, ".json", (b, file) =>
                         {
-                            Service.Log.Error("savepath is" + file);
                             if (!b) return;
                             Configuration.ReplacementSet.Save(file, setid);
                         });
@@ -122,7 +121,7 @@ public sealed partial class ConfigWindow : Window
                 if (string.IsNullOrEmpty(localname)) { return; }
                 foreach (var set in Service.Config.ReplacementSets) { if (set.Name == localname) { exists = true; break; } }
                 if (exists) { return; }
-                Service.Config.ReplacementSets.Add(new Configuration.ReplacementSet((string)localname, true, 0, new Configuration.JobArray(), Service.PlayerState.CharacterName, Service.PlayerState.HomeWorld.RowId,  [],  [], [], [], [], [], [], [], [], [], [], [], [], [], []));
+                Service.Config.ReplacementSets.Add(new Configuration.ReplacementSet((string)localname, true, 0, new Configuration.JobArray(), Service.PlayerState.CharacterName, Service.PlayerState.HomeWorld.RowId,  [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], []));
                 CreateName = "";
                 Service.Config.Save();
 

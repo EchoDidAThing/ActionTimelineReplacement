@@ -143,8 +143,10 @@ public class Configuration : IPluginConfiguration
     Dictionary<uint, ActionCastVFXConfig> actioncastvfxwriter,
     Dictionary<uint, ActionTransientsConfig> actiontransientswriter,
     Dictionary<uint, ActionTimelineConfig> actiontimelinewriter,
+    Dictionary<uint, CompanionTransientsConfig> companiontransientswriter,
     Dictionary<uint, MountConfig> mountwriter,
     Dictionary<uint, MountCustomizeConfig> mountcustomizewriter,
+    Dictionary<uint, MountTransientsConfig> mounttransientswriter,
     Dictionary<uint, StatusConfig> statuswriter,
     Dictionary<uint, StatusLoopVFXConfig> statusloopvfxwriter,
     Dictionary<uint, StatusHitEffectConfig> statushiteffectwriter,
@@ -174,8 +176,10 @@ public class Configuration : IPluginConfiguration
         public Dictionary<uint, ActionCastVFXConfig> ActionCastVFXWriter { get; set; } = actioncastvfxwriter;
         public Dictionary<uint, ActionTimelineConfig> ActionTimelineWriter { get; set; } = actiontimelinewriter;
         public Dictionary<uint, ActionTransientsConfig> ActionTransientsWriter { get; set; } = actiontransientswriter;
+        public Dictionary<uint, CompanionTransientsConfig> CompanionTransientsWriter { get; set; } = companiontransientswriter;
         public Dictionary<uint, MountConfig> MountWriter { get; set; } = mountwriter;
         public Dictionary<uint, MountCustomizeConfig> MountCustomizeWriter { get; set; } = mountcustomizewriter;
+        public Dictionary<uint, MountTransientsConfig> MountTransientsWriter { get; set; } = mounttransientswriter;
         public Dictionary<uint, TiltParamConfig> TiltParamWriter { get; set; } = tiltparamwriter;
         public Dictionary<uint, StatusConfig> StatusWriter { get; set; } = statuswriter;
         public Dictionary<uint, StatusLoopVFXConfig> StatusLoopVFXWriter { get; set; } = statusloopvfxwriter;
@@ -216,7 +220,6 @@ public class Configuration : IPluginConfiguration
             ReplacementSet replacements = Service.Config.ReplacementSets[index];
             replacements.CharacterName = "";
             replacements.HomeWorld = 0;
-            Service.Log.Error("index is " + index);
             try
             {
                 File.WriteAllText(jsonFile, JsonConvert.SerializeObject(replacements));
@@ -224,7 +227,7 @@ public class Configuration : IPluginConfiguration
             }
             catch
             {
-                Service.Log.Error("savefailed");
+                Service.Log.Error("savefailed for set" + index);
                 return false;
             }
         }

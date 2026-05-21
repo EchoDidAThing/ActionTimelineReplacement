@@ -8,6 +8,9 @@ namespace ActionTimelineReplacement.Sheets;
 //accessed already by []Replace
 public static class Utils
 {
+
+
+
     public static RowRef<T> ReadRowRef<T>(this ExcelPage page, int columnIndex, uint offset) where T : struct, IExcelRow<T>
     {
         var rowId = GetAndReadColumn(page, columnIndex, offset);
