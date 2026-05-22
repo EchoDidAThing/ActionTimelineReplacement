@@ -24,26 +24,6 @@ public static class ActionTransientsManager
     public static IEnumerable<uint> AllActionTransientIds =>
         Service.Config.ReplacementSets.SelectMany(i => i.ActionTransientsWriter.Keys);
 
-    public static Dictionary<uint, uint> AllChangedActionTransientIcons()
-    {
-        Dictionary<uint, uint> output = [];
-        IEnumerable<uint> SetIds = [];
-        SetIds = Service.Config.ReplacementSets.Where(i => i.Enabled)
-        .Where(i => i.CharacterName == Service.PlayerState.CharacterName)
-        .Where(i => i.HomeWorld == Service.PlayerState.HomeWorld.RowId)
-        .Where(i => i.Jobs.CheckJob(Service.PlayerState.ClassJob.Value.Abbreviation.ToString()))
-        .SelectMany(i => i.ActionTransientsWriter.Keys);
-
-        foreach (var id in SetIds)
-        {
-            var tempvalue = ActionTransientsManager.GetConfig(id).Icon;
-            if (tempvalue != null) { output.Add(id, tempvalue); }
-        }
-        if (output.Count() == 0) { output = null; }
-        
-        return output;
-    }
-
     public static string GetName(uint id)
     {
         return Names.GetValueOrDefault(id, "Unknown");

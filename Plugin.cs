@@ -1,4 +1,5 @@
 using ActionTimelineReplacement.Base;
+using ActionTimelineReplacement.Base.Detours;
 using ActionTimelineReplacement.Base.Setups;
 using ActionTimelineReplacement.Interface;
 using ActionTimelineReplacement.Sheets;
@@ -20,9 +21,10 @@ public sealed class Plugin : IDalamudPlugin
     private readonly ImmutableArray<IDisposable> _disposables;
     public Plugin(IDalamudPluginInterface pluginInterface)
     {
-
         pluginInterface.Create<Service>();
+        pluginInterface.Create<Events>();
         HookHandler = new HookHandler();
+
 
         //用于读取Config
         Service.Log.Error("cur value is " + Service.PluginInterface.ConfigFile.FullName);

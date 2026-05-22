@@ -24,7 +24,6 @@ internal class Service
     [PluginService] public static IPluginLog Log { get; set; } = null!;
     [PluginService] public static IAddonLifecycle AddonLifecycle { get; set; } = null!;
     [PluginService] public static ITextureProvider TextureProvider { get; private set; } = null!;
-    [PluginService] public static ISigScanner SigScanner { get; private set; } = null!;
     [PluginService] public static ICondition Conditions { get; private set; } = null!;
     [PluginService] public static IFlyTextGui Flytext { get; private set; } = null!;
     [PluginService] public static IGameInventory GameInventory { get; private set; } = null!;

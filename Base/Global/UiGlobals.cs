@@ -147,7 +147,7 @@ public class UiGlobals
             {
                 ImGui.Text("");
             }
-            else if (entry == "ICON")
+            else if (entry == "ICON" )
             {
                 DrawIcon((uint)curvalue);
                 ImGui.SameLine();
@@ -480,6 +480,9 @@ public class UiGlobals
             case "MountTransients":
                 output = MountTransientsManager.Names;
                 return output;
+            case "OrnamentTransients":
+                output = OrnamentTransientsManager.Names;
+                return output;
             case "Ornament":
                 output = OrnamentManager.Names;
                 return output;
@@ -504,8 +507,14 @@ public class UiGlobals
             case "StatusLoopVFX":
                 output = StatusLoopVFXManager.Names;
                 return output;
+            case "StatusTransients":
+                output = StatusTransientsManager.Names;
+                return output;
             case "TiltParam":
                 output = TiltParamManager.Names;
+                return output;
+            case "TraitTransients":
+                output = TraitTransientsManager.Names;
                 return output;
             case "VFX":
                 output = VfxManager.Names;
@@ -550,6 +559,9 @@ public class UiGlobals
             case "MountTransients":
                 output = (uint)activeset.MountTransientsWriter.Count();
                 return output;
+            case "OrnamentTransients":
+                output = (uint)activeset.OrnamentTransientsWriter.Count();
+                return output;
             case "Ornament":
                 output = (uint)activeset.OrnamentWriter.Count();
                 return output;
@@ -574,8 +586,14 @@ public class UiGlobals
             case "StatusLoopVFX":
                 output = (uint)activeset.StatusLoopVFXWriter.Count();
                 return output;
+            case "StatusTransients":
+                output = (uint)activeset.StatusTransientsWriter.Count();
+                return output;
             case "TiltParam":
                 output = (uint)activeset.TiltParamWriter.Count();
+                return output;
+            case "TraitTransients":
+                output = (uint)activeset.TraitTransientsWriter.Count();
                 return output;
             case "VFX":
                 output = (uint)activeset.VfxWriter.Count();
@@ -607,7 +625,8 @@ public class UiGlobals
                 output = "BGM Not Implemented";
                 return output;
             case "ICON":
-                output = "ui/icon/" + key.ToString().Substring(0,3).PadRight(6,'0')+ "/" + key.ToString().PadLeft(6, '0') + ".tex";
+                if (key != 0) { output = "ui/icon/" + key.ToString().Substring(0, 3).PadRight(6, '0') + "/" + key.ToString().PadLeft(6, '0') + ".tex"; }
+                else { output = "ui/icon/000000/000000.tex"; }
                 return output;
             case "StatusHitEffect-VFX_Path":
                 output = "vfx/common/" + VfxManager.GetReplacement(StatusHitEffectManager.GetReplacement(key).VFX).String1 + ".avfx";

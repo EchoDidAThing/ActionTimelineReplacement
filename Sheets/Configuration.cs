@@ -147,10 +147,13 @@ public class Configuration : IPluginConfiguration
     Dictionary<uint, MountConfig> mountwriter,
     Dictionary<uint, MountCustomizeConfig> mountcustomizewriter,
     Dictionary<uint, MountTransientsConfig> mounttransientswriter,
+    Dictionary<uint, OrnamentTransientsConfig> ornamenttransientswriter,
     Dictionary<uint, StatusConfig> statuswriter,
     Dictionary<uint, StatusLoopVFXConfig> statusloopvfxwriter,
     Dictionary<uint, StatusHitEffectConfig> statushiteffectwriter,
+    Dictionary<uint, StatusTransientsConfig> statustransientswriter,
     Dictionary<uint, TiltParamConfig> tiltparamwriter,
+    Dictionary<uint, TraitTransientsConfig> traittransientswriter,
     Dictionary<uint, GlassesConfig> glasseswriter,
     Dictionary<uint, GlassesStyleConfig> glassesstylewriter,
     //Dictionary<uint, PlaceNameConfig> placenamewriter,
@@ -180,10 +183,13 @@ public class Configuration : IPluginConfiguration
         public Dictionary<uint, MountConfig> MountWriter { get; set; } = mountwriter;
         public Dictionary<uint, MountCustomizeConfig> MountCustomizeWriter { get; set; } = mountcustomizewriter;
         public Dictionary<uint, MountTransientsConfig> MountTransientsWriter { get; set; } = mounttransientswriter;
+        public Dictionary<uint, OrnamentTransientsConfig> OrnamentTransientsWriter { get; set; } = ornamenttransientswriter;
         public Dictionary<uint, TiltParamConfig> TiltParamWriter { get; set; } = tiltparamwriter;
+        public Dictionary<uint, TraitTransientsConfig> TraitTransientsWriter { get; set; } = traittransientswriter;
         public Dictionary<uint, StatusConfig> StatusWriter { get; set; } = statuswriter;
         public Dictionary<uint, StatusLoopVFXConfig> StatusLoopVFXWriter { get; set; } = statusloopvfxwriter;
         public Dictionary<uint, StatusHitEffectConfig> StatusHitEffectWriter { get; set; } = statushiteffectwriter;
+        public Dictionary<uint, StatusTransientsConfig> StatusTransientsWriter { get; set; } = statustransientswriter;
         public Dictionary<uint, GlassesConfig> GlassesWriter { get; set; } = glasseswriter;
         public Dictionary<uint, GlassesStyleConfig> GlassesStyleWriter { get; set; } = glassesstylewriter;
         //public Dictionary<uint, PlaceNameConfig> PlaceNameWriter { get; set; } = placenamewriter;

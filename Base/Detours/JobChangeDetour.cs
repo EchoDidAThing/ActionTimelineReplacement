@@ -2,17 +2,74 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using ActionTimelineReplacement.Sheets;
 
-namespace ActionTimelineReplacement.Base.Detours
+namespace ActionTimelineReplacement.Base.Detours;
+
+internal class JobChangeDetour
 {
-    internal class JobChangeDetour
-    {
-        //TODO: build icon swap Disctionary whenever the players job changes for the Icons.
-        /*public JobChangeDetour()
-        {
-            ClassJobChangeHook = Service.GameInteropProvider.HookFromAddress<Service.ClientState.ClassJobChanged>(Service.ClientState., IconLoadedDetour);
-            Service.ClientState.(AddonEvent.PostRequestedUpdate, "Tooltip", OnTooltipRequestedUpdate);
 
-        }*/
+    public static Dictionary<uint, uint>  CurrentJobIcons = [];
+    public static void UpdateIconList(ref Dictionary<uint, uint> currentjobicons)
+    {
+        var tempcurrentjobicons = new Dictionary<uint, uint>();
+        var ids = ActionTransientsManager.AllActionTransientIds;
+        if (ids != null) 
+        {
+            foreach (var id in ids)
+            {
+                if (tempcurrentjobicons.ContainsKey(id)) {
+                    Service.Log.Error("key" + id + " already exists");
+                    continue;
+                }
+                var replacement = ActionTransientsManager.GetReplacement(id).Icon;
+                var original = ActionTransientsManager.GetOriginal(id).Icon;
+                Service.Log.Error("adding" + original + " with value of " + replacement);
+                if (original == replacement) { continue; }
+                Service.Log.Error("adding" + original + " with value of " + replacement);
+                tempcurrentjobicons.Add(original, replacement);
+            }
+        }
+        ids = MountTransientsManager.AllMountTransientsIds;
+        if (ids != null)
+        {
+            foreach (var id in ids)
+            {
+                if (tempcurrentjobicons.ContainsKey(id))
+                {
+                    Service.Log.Error("key" + id + " already exists");
+                    continue;
+                }
+                var replacement = MountTransientsManager.GetReplacement(id).Icon;
+                var original = MountTransientsManager.GetOriginal(id).Icon;
+                Service.Log.Error("adding" + original + " with value of " + replacement);
+                if (original == replacement) { continue; }
+                Service.Log.Error("adding" + original + " with value of " + replacement);
+                tempcurrentjobicons.Add(original, replacement);
+            }
+        }
+        ids = CompanionTransientsManager.AllCompanionTransientsIds;
+        if (ids != null)
+        {
+            foreach (var id in ids)
+            {
+                if (tempcurrentjobicons.ContainsKey(id))
+                {
+                    Service.Log.Error("key" + id + " already exists");
+                    continue;
+                }
+                var replacement = CompanionTransientsManager.GetReplacement(id).Icon;
+                var original = CompanionTransientsManager.GetOriginal(id).Icon;
+                Service.Log.Error("adding" + original + " with value of " + replacement);
+                if (original == replacement) { continue; }
+                Service.Log.Error("adding" + original + " with value of " + replacement);
+                tempcurrentjobicons.Add(original, replacement);
+            }
+        }
+
+        Service.Log.Error("after update count of changed ids is " + tempcurrentjobicons.Count);
+
+        currentjobicons = tempcurrentjobicons;
     }
 }
+

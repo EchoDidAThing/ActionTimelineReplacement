@@ -113,6 +113,22 @@ public unsafe class ShowTooltipDetour : IDisposable
                 repldescenhanced = CompanionTransientsManager.GetReplacement(idx).DescriptionEnhanced;
                 repltooltip = CompanionTransientsManager.GetReplacement(idx).Tooltip;
                 break;
+            case ("Ornament"):
+                origicon = OrnamentTransientsManager.GetOriginal(idx).Icon;
+                origname = OrnamentTransientsManager.GetOriginal(idx).Singular;
+                origdesc = OrnamentTransientsManager.GetOriginal(idx).Description;
+                replicon = OrnamentTransientsManager.GetReplacement(idx).Icon;
+                replname = OrnamentTransientsManager.GetReplacement(idx).Singular;
+                repldesc = OrnamentTransientsManager.GetReplacement(idx).Description;
+                break;
+            case ("Trait"):
+                origicon = TraitTransientsManager.GetOriginal(idx).Icon;
+                origname = TraitTransientsManager.GetOriginal(idx).Name;
+                origdesc = TraitTransientsManager.GetOriginal(idx).Description;
+                replicon = TraitTransientsManager.GetReplacement(idx).Icon;
+                replname = TraitTransientsManager.GetReplacement(idx).Name;
+                repldesc = TraitTransientsManager.GetReplacement(idx).Description;
+                break;
             default:
                 Service.Log.Error("|" + HoveredAction.ActionKind + "| does not exist in GetOrigAndConfByType");
                 return null;

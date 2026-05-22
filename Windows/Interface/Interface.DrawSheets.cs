@@ -24,10 +24,13 @@ public sealed partial class ConfigWindow : Window
     private string _searchMount = string.Empty;
     private string _searchMountCustomize = string.Empty;
     private string _searchMountTransients = string.Empty;
+    private string _searchOrnamentTransients = string.Empty;
     private string _searchTiltParam = string.Empty;
     private string _searchStatus = string.Empty;
     private string _searchStatusLoopVFX = string.Empty;
     private string _searchStatusHitEffect = string.Empty;
+    private string _searchStatusTransients = string.Empty;
+    private string _searchTraitTransients = string.Empty;
     private string _searchGlasses = string.Empty;
     private string _searchGlassesStyle = string.Empty;
     //private string _searchPlaceName = string.Empty;
@@ -51,10 +54,13 @@ public sealed partial class ConfigWindow : Window
             _AllHeaders.Add("Mount", []);
             _AllHeaders.Add("MountCustomize", []);
             _AllHeaders.Add("MountTransients", []);
+            _AllHeaders.Add("OrnamentTransients", []);
             _AllHeaders.Add("Status", []);
             _AllHeaders.Add("StatusLoopVFX", []);
             _AllHeaders.Add("StatusHitEffect", []);
+            _AllHeaders.Add("StatusTransients", []);
             _AllHeaders.Add("TiltParam", []);
+            _AllHeaders.Add("TraitTransients", []);
             _AllHeaders.Add("Glasses", []);
             _AllHeaders.Add("GlassesStyle", []);
             _AllHeaders.Add("Ornament", []);
@@ -96,6 +102,9 @@ public sealed partial class ConfigWindow : Window
             case "MountTransients":
                 MountTransientsMain.Draw(activesheet, ref _activeSet, ref _searchMountTransients);
                 break;
+            case "OrnamentTransients":
+                OrnamentTransientsMain.Draw(activesheet, ref _activeSet, ref _searchOrnamentTransients);
+                break;
             case "Status":
                 StatusMain.Draw(activesheet, ref _activeSet, ref _searchStatus);
                 break;
@@ -105,8 +114,14 @@ public sealed partial class ConfigWindow : Window
             case "StatusHitEffect":
                 StatusHitEffectMain.Draw(activesheet, ref _activeSet, ref _searchStatusHitEffect);
                 break;
+            case "StatusTransients":
+                StatusTransientsMain.Draw(activesheet, ref _activeSet, ref _searchStatusTransients);
+                break;
             case "TiltParam":
                 TiltParamMain.Draw(activesheet, ref _activeSet, ref _searchTiltParam);
+                break;
+            case "TraitTransients":
+                TraitTransientsMain.Draw(activesheet, ref _activeSet, ref _searchTraitTransients);
                 break;
             case "Glasses":
                 GlassesMain.Draw(activesheet, ref _activeSet, ref _searchGlasses);

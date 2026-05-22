@@ -21,7 +21,7 @@ public static class CompanionTransientsManager
             .Where(i => !string.IsNullOrEmpty(i.Singular.ToString()))
             .ToDictionary(i => i.RowId, i => i.Singular.ToString());
 
-    public static IEnumerable<uint> AllCompanionIds =>
+    public static IEnumerable<uint> AllCompanionTransientsIds =>
         Service.Config.ReplacementSets.SelectMany(i => i.CompanionTransientsWriter.Keys);
 
     public static string GetName(uint id)
