@@ -144,6 +144,7 @@ public class Configuration : IPluginConfiguration
     Dictionary<uint, ActionTransientsConfig> actiontransientswriter,
     Dictionary<uint, ActionTimelineConfig> actiontimelinewriter,
     Dictionary<uint, CompanionTransientsConfig> companiontransientswriter,
+    Dictionary<uint, JobTransientsConfig> jobtransientswriter,
     Dictionary<uint, MountConfig> mountwriter,
     Dictionary<uint, MountCustomizeConfig> mountcustomizewriter,
     Dictionary<uint, MountTransientsConfig> mounttransientswriter,
@@ -180,6 +181,7 @@ public class Configuration : IPluginConfiguration
         public Dictionary<uint, ActionTimelineConfig> ActionTimelineWriter { get; set; } = actiontimelinewriter;
         public Dictionary<uint, ActionTransientsConfig> ActionTransientsWriter { get; set; } = actiontransientswriter;
         public Dictionary<uint, CompanionTransientsConfig> CompanionTransientsWriter { get; set; } = companiontransientswriter;
+        public Dictionary<uint, JobTransientsConfig> JobTransientsWriter { get; set; } = jobtransientswriter;
         public Dictionary<uint, MountConfig> MountWriter { get; set; } = mountwriter;
         public Dictionary<uint, MountCustomizeConfig> MountCustomizeWriter { get; set; } = mountcustomizewriter;
         public Dictionary<uint, MountTransientsConfig> MountTransientsWriter { get; set; } = mounttransientswriter;

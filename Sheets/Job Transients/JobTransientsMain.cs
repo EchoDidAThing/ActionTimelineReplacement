@@ -10,55 +10,47 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Linq;
-using static FFXIVClientStructs.FFXIV.Client.System.String.Utf8String.Delegates;
 using static FFXIVClientStructs.FFXIV.Client.UI.Misc.AozNoteModule;
 #pragma warning disable CA1416 // Validate platform compatibility
 
 namespace ActionTimelineReplacement.Sheets;
 
 #region Main
-public class TiltParamMain
+public class JobTransientsMain
 {
-    const string type = "TiltParam";
-    const string typename = "Tilt Parameter";
-    const string typenameplural = "Tilt Parameters";
+    const string type = "JobTransients";
+    const string typename = "Job Transient";
+    const string typenameplural = "Job Transients";
+    const string searchPopup = "Search " + typenameplural;
     private static string lastsearch = "";
     private static string localsearch = "";
     private static Dictionary<uint, string> SearchList = UiGlobals.CreateSearchList(type);
-    public static void Draw(string mainkey, ref Configuration.ReplacementSet _activeSet, ref string search)
-    {
+    public static void Draw(string mainkey, ref Configuration.ReplacementSet _activeSet, ref string search) {
 
-        Dictionary<uint, TiltParamConfig> Writer = _activeSet.TiltParamWriter;
-        var GetName = TiltParamManager.GetName;
-        var CreateEntry = TiltParamConfig.CreateEntry;
+        Dictionary<uint, JobTransientsConfig> Writer = _activeSet.JobTransientsWriter;
+        var GetName = JobTransientsManager.GetName;
+        var CreateEntry = JobTransientsConfig.CreateEntry;
 
         using var subList = ImRaii.Child(mainkey, CalcGlobals.BodyScale(), true);
-        if (subList)
-        {
-            const string searchPopup = "Search " + typenameplural;
+        if (subList) {
             UiGlobals.DrawAddItem(searchPopup);
-
             foreach (var key in Writer.Keys)
             {
-                if (ImGui.CollapsingHeader($"#{key:D5} - " + GetName(key)))
-                {
+                var old = JobTransientsManager.GetOriginal(key);
+                if (ImGui.CollapsingHeader($"#{key:D5} - " + GetName(key))) {
                     var LocalWriter = Writer[key];
-                    var DefaultValues = TiltParamManager.GetOriginal(key);
                     bool enablechanges = UiGlobals.CheckIsEnabled(Service.Config.EnableReplacement, _activeSet.Enabled, LocalWriter.Enabled);
 
-                    using (ImRaii.PushFont(UiBuilder.IconFont))
-                    {
-                        if (UiGlobals.DrawDeleteEntryButton($"{FontAwesomeIcon.Trash.ToIconString()}##{key}"))
-                        {
+                    using (ImRaii.PushFont(UiBuilder.IconFont)) {
+                        if (UiGlobals.DrawDeleteEntryButton($"{FontAwesomeIcon.Trash.ToIconString()}##{key}")) {
                             Setup.SetupByType(key, type, true);
                             Writer.Remove(key);
                             Service.Config.Save();
                         }
                     }
-                    if (ImGui.Checkbox("##" + key, ref LocalWriter.Enabled))
-                    {
+                    if (ImGui.Checkbox("##" + key, ref LocalWriter.Enabled)) {
                         enablechanges = UiGlobals.CheckIsEnabled(Service.Config.EnableReplacement, _activeSet.Enabled, LocalWriter.Enabled);
-                        if (enablechanges) Setup.SetupByType(key, type);
+                        if (enablechanges) Setup.SetupByType(key, type); 
                         else Setup.SetupByType(key, type, true);
                         Service.Config.Save();
                     }
@@ -66,16 +58,11 @@ public class TiltParamMain
                     ImGui.TextUnformatted("Entry Enabled");
                     UiGlobals.DrawItemSeparator();
 
-
-
-
                     #region Datainputs
-                    UiGlobals.DrawFloat("Tilt Rate", type, key, enablechanges, ref LocalWriter.Replacement.Unknown0, DefaultValues.Unknown0);
-                    UiGlobals.DrawByte("Rotation Origin Offset", type, key, enablechanges, ref LocalWriter.Replacement.Unknown1, DefaultValues.Unknown1);
-                    UiGlobals.DrawByte("Max Angle", type, key, enablechanges, ref LocalWriter.Replacement.Unknown2, DefaultValues.Unknown2);
-                    UiGlobals.DrawByte("Unknown 3", type, key, enablechanges, ref LocalWriter.Replacement.Unknown3, DefaultValues.Unknown3);
-                    UiGlobals.DrawByte("Unknown 4", type, key, enablechanges, ref LocalWriter.Replacement.Unknown4, DefaultValues.Unknown4);
-                    UiGlobals.DrawBool("Reverse Mouse Direction", type, key, enablechanges, ref LocalWriter.Replacement.Unknown5, DefaultValues.Unknown5);
+                    UiGlobals.DrawString("Name", type, key, enablechanges, ref LocalWriter.Replacement.Name, old.Name);
+                    UiGlobals.DrawString("Abbreviation", type, key, enablechanges, ref LocalWriter.Replacement.Abbreviation, old.Abbreviation);
+                    //This needs better implementation to handle the multiline.. no idea. 
+                    //UiGlobals.DrawMultiString("Description", type, key, enablechanges, ref LocalWriter.Replacement.ActionDesc, old.ActionDesc);
                     UiGlobals.DrawItemSeparator();
                     continue;
 

@@ -21,6 +21,7 @@ using FFXIVClientStructs.FFXIV.Component.GUI;
 using Lumina.Text;
 using Lumina.Text.Payloads;
 using Lumina.Text.ReadOnly;
+using Serilog.Data;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -44,20 +45,23 @@ public unsafe class IconLoadDetour : IDisposable
 {
 
     private readonly Hook<AtkComponentDragDrop.Delegates.LoadIcon>? _ItemDragDropLoadHook;
-    private readonly Hook<AtkComponentDragDrop.Delegates.GetIconId>? _ItemDragDropGetIconIDHook;
+    private readonly Hook<RaptureHotbarModule.HotbarSlot.Delegates.GetIconIdForSlot>? _RaptureGetIconIDForSlotLoadHook;
+    private readonly Hook<RaptureHotbarModule.HotbarSlot.Delegates.LoadIconId>? _RaptureLoadIconID;
     //private readonly Hook<AddonInventoryGrid.Delegates.ReceiveEvent>? _InventoryGridReceiveEvent;
 
     public IconLoadDetour()
     {
-         IntPtr InvGridRecEvntPtR = Service.Scanner.ScanText("E8 ?? ?? ?? FF 48 8B 7C 24 48 C7 46 0C 01 00 00 00");
+        //IntPtr InvGridRecEvntPtR = Service.Scanner.ScanText("E8 ?? ?? ?? FF 48 8B 7C 24 48 C7 46 0C 01 00 00 00");
         //_InventoryGridReceiveEvent = Service.GameInteropProvider.HookFromAddress<AddonInventoryGrid.Delegates.ReceiveEvent>(InvGridRecEvntPtR, InventoryGridReceiveDetour);
-        _ItemDragDropLoadHook = Service.GameInteropProvider.HookFromAddress<AtkComponentDragDrop.Delegates.LoadIcon>(AtkComponentDragDrop.Addresses.LoadIcon.Value, DragDropIconLoadedDetour);
+        //_RaptureGetIconIDForSlotLoadHook = Service.GameInteropProvider.HookFromAddress<RaptureHotbarModule.HotbarSlot.Delegates.LoadIconId>(RaptureHotbarModule.HotbarSlot.Addresses.LoadIconId.Value, TESTDETOUR2);
+        _RaptureGetIconIDForSlotLoadHook = Service.GameInteropProvider.HookFromAddress<RaptureHotbarModule.HotbarSlot.Delegates.GetIconIdForSlot>(RaptureHotbarModule.HotbarSlot.Addresses.GetIconIdForSlot.Value, HotbarSlotGetIconIDDetour);
+        //_ItemDragDropLoadHook = Service.GameInteropProvider.HookFromAddress<AtkComponentDragDrop.Delegates.LoadIcon>(AtkComponentDragDrop.Addresses.LoadIcon.Value, DragDropIconLoadedDetour);
         //_ItemDragDropGetIconIDHook = Service.GameInteropProvider.HookFromAddress<AtkComponentDragDrop.Delegates.GetIconId>(AtkComponentDragDrop.Addresses.GetIconId.Value, DragDropGetIconDetour);
         //_ItemHoveredHook = Service.GameInteropProvider.HookFromSignature<ItemHoveredDelegate>(Hooks.itemhoveredhook, ItemHoveredDetour);
         //_ShowTooltipHook = Service.GameInteropProvider.HookFromAddress<AtkTooltipManager.Delegates.ShowTooltip>(AtkTooltipManager.Addresses.ShowTooltip.Value, AtkTooltipManagerShowTooltipDetour);
 
-        //this._InventoryGridReceiveEvent.Enable();
-        this._ItemDragDropLoadHook.Enable();
+        this._RaptureGetIconIDForSlotLoadHook.Enable();
+        //this._ItemDragDropLoadHook.Enable();
         //this._ItemHoveredHook.Enable();
         //this._ShowTooltipHook.Enable();
 
@@ -65,7 +69,21 @@ public unsafe class IconLoadDetour : IDisposable
         //Service.AddonLifecycle.RegisterListener(AddonEvent.PreDraw, "Tooltip", OnTooltipPreDraw);
         //Service.AddonLifecycle.RegisterListener(AddonEvent.PostRequestedUpdate, "ActionDetail", OnActionTooltipRequestedUpdate);
         //Service.AddonLifecycle.RegisterListener(AddonEvent.PostShow, "_ActionBar07", OnActionBarShow);
+
+    }
+
+
+    private int HotbarSlotGetIconIDDetour(RaptureHotbarModule.HotbarSlot* hotbarSlot, RaptureHotbarModule.HotbarSlotType slotType, uint actionid)
+    {
+        int returnvalue = 0;
+        //Service.Log.Error("trying to determine icon for " + actionid + "of type" + slotType);
+        if (slotType == RaptureHotbarModule.HotbarSlotType.Action) { returnvalue = ActionTransientsManager.GetReplacement(actionid).Icon; }
+        else if (slotType == RaptureHotbarModule.HotbarSlotType.Mount) { returnvalue = MountTransientsManager.GetReplacement(actionid).Icon; }
+        else if (slotType == RaptureHotbarModule.HotbarSlotType.Companion) { returnvalue = CompanionTransientsManager.GetReplacement(actionid).Icon; }
+        else if (slotType == RaptureHotbarModule.HotbarSlotType.Ornament) { returnvalue = OrnamentTransientsManager.GetReplacement(actionid).Icon;}
         
+        if (returnvalue == 0) { returnvalue = _RaptureGetIconIDForSlotLoadHook!.Original(hotbarSlot, slotType, actionid); }
+        return returnvalue;
     }
 
     private bool DragDropIconLoadedDetour(AtkComponentDragDrop* thisPtr, uint iconid)
@@ -73,7 +91,8 @@ public unsafe class IconLoadDetour : IDisposable
         //this works for most things, but items are a problem.need to work around that
         uint feedid = iconid;
         var tocheck = thisPtr;
-        if (JobChangeDetour.CurrentJobIcons.ContainsKey(iconid)) { feedid = JobChangeDetour.CurrentJobIcons[iconid]; }
+        Service.Log.Error("trying to load icon" + iconid );
+        //if (JobChangeDetour.CurrentJobIcons.ContainsKey(iconid)) { feedid = JobChangeDetour.CurrentJobIcons[iconid]; }
         if (feedid != iconid)
         {
             Service.Log.Error("original value was " + iconid + "decided value was " + feedid);
@@ -112,8 +131,8 @@ public unsafe class IconLoadDetour : IDisposable
     public void Dispose()
     {
         // When we're done, disable the hook again and clean up. Dispose does this in one go!
-        this._ItemDragDropLoadHook.Dispose();
-        //this._ItemDragDropGetIconIDHook.Dispose();
+        //this._ItemDragDropLoadHook.Dispose();
+        this._RaptureGetIconIDForSlotLoadHook.Dispose();
         //this._InventoryGridReceiveEvent.Dispose();
         //this._ActionHoveredHook.Dispose();
 

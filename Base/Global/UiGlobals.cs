@@ -213,7 +213,7 @@ public class UiGlobals
     {
         string relay = value;
         string refname = name.Replace(" ", "");
-        if (ImGui.InputTextMultiline("##" + refname + key, ref value, 512, new Vector2(800, 100),  ImGuiInputTextFlags.EnterReturnsTrue))
+        if (ImGui.InputTextMultiline("##" + refname + key, ref relay, 2048, new Vector2(800, 100),  ImGuiInputTextFlags.EnterReturnsTrue))
         {
             value = relay;
             if (changesenabled) { Setup.SetupByType(key, type); }
@@ -225,6 +225,7 @@ public class UiGlobals
         {
             if (ImGui.Button($"{FontAwesomeIcon.Reply.ToIconString()}##{refname}{key}"))
             {
+                value = defaultvalue;
                 if (changesenabled) { Setup.SetupByType(key, type); }
                 Service.Config.Save();
             }
@@ -239,7 +240,7 @@ public class UiGlobals
         sbyte relay = value;
         if (indirecttype == null) { indirecttype = ["NO"]; }
         string refname = name.Replace(" ", "");
-        if (ImGui.InputSByte("##" + refname + key, ref value, 0, 0, default, ImGuiInputTextFlags.EnterReturnsTrue))
+        if (ImGui.InputSByte("##" + refname + key, ref relay, 0, 0, default, ImGuiInputTextFlags.EnterReturnsTrue))
         {
             value = relay;
             if (changesenabled) { Setup.SetupByType(key, type); }
@@ -271,7 +272,7 @@ public class UiGlobals
         byte relay = value;
         if (indirecttype == null) { indirecttype = ["NO"]; }
         string refname = name.Replace(" ", "");
-        if (ImGui.InputByte("##" + refname + key, ref value, 0, 0, default, ImGuiInputTextFlags.EnterReturnsTrue))
+        if (ImGui.InputByte("##" + refname + key, ref relay, 0, 0, default, ImGuiInputTextFlags.EnterReturnsTrue))
         {
             value = relay;
             if (changesenabled) { Setup.SetupByType(key, type); }
@@ -364,7 +365,7 @@ public class UiGlobals
         int relay = value;
         if (indirecttype == null) { indirecttype = ["NO"]; }
         string refname = name.Replace(" ", "");
-        if (ImGui.InputInt("##" + refname + key, ref value, 0, 0, default, ImGuiInputTextFlags.EnterReturnsTrue))
+        if (ImGui.InputInt("##" + refname + key, ref relay, 0, 0, default, ImGuiInputTextFlags.EnterReturnsTrue))
         {
             value = relay;
             if (changesenabled) { Setup.SetupByType(key, type); }
@@ -394,7 +395,37 @@ public class UiGlobals
         uint relay = value;
         if (indirecttype == null) { indirecttype = ["NO"]; }
         string refname = name.Replace(" ", "");
-        if (ImGui.InputUInt("##" + refname + key, ref value, 0, 0, default, ImGuiInputTextFlags.EnterReturnsTrue))
+        if (ImGui.InputUInt("##" + refname + key, ref relay, 0, 0, default, ImGuiInputTextFlags.EnterReturnsTrue))
+        {
+            value = relay;
+            if (changesenabled) { Setup.SetupByType(key, type); }
+            Service.Config.Save();
+        }
+        ImGui.SameLine();
+
+        using (ImRaii.PushFont(UiBuilder.IconFont))
+        {
+            if (ImGui.Button($"{FontAwesomeIcon.Reply.ToIconString()}##{refname}{key}"))
+            {
+                value = defaultvalue;
+                if (changesenabled) { Setup.SetupByType(key, type); }
+                Service.Config.Save();
+            }
+        }
+        ImGui.SameLine();
+        ImGui.TextUnformatted(name);
+        if (sheethasindirects)
+        {
+            ResolveIndirectDraw(indirecttype, refname, key, (uint)value);
+        }
+    }
+    public static void DrawFloat(string name, string type, uint key, bool changesenabled, ref float value,
+    float defaultvalue, bool sheethasindirects = false, List<string> indirecttype = null)
+    {
+        float relay = value;
+        if (indirecttype == null) { indirecttype = ["NO"]; }
+        string refname = name.Replace(" ", "");
+        if (ImGui.InputFloat("##" + refname + key, ref relay, 0, 0, default, ImGuiInputTextFlags.EnterReturnsTrue))
         {
             value = relay;
             if (changesenabled) { Setup.SetupByType(key, type); }
@@ -423,7 +454,7 @@ public class UiGlobals
     {
         bool relay = value;
         string refname = name.Replace(" ", "");
-        if (ImGui.Checkbox("##" + refname + key, ref value))
+        if (ImGui.Checkbox("##" + refname + key, ref relay))
         {
             value = relay;
             if (changesenabled) { Setup.SetupByType(key, type); }
@@ -464,6 +495,9 @@ public class UiGlobals
                 return output;
             case "CompanionTransients":
                 output = CompanionTransientsManager.Names;
+                return output;
+            case "JobTransients":
+                output = JobTransientsManager.Names;
                 return output;
             case "Glasses":
                 output = GlassesManager.Names;
@@ -543,6 +577,9 @@ public class UiGlobals
                 return output;
             case "CompanionTransients":
                 output = (uint)activeset.CompanionTransientsWriter.Count();
+                return output;
+            case "JobTransients":
+                output = (uint)activeset.JobTransientsWriter.Count();
                 return output;
             case "Glasses":
                 output = (uint)activeset.GlassesWriter.Count();

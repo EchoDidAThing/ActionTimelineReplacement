@@ -10,9 +10,10 @@ namespace ActionTimelineReplacement.Base;
 
 internal class HookHandler : IDisposable
 {
-    private ScrollDetour _ScrollHook;
+    //private ScrollDetour _ScrollHook;
     private ShowTooltipDetour _ShowTooltipHook;
     private IconLoadDetour _IconLoadHook;
+    private Mountstuffs _MountStuffs;
     public HookHandler()
     {
         _Register();
@@ -21,7 +22,7 @@ internal class HookHandler : IDisposable
     private void _Register()
     {
         _ShowTooltipHook = new ShowTooltipDetour();
-        _ScrollHook = new ScrollDetour();
+        _MountStuffs = new Mountstuffs();
         _IconLoadHook = new IconLoadDetour();
         //_ShowActionbarHook = new ShowActionbarDetour();
     }
@@ -29,7 +30,7 @@ internal class HookHandler : IDisposable
     public void Dispose()
     {
         _ShowTooltipHook?.Dispose();
-        _ScrollHook?.Dispose();
+        _MountStuffs?.Dispose();
         _IconLoadHook?.Dispose();
         //_ShowActionbarHook?.Dispose();
     }

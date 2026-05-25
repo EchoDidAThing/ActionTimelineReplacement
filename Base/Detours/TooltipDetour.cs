@@ -44,13 +44,15 @@ public unsafe class ShowTooltipDetour : IDisposable
         public FFXIVClientStructs.FFXIV.Client.Enums.DetailKind ActionKind;
         public uint ActionID;
     }
-    public class ReplEntry(uint icon, string name, string description, string descenhanced, string tooltip)
+    public class ReplEntry(uint icon, string name, string description, string descenhanced, string tooltip, string jobname, string jobabbreviation)
     {
         public uint Icon = icon;
         public string Name = name;
         public string Description = description;
         public string DescriptionEnhanced = descenhanced;
         public string Tooltip = tooltip;
+        public string JobName = jobname;
+        public string JobAbbreviation = jobabbreviation;
     }
     public class OrigAndReplace(ReplEntry original, ReplEntry replacement)
     {
@@ -60,24 +62,29 @@ public unsafe class ShowTooltipDetour : IDisposable
         public bool Matches()
         {
             if (this.Original.Icon == this.Replacement.Icon && this.Original.Name == this.Replacement.Name && this.Original.Description == this.Replacement.Description 
-                && this.Original.DescriptionEnhanced == this.Replacement.DescriptionEnhanced && this.Original.Tooltip == this.Replacement.Tooltip) return true;
+                && this.Original.DescriptionEnhanced == this.Replacement.DescriptionEnhanced && this.Original.Tooltip == this.Replacement.Tooltip 
+                && this.Original.JobName == this.Replacement.JobName && this.Original.JobAbbreviation == this.Replacement.JobAbbreviation) return true;
             return false;
         }
     }
 
-    private static OrigAndReplace GetOrigAndConfByType(string type, uint idx)
+    private static OrigAndReplace GetOrigAndConfByType(string type, uint idx, uint idy)
     {
         uint origicon = 0;
         string origname = "";
         string origdesc = "";
         string origdescenhanced = "";
         string origtooltip = "";
+        string origjobname = "";
+        string origjobabbreviation = "";
 
         uint replicon = 0;
         string replname = "";
         string repldesc = "";
         string repldescenhanced = "";
         string repltooltip = "";
+        string repljobname = "";
+        string repljobabbreviation = "";
 
         switch (type)
         {
@@ -85,9 +92,13 @@ public unsafe class ShowTooltipDetour : IDisposable
                 origicon = ActionTransientsManager.GetOriginal(idx).Icon;
                 origname = ActionTransientsManager.GetOriginal(idx).ActionName;
                 origdesc = ActionTransientsManager.GetOriginal(idx).ActionDesc;
+                origjobname = JobTransientsManager.GetOriginal(idy).Name;
+                origjobabbreviation = JobTransientsManager.GetOriginal(idy).Abbreviation;
                 replicon = ActionTransientsManager.GetReplacement(idx).Icon;
                 replname = ActionTransientsManager.GetReplacement(idx).ActionName;
                 repldesc = ActionTransientsManager.GetReplacement(idx).ActionDesc;
+                repljobname = JobTransientsManager.GetReplacement(idy).Name;
+                repljobabbreviation = JobTransientsManager.GetReplacement(idy).Abbreviation;
                 break;
             case ("Mount"):
                 origicon = MountTransientsManager.GetOriginal(idx).Icon;
@@ -134,7 +145,7 @@ public unsafe class ShowTooltipDetour : IDisposable
                 return null;
         }
 
-        OrigAndReplace Output = new OrigAndReplace(new ReplEntry(origicon, origname, origdesc, origdescenhanced, origtooltip), new ReplEntry(replicon, replname, repldesc, repldescenhanced, repltooltip));
+        OrigAndReplace Output = new OrigAndReplace(new ReplEntry(origicon, origname, origdesc, origdescenhanced, origtooltip, origjobname, origjobabbreviation), new ReplEntry(replicon, replname, repldesc, repldescenhanced, repltooltip, repljobname, repljobabbreviation));
         return Output;
     }
 
@@ -181,8 +192,8 @@ public unsafe class ShowTooltipDetour : IDisposable
 
         Service.AddonLifecycle.RegisterListener(AddonEvent.PostRequestedUpdate, "Tooltip", OnTooltipRequestedUpdate);
         Service.AddonLifecycle.RegisterListener(AddonEvent.PreDraw, "Tooltip", OnTooltipPreDraw);
-        Service.AddonLifecycle.RegisterListener(AddonEvent.PostRequestedUpdate, "ActionDetail", OnActionTooltipRequestedUpdate);
-        Service.AddonLifecycle.RegisterListener(AddonEvent.PreRequestedUpdate, "ActionDetail", OnActionTooltipRequestedUpdate);
+        Service.AddonLifecycle.RegisterListener(AddonEvent.PostRequestedUpdate, "ActionDetail", OnActionTooltipPostRequestedUpdate);
+        Service.AddonLifecycle.RegisterListener(AddonEvent.PreRequestedUpdate, "ActionDetail", OnActionTooltipPreRequestedUpdate);
         
     }
 
@@ -218,7 +229,7 @@ public unsafe class ShowTooltipDetour : IDisposable
 
     private byte ItemHoveredDetour(IntPtr a1, IntPtr* a2, int* containerid, ushort* slotid, IntPtr a5, uint slotidint, IntPtr a7)
     {
-        var returnValue = _ItemHoveredHook.Original(a1, a2, containerid, slotid, a5, slotidint, a7);
+        var returnValue = _ItemHoveredHook!.Original(a1, a2, containerid, slotid, a5, slotidint, a7);
         HoveredItem = *(InventoryItem*)(a7);
         Service.Log.Info("Hovered item is " + HoveredItem.ItemId);
         return returnValue;
@@ -436,7 +447,7 @@ public unsafe class ShowTooltipDetour : IDisposable
         AtkNineGridNode* backgroundNode = (AtkNineGridNode*)addonTooltip->GetNodeById(3);
         if (nametextNode == null) { return; }
 
-        OrigAndReplace origandreplace = GetOrigAndConfByType(HoveredAction.ActionKind.ToString(), HoveredAction.ActionID);
+        OrigAndReplace origandreplace = GetOrigAndConfByType(HoveredAction.ActionKind.ToString(), HoveredAction.ActionID, Service.PlayerState.ClassJob.RowId);
         if (origandreplace == null){ return; }
         if (origandreplace.Matches()) { return; }
 
@@ -475,7 +486,7 @@ public unsafe class ShowTooltipDetour : IDisposable
             break;
         }
     }
-    private void OnActionTooltipRequestedUpdate(AddonEvent addonEvent, AddonArgs addonArgs)
+    private void OnActionTooltipPreRequestedUpdate(AddonEvent addonEvent, AddonArgs addonArgs)
     {
         Service.Log.Error("Actionrequestupdate triggered");
         //HandlePronounChange(addonEvent);
@@ -483,39 +494,54 @@ public unsafe class ShowTooltipDetour : IDisposable
         AtkUnitBase* addonActionTooltip = (AtkUnitBase*)addonArgs.Addon.Address;
         if (addonActionTooltip == null) { return; }
 
-        OrigAndReplace origandreplace = GetOrigAndConfByType(HoveredAction.ActionKind.ToString(), HoveredAction.ActionID);
+        OrigAndReplace origandreplace = GetOrigAndConfByType(HoveredAction.ActionKind.ToString(), HoveredAction.ActionID, Service.PlayerState.ClassJob.RowId);
         if (origandreplace == null) { return; }
         if (origandreplace.Matches()) { return; }
-        
+        if (origandreplace.Original.JobAbbreviation != origandreplace.Replacement.JobAbbreviation && origandreplace.Replacement.JobAbbreviation != "")
+        {
+            AtkTextNode* jobtextNode = addonActionTooltip->GetTextNodeById(29);
+            Service.Log.Error("Actionrequestupdate ABBREVIATION triggered");
+            //Service.Log.Error("desc Values at current location: " + origandreplace.Original.Description + " + " + origandreplace.Replacement.Description);
+            SetText(jobtextNode, null, origandreplace.Original.JobAbbreviation, origandreplace.Replacement.JobAbbreviation);
+        }
+    }
+    private void OnActionTooltipPostRequestedUpdate(AddonEvent addonEvent, AddonArgs addonArgs)
+    {
+        Service.Log.Error("Actionrequestupdate triggered");
+        //HandlePronounChange(addonEvent);
+
+        AtkUnitBase* addonActionTooltip = (AtkUnitBase*)addonArgs.Addon.Address;
+        if (addonActionTooltip == null) { return; }
+
+        OrigAndReplace origandreplace = GetOrigAndConfByType(HoveredAction.ActionKind.ToString(), HoveredAction.ActionID, Service.PlayerState.ClassJob.RowId);
+        if (origandreplace == null) { return; }
+        if (origandreplace.Matches()) { return; }
+
         //if (LastHoveredAction.ActionID == HoveredAction.ActionID ) { return; }
         LastHoveredAction.ActionID = HoveredAction.ActionID;
         Service.Log.Error("Actionrequestupdate triggered");
 
-        AtkTextNode* nametextNode = addonActionTooltip->GetTextNodeById(5);
-        AtkTextNode* desctextNode = addonActionTooltip->GetTextNodeById(19);
-        AtkImageNode* ImageNode = addonActionTooltip->GetNodeById(4)->GetAsAtkComponentIcon()->GetImageNodeById(20);
         //AtkImageNode* ImageNode = ImageNodeComponent->GetImageNodeById(20);
         //AtkImageNode* ImageNode = (AtkImageNode*)(((AtkComponentIcon*)addonActionTooltip->GetNodeById(4))->GetNodeById(20));
-        AtkResNode* backgroundNode = (AtkResNode*)addonActionTooltip->GetNodeById(17);
-        //backgroundNode->DrawFlags
-        AtkResNode* backgroundNode2 = (AtkResNode*)addonActionTooltip->GetNodeById(30)->GetAsAtkComponentWindow()->GetNodeById(2);
-        AtkResNode* backgroundNode3 = (AtkResNode*)addonActionTooltip->GetNodeById(21);
-        AtkResNode* backgroundNode4 = (AtkResNode*)addonActionTooltip->GetNodeById(27);
-        if (nametextNode == null && desctextNode == null && ImageNode == null) { return; }
 
         //Service.Log.Error("Name Values at current location: " + origandreplace.Original.Name + " + " + origandreplace.Replacement.Name);
         //Service.Log.Error("Icon Values at current location: " + origandreplace.Original.Icon + " + " + origandreplace.Replacement.Icon);
         //Service.Log.Error("desc Values at current location: " + origandreplace.Original.Description + " + " + origandreplace.Replacement.Description);
         //Service.Log.Error("nodetext: " + nametextNode->NodeText.ToString().Split(" [")[0]);
 
-        if (origandreplace.Original.Name.ToLower() != origandreplace.Replacement.Name.ToLower() && nametextNode->NodeText.ToString().Split(" [")[0].ToLower() == origandreplace.Original.Name.ToLower() && origandreplace.Replacement.Name.ToLower() != "")
+        if (origandreplace.Original.Name.ToLower() != origandreplace.Replacement.Name.ToLower() && origandreplace.Replacement.Name.ToLower() != "")
         {
-            //Service.Log.Error("Actionrequestupdate NAMEtriggered");
+            AtkTextNode* nametextNode = addonActionTooltip->GetTextNodeById(5);
+            Service.Log.Error("Actionrequestupdate NAMEtriggered");
+            if ((nametextNode == null) || (nametextNode->NodeText.ToString().Split(" [")[0].ToLower() != origandreplace.Original.Name.ToLower())) { goto IconReplace; }
             //Service.Log.Error("Name Values at current location: " + origandreplace.Original.Name + " + " + origandreplace.Replacement.Name);
             SetText(nametextNode, null, origandreplace.Original.Name, origandreplace.Replacement.Name);
         }
+    IconReplace:
         if (origandreplace.Original.Icon != origandreplace.Replacement.Icon && origandreplace.Replacement.Icon != 0)
         {
+            AtkImageNode* ImageNode = addonActionTooltip->GetNodeById(4)->GetAsAtkComponentIcon()->GetImageNodeById(20);
+            if (ImageNode == null) { goto DescReplace; }
             //Service.Log.Error("Actionrequestupdate ICONtriggered");
             //Service.Log.Error("Icon Values at current location: " + origandreplace.Original.Icon + " + " + origandreplace.Replacement.Icon);
             //why isn';'t this working. what can I do to fix it?
@@ -525,8 +551,15 @@ public unsafe class ShowTooltipDetour : IDisposable
             //Service.Log.Error(iconstring);
             ImageNode->LoadIconTexture(origandreplace.Replacement.Icon, 0);
         }
-        if (origandreplace.Original.Description != origandreplace.Replacement.Description && origandreplace.Replacement.Description != "" )
+    DescReplace:
+        if (origandreplace.Original.Description != origandreplace.Replacement.Description && origandreplace.Replacement.Description != "")
         {
+            AtkResNode* backgroundNode = (AtkResNode*)addonActionTooltip->GetNodeById(17);
+            AtkResNode* backgroundNode2 = (AtkResNode*)addonActionTooltip->GetNodeById(30)->GetAsAtkComponentWindow()->GetNodeById(2);
+            AtkResNode* backgroundNode3 = (AtkResNode*)addonActionTooltip->GetNodeById(21);
+            AtkResNode* backgroundNode4 = (AtkResNode*)addonActionTooltip->GetNodeById(27);
+            AtkTextNode* desctextNode = addonActionTooltip->GetTextNodeById(19);
+            if (desctextNode == null && backgroundNode == null && backgroundNode2 == null && backgroundNode3 == null && backgroundNode4 == null) { return; }
             //Service.Log.Error("Actionrequestupdate DESC triggered");
             //Service.Log.Error("desc Values at current location: " + origandreplace.Original.Description + " + " + origandreplace.Replacement.Description);
             SetTextNoSwap(desctextNode, origandreplace.Replacement.Description);
@@ -543,7 +576,7 @@ public unsafe class ShowTooltipDetour : IDisposable
             backgroundNode4->SetYShort((short)((backgroundNode->GetHeight() - tempheight) + backgroundNode4->GetYShort()));
         }
     }
-    
+
     private void RelayShowTooltip(ushort parentId)
     {
         if (lastParentId == parentId)
@@ -617,6 +650,7 @@ public unsafe class ShowTooltipDetour : IDisposable
 
         Service.AddonLifecycle.UnregisterListener(OnTooltipPreDraw);
         Service.AddonLifecycle.UnregisterListener(OnTooltipRequestedUpdate);
-        Service.AddonLifecycle.UnregisterListener(OnActionTooltipRequestedUpdate);
+        Service.AddonLifecycle.UnregisterListener(OnActionTooltipPreRequestedUpdate);
+        Service.AddonLifecycle.UnregisterListener(OnActionTooltipPostRequestedUpdate);
     }
 }

@@ -21,6 +21,7 @@ public sealed partial class ConfigWindow : Window
     private string _searchActionCastVFX = string.Empty;
     private string _searchActionTransients = string.Empty;
     private string _searchCompanionTransients = string.Empty;
+    private string _searchJobTransients = string.Empty;
     private string _searchMount = string.Empty;
     private string _searchMountCustomize = string.Empty;
     private string _searchMountTransients = string.Empty;
@@ -51,6 +52,7 @@ public sealed partial class ConfigWindow : Window
             _AllHeaders.Add("ActionTimeline", []);
             _AllHeaders.Add("ActionTransients", []);
             _AllHeaders.Add("CompanionTransients", []);
+            _AllHeaders.Add("JobTransients", []);
             _AllHeaders.Add("Mount", []);
             _AllHeaders.Add("MountCustomize", []);
             _AllHeaders.Add("MountTransients", []);
@@ -92,6 +94,9 @@ public sealed partial class ConfigWindow : Window
                 break;
             case "CompanionTransients":
                 CompanionTransientsMain.Draw(activesheet, ref _activeSet, ref _searchCompanionTransients);
+                break;
+            case "JobTransients":
+               JobTransientsMain.Draw(activesheet, ref _activeSet, ref _searchJobTransients);
                 break;
             case "Mount":
                 MountMain.Draw(activesheet, ref _activeSet, ref _searchMount);

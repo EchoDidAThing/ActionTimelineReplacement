@@ -1,24 +1,27 @@
-﻿using FFXIVClientStructs.FFXIV.Component.GUI;
+﻿using ActionTimelineReplacement.Sheets;
+using FFXIVClientStructs.FFXIV.Client.UI.Misc;
+using FFXIVClientStructs.FFXIV.Component.GUI;
 using System;
 using System.Collections.Generic;
 using System.Text;
-using ActionTimelineReplacement.Sheets;
 
 namespace ActionTimelineReplacement.Base.Detours;
 
 internal class JobChangeDetour
 {
 
-    public static Dictionary<uint, uint>  CurrentJobIcons = [];
-    public static void UpdateIconList(ref Dictionary<uint, uint> currentjobicons)
+    public static Dictionary<RaptureHotbarModule.HotbarSlotType, Dictionary<uint, uint>>  CurrentJobIcons = [];
+    public static void UpdateIconList(Dictionary<RaptureHotbarModule.HotbarSlotType, Dictionary<uint, uint>> currentjobicons)
     {
-        var tempcurrentjobicons = new Dictionary<uint, uint>();
+        currentjobicons.Clear();
+        var tempcurrenticons = new Dictionary<uint, uint>();
         var ids = ActionTransientsManager.AllActionTransientIds;
+
         if (ids != null) 
         {
             foreach (var id in ids)
             {
-                if (tempcurrentjobicons.ContainsKey(id)) {
+                if (tempcurrenticons.ContainsKey(id)) {
                     Service.Log.Error("key" + id + " already exists");
                     continue;
                 }
@@ -27,15 +30,17 @@ internal class JobChangeDetour
                 Service.Log.Error("adding" + original + " with value of " + replacement);
                 if (original == replacement) { continue; }
                 Service.Log.Error("adding" + original + " with value of " + replacement);
-                tempcurrentjobicons.Add(original, replacement);
+                tempcurrenticons.Add(id, replacement);
             }
         }
+        currentjobicons.Add(RaptureHotbarModule.HotbarSlotType.Action , tempcurrenticons);
+
         ids = MountTransientsManager.AllMountTransientsIds;
         if (ids != null)
         {
             foreach (var id in ids)
             {
-                if (tempcurrentjobicons.ContainsKey(id))
+                if (tempcurrenticons.ContainsKey(id))
                 {
                     Service.Log.Error("key" + id + " already exists");
                     continue;
@@ -45,7 +50,7 @@ internal class JobChangeDetour
                 Service.Log.Error("adding" + original + " with value of " + replacement);
                 if (original == replacement) { continue; }
                 Service.Log.Error("adding" + original + " with value of " + replacement);
-                tempcurrentjobicons.Add(original, replacement);
+                tempcurrenticons.Add(original, replacement);
             }
         }
         ids = CompanionTransientsManager.AllCompanionTransientsIds;
@@ -53,7 +58,7 @@ internal class JobChangeDetour
         {
             foreach (var id in ids)
             {
-                if (tempcurrentjobicons.ContainsKey(id))
+                if (tempcurrenticons.ContainsKey(id))
                 {
                     Service.Log.Error("key" + id + " already exists");
                     continue;
@@ -63,13 +68,11 @@ internal class JobChangeDetour
                 Service.Log.Error("adding" + original + " with value of " + replacement);
                 if (original == replacement) { continue; }
                 Service.Log.Error("adding" + original + " with value of " + replacement);
-                tempcurrentjobicons.Add(original, replacement);
+                tempcurrenticons.Add(original, replacement);
             }
         }
 
-        Service.Log.Error("after update count of changed ids is " + tempcurrentjobicons.Count);
-
-        currentjobicons = tempcurrentjobicons;
+        Service.Log.Error("after update count of changed ids is " + tempcurrenticons.Count);
     }
 }
 

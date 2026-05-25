@@ -1,5 +1,6 @@
 ﻿using ActionTimelineReplacement.Base.Global;
 using ActionTimelineReplacement.Base.Structs;
+using System;
 
 namespace ActionTimelineReplacement.Sheets;
 
@@ -17,14 +18,14 @@ public class TiltParamConfig(TiltParamReplace replace, bool enabled)
 }
 
 public class TiltParamReplace(
-    ushort unknown0,
+    float unknown0,
     byte unknown1,
     byte unknown2,
     byte unknown3,
     byte unknown4,
     bool mouseReverse)
 {
-    public ushort Unknown0 = unknown0;
+    public float Unknown0 = unknown0;
     public byte Unknown1 = unknown1;
     public byte Unknown2 = unknown2;
     public byte Unknown3 = unknown3;

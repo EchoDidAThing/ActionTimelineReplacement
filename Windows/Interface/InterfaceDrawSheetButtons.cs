@@ -15,7 +15,7 @@ public sealed partial class ConfigWindow : Window
 {
     private void DrawSheetButtons()
     {
-        using var child = ImRaii.Child("SheetButtons body", new Vector2(-1f, 130f), false);
+        using var child = ImRaii.Child("SheetButtons body", new Vector2(-1f, 161f), false);
         if (!child) return;
         if (_activeSet is null) return;
         ImGui.Columns(5, "###SheetButtonsSelector", false);

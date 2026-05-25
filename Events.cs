@@ -19,7 +19,7 @@ internal class Events
     public void ClientState_ClassJobChanged(uint classJobId)
     {
         //Service.Log.Error("job changed to " + classJobId);
-        JobChangeDetour.UpdateIconList(ref JobChangeDetour.CurrentJobIcons);
+        //JobChangeDetour.UpdateIconList(ref JobChangeDetour.CurrentJobIcons);
     }
 
     public void Dispose()
