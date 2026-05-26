@@ -1,4 +1,5 @@
-﻿using InteropGenerator.Runtime.Attributes;
+﻿using FFXIVClientStructs.FFXIV.Client.Game.Character;
+using InteropGenerator.Runtime.Attributes;
 using System;
 using System.Runtime.InteropServices;
 
@@ -7,6 +8,8 @@ namespace ActionTimelineReplacement.Base.Structs;
 [StructLayout(LayoutKind.Explicit, Size = 0x80)]
 public unsafe partial struct EffectContainerFAFO
 {
+    [FieldOffset(8)]
+    public unsafe CharacterContainerFAFO* OwnerObject;
     [FieldOffset(0x10)] public float CurrentFloatHeight;
     [FieldOffset(0x14)] public float TargetFloatHeight;
     [FieldOffset(0x18)] public float FloatHeightChangeSpeed;
@@ -44,9 +47,9 @@ public unsafe partial struct EffectContainerFAFO
     [FieldOffset(0x64)] public float Set3TiltSpeed;
     [FieldOffset(0x68)] public TiltFlags Set3TiltFlags;
 
-    [FieldOffset(0x6E)] public TiltOrigin Set4TiltOrigin;
-    [FieldOffset(0x6C)] public byte Set4Unk1;
-    [FieldOffset(0x6D)] public ushort Set4Unk2;
+    [FieldOffset(0x6C)] public TiltOrigin Set4TiltOrigin;
+    [FieldOffset(0x6D)] public byte Set4Unk1;
+    [FieldOffset(0x6E)] public ushort Set4Unk2;
     [FieldOffset(0x70)] public float Set4TiltAngle;
     [FieldOffset(0x74)] public float Set4TiltSpeed;
     [FieldOffset(0x78)] public TiltFlags Set4ReverseTilt;

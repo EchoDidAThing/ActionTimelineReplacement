@@ -60,19 +60,22 @@ public class MountMain
 
 
 
-
+                    
                     #region Datainputs
                     UiGlobals.DrawUShort("Ride BGM ID", type, key, enablechanges, ref LocalWriter.Replacement.RideBGM, old.RideBGM, true, ["BGM_Path"]);
                     UiGlobals.DrawUShort("Ground Tilt ID", type, key, enablechanges, ref LocalWriter.Replacement.TiltParam1, old.TiltParam1, true, ["TiltParam_Index"]);
                     UiGlobals.DrawUShort("Fly/Swim Tilt ID", type, key, enablechanges, ref LocalWriter.Replacement.TiltParam2, old.TiltParam2, true, ["TiltParam_Index"]);
                     UiGlobals.DrawUShort("Unknown Tilt3 ID", type, key, enablechanges, ref LocalWriter.Replacement.TiltParam3, old.TiltParam3, true, ["TiltParam_Index"]);
                     UiGlobals.DrawUShort("Unknown Tilt4 ID", type, key, enablechanges, ref LocalWriter.Replacement.TiltParam4, old.TiltParam4, true, ["TiltParam_Index"]);
-                    UiGlobals.DrawUShort("Fly Up/Down Tilt", type, key, enablechanges, ref LocalWriter.Replacement.FlyUpDownTilt, old.FlyUpDownTilt);
-                    UiGlobals.DrawUShort("Unknown 6", type, key, enablechanges, ref LocalWriter.Replacement.Unknown6, old.Unknown6);
-                    UiGlobals.DrawUShort("Unknown 7", type, key, enablechanges, ref LocalWriter.Replacement.Unknown7, old.Unknown7);
-                    UiGlobals.DrawUShort("Unknown 8", type, key, enablechanges, ref LocalWriter.Replacement.Unknown8, old.Unknown8);
-                    UiGlobals.DrawUShort("Mount Customize ID", type, key, enablechanges, ref LocalWriter.Replacement.MountCustomize, old.MountCustomize);
-                    UiGlobals.DrawUShort("Swim Animation Speed", type, key, enablechanges, ref LocalWriter.Replacement.SwimAnimSpeed, old.SwimAnimSpeed);
+                    UiGlobals.DrawByte("Fly Up/Down Tilt", type, key, enablechanges, ref LocalWriter.Replacement.FlyUpDownTilt, old.FlyUpDownTilt);
+                    UiGlobals.DrawByte("Unknown 6", type, key, enablechanges, ref LocalWriter.Replacement.Unknown6, old.Unknown6);
+                    UiGlobals.DrawByte("Unknown 7", type, key, enablechanges, ref LocalWriter.Replacement.Unknown7, old.Unknown7);
+                    UiGlobals.DrawByte("Unknown 8", type, key, enablechanges, ref LocalWriter.Replacement.Unknown8, old.Unknown8);
+                    UiGlobals.DrawByte("Mount Customize ID", type, key, enablechanges, ref LocalWriter.Replacement.MountCustomize, old.MountCustomize);
+                    UiGlobals.DrawByte("Swim Animation Speed", type, key, enablechanges, ref LocalWriter.Replacement.SwimAnimSpeed, old.SwimAnimSpeed);
+                    UiGlobals.DrawBool("Enableheadgear", type, key, enablechanges, ref LocalWriter.Replacement.EnableHeadgear, old.EnableHeadgear);
+                    UiGlobals.DrawBool("OwnerGroundTilt?", type, key, enablechanges, ref LocalWriter.Replacement.Unk18, old.Unk18);
+                    UiGlobals.DrawBool("OwnerFlySwimTilt?", type, key, enablechanges, ref LocalWriter.Replacement.Unk19, old.Unk19);
                     //UiGlobals.DrawByte("MountBoolSet1", "Mount Bools 1 [raw]", ref replace.MountBoolSet1, i => i.MountBoolSet1);
                     UiGlobals.DrawItemSeparator();
                     continue;

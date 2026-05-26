@@ -135,7 +135,10 @@ public class MountMainOLD
                                     original.Unknown7,
                                     original.Unknown8,
                                     original.MountCustomize,
-                                    original.SwimAnimSpeed),
+                                    original.SwimAnimSpeed,
+                                    original.EnableHeadgear,
+                                    original.Unk18,
+                                    original.Unk19),
                                 false);
                         Service.Config.Save();
                     }

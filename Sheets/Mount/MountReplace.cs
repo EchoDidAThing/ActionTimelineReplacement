@@ -1,4 +1,5 @@
-﻿using ActionTimelineReplacement.Base.Structs;
+﻿using ActionTimelineReplacement.Base.Global;
+using ActionTimelineReplacement.Base.Structs;
 
 namespace ActionTimelineReplacement.Sheets;
 
@@ -17,14 +18,17 @@ public class MountReplace(
     ushort rideBGM,
     ushort tiltGround,
     ushort tiltFlySwim,
-    ushort tiltParam3,
+    ushort tiltParam3, 
     ushort tiltParam4,
-    ushort flyUpDownTilt,
-    ushort unknown6,
-    ushort unknown7,
-    ushort unknown8,
-    ushort mountCustomize,
-    ushort swimAnimSpeed)
+    byte flyUpDownTilt,
+    byte unknown6,
+    byte unknown7,
+    byte unknown8,
+    byte mountCustomize,
+    byte swimAnimSpeed,
+    bool enableHeadgear,
+    bool unk18,
+    bool unk19)
     //byte mountBoolSet1
 {
     public ushort RideBGM = rideBGM;
@@ -32,13 +36,16 @@ public class MountReplace(
     public ushort TiltParam2 = tiltFlySwim;
     public ushort TiltParam3 = tiltParam3;
     public ushort TiltParam4 = tiltParam4;
-    public ushort FlyUpDownTilt = flyUpDownTilt;
-    public ushort Unknown6 = unknown6;
-    public ushort Unknown7 = unknown7;
-    public ushort Unknown8 = unknown8;
-    public ushort MountCustomize = mountCustomize;
-    public ushort SwimAnimSpeed = swimAnimSpeed;
-    //public byte MountBoolSet1 = mountBoolSet1;
+    public byte FlyUpDownTilt = flyUpDownTilt;
+    public byte Unknown6 = unknown6;
+    public byte Unknown7 = unknown7;
+    public byte Unknown8 = unknown8;
+    public byte MountCustomize = mountCustomize;
+    public byte SwimAnimSpeed = swimAnimSpeed;
+    public bool EnableHeadgear = enableHeadgear;
+    public bool Unk18 = unk18;
+    public bool Unk19 = unk19;
+    public byte UnknownBitfield1 = ProcessingGlobals.PackBools(enableHeadgear, unk18, unk19);
     public unsafe void WriteToPointer(MountData* ptr)
     {
         ptr->RideBGM = RideBGM;
@@ -53,5 +60,6 @@ public class MountReplace(
         ptr->MountCustomize = MountCustomize;
         ptr->UnderwaterAnimSpeed = SwimAnimSpeed;
         //ptr->MountBoolSet1 = MountBoolSet1;
+        ptr->BitField2 = UnknownBitfield1;
     }
 }

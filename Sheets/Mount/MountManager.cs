@@ -72,8 +72,11 @@ public static class MountManager
                 act?.Unknown6 ?? 0,
                 act?.Unknown7 ?? 0,
                 act?.Unknown8 ?? 0,
-                (ushort)(act?.MountCustomize.RowId ?? 0),
-                act?.Unknown10 ?? 0);
+                (byte)(act?.MountCustomize.RowId ?? 0),
+                act?.Unknown10 ?? 0,
+                act?.HideHeadgear ?? false,
+                act?.Unknown18 ?? false,
+                act?.Unknown19 ?? false);
         }
         return replacement!;
     }

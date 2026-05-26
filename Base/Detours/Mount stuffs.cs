@@ -117,6 +117,7 @@ public unsafe class Mountstuffs : IDisposable
         Service.Log.Error("SetupTiltOTHER Triggered");
         //Service.Log.Error("Tiltowner address is " + thisptr-> + " TiltOwner name is " + thisptr->OwnerObject->GetName() + " || Owner homeworld is " + thisptr->OwnerObject->HomeWorld.ToString() + " || Owner classjob is " + JobTransientsManager.GetOriginal(thisptr->OwnerObject->ClassJob).Abbreviation);
         var test = (EffectContainerFAFO*)thisptr;
+        var testOwner = test->OwnerObject->Effects;
         Service.Log.Error("STOP");
         //thisptr->MountObject->Scale = .2f;
         //thisptr->OwnerObject->DrawData->head
