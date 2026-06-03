@@ -511,6 +511,9 @@ public class UiGlobals
             case "MountCustomize":
                 output = MountCustomizeManager.Names;
                 return output;
+            case "MountDetour":
+                output = MountDetourManager.Names;
+                return output;
             case "MountTransients":
                 output = MountTransientsManager.Names;
                 return output;
@@ -592,6 +595,9 @@ public class UiGlobals
                 return output;
             case "MountCustomize":
                 output = (uint)activeset.MountCustomizeWriter.Count();
+                return output;
+            case "MountDetour":
+                output = (uint)activeset.MountDetourWriter.Count();
                 return output;
             case "MountTransients":
                 output = (uint)activeset.MountTransientsWriter.Count();

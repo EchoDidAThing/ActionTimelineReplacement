@@ -13,5 +13,10 @@ public unsafe partial struct CharacterContainerFAFO
 {
     [FieldOffset(6800)]
     public EffectContainerFAFO Effects;
+
+    [FieldOffset(308)]
+    public float CameraOffset1;
+    [FieldOffset(388)]
+    public float CameraOffset2;
 }
 

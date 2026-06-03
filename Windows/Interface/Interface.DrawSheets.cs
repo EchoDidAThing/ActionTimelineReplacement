@@ -24,6 +24,7 @@ public sealed partial class ConfigWindow : Window
     private string _searchJobTransients = string.Empty;
     private string _searchMount = string.Empty;
     private string _searchMountCustomize = string.Empty;
+    private string _searchMountDetour = string.Empty;
     private string _searchMountTransients = string.Empty;
     private string _searchOrnamentTransients = string.Empty;
     private string _searchTiltParam = string.Empty;
@@ -55,6 +56,7 @@ public sealed partial class ConfigWindow : Window
             _AllHeaders.Add("JobTransients", []);
             _AllHeaders.Add("Mount", []);
             _AllHeaders.Add("MountCustomize", []);
+            _AllHeaders.Add("MountDetour", []);
             _AllHeaders.Add("MountTransients", []);
             _AllHeaders.Add("OrnamentTransients", []);
             _AllHeaders.Add("Status", []);
@@ -103,6 +105,9 @@ public sealed partial class ConfigWindow : Window
                 break;
             case "MountCustomize":
                 MountCustomizeMain.Draw(activesheet, ref _activeSet, ref _searchMountCustomize);
+                break;
+            case "MountDetour":
+                MountDetourMain.Draw(activesheet, ref _activeSet, ref _searchMountDetour);
                 break;
             case "MountTransients":
                 MountTransientsMain.Draw(activesheet, ref _activeSet, ref _searchMountTransients);
