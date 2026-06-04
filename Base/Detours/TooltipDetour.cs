@@ -171,10 +171,12 @@ public unsafe class ShowTooltipDetour : IDisposable
 
 
     private delegate byte ItemHoveredDelegate(IntPtr a1, IntPtr* a2, int* containerId, ushort* slotId, IntPtr a5, uint slotIdInt, IntPtr a7);
+    //private delegate byte MountNotebookEntryDelegate(nint a1, ushort entryid, IntPtr* a3);
 
     private readonly Hook<ItemHoveredDelegate>? _ItemHoveredHook;
     private readonly Hook<AgentActionDetail.Delegates.HandleActionHover>? _ActionHoveredHook;
     private readonly Hook<AtkTooltipManager.Delegates.ShowTooltip>? _ShowTooltipHook;
+    //private readonly Hook<MountNotebookEntryDelegate>? _MountNotebookEntryHook;
 
 
     private ushort lastParentId = ushort.MaxValue;
@@ -185,6 +187,7 @@ public unsafe class ShowTooltipDetour : IDisposable
         _ActionHoveredHook = Service.GameInteropProvider.HookFromAddress<AgentActionDetail.Delegates.HandleActionHover>(AgentActionDetail.Addresses.HandleActionHover.Value, ActionHoveredDetour);
         _ItemHoveredHook = Service.GameInteropProvider.HookFromSignature<ItemHoveredDelegate>(Hooks.itemhoveredhook, ItemHoveredDetour);
         _ShowTooltipHook = Service.GameInteropProvider.HookFromAddress<AtkTooltipManager.Delegates.ShowTooltip>(AtkTooltipManager.Addresses.ShowTooltip.Value, AtkTooltipManagerShowTooltipDetour);
+        //_MountNotebookEntryHook = Service.GameInteropProvider.HookFromAddress<AgentMountNoteBook.Delegates.Show>(AgentMountNoteBook., MountNotebookEntryDetour);
 
         this._ActionHoveredHook.Enable();
         this._ItemHoveredHook.Enable();
@@ -194,7 +197,10 @@ public unsafe class ShowTooltipDetour : IDisposable
         Service.AddonLifecycle.RegisterListener(AddonEvent.PreDraw, "Tooltip", OnTooltipPreDraw);
         Service.AddonLifecycle.RegisterListener(AddonEvent.PostRequestedUpdate, "ActionDetail", OnActionTooltipPostRequestedUpdate);
         Service.AddonLifecycle.RegisterListener(AddonEvent.PreRequestedUpdate, "ActionDetail", OnActionTooltipPreRequestedUpdate);
-        
+        Service.AddonLifecycle.RegisterListener(AddonEvent.PostRefresh, "MountNoteBook", MountMinionNotebookPostRequestedUpdate);
+        Service.AddonLifecycle.RegisterListener(AddonEvent.PostRefresh, "MinionNoteBook", MountMinionNotebookPostRequestedUpdate);
+        //Service.AddonLifecycle.RegisterListener(AddonEvent.PreRequestedUpdate, "MountNoteBook", MountNotebookPreRequestedUpdate);
+
     }
 
     public static HoveredActionInfo HoveredAction{ get; private set; }
@@ -505,6 +511,50 @@ public unsafe class ShowTooltipDetour : IDisposable
             SetText(jobtextNode, null, origandreplace.Original.JobAbbreviation, origandreplace.Replacement.JobAbbreviation);
         }
     }
+    private void MountMinionNotebookPostRequestedUpdate(AddonEvent addonEvent, AddonArgs addonArgs)
+    {
+        Service.Log.Error("Mount/MinionNotebookupdate triggered");
+        //HandlePronounChange(addonEvent);
+
+        AtkUnitBase* addonNotebook = (AtkUnitBase*)addonArgs.Addon.Address;
+        if (addonNotebook == null) { return; }
+        if ((HoveredAction.ActionKind.ToString() != "Mount") && (HoveredAction.ActionKind.ToString() != "Companion")) { return; }
+
+        OrigAndReplace origandreplace = GetOrigAndConfByType(HoveredAction.ActionKind.ToString(), HoveredAction.ActionID, Service.PlayerState.ClassJob.RowId);
+        if (origandreplace == null) { return; }
+        if (origandreplace.Matches()) { return; }
+        if (origandreplace.Original.Name != origandreplace.Replacement.Name && origandreplace.Replacement.Name != "")
+        {
+            uint nodeid = 65;
+            if (HoveredAction.ActionKind.ToString() == "Companion") { nodeid = 67; }
+            AtkTextNode* nameNode = addonNotebook->GetTextNodeById(nodeid);
+            Service.Log.Error("MountNotebookupdate NAME triggered");
+            //Service.Log.Error("desc Values at current location: " + origandreplace.Original.Description + " + " + origandreplace.Replacement.Description);
+            SetTextNoSwap(nameNode, origandreplace.Replacement.Name);
+        }
+        if (origandreplace.Original.DescriptionEnhanced != origandreplace.Replacement.DescriptionEnhanced && origandreplace.Replacement.DescriptionEnhanced != "")
+        {
+            uint nodeid = 66;
+            if (HoveredAction.ActionKind.ToString() == "Companion") { nodeid = 68; }
+            AtkTextNode* descriptionNode = addonNotebook->GetTextNodeById(nodeid);
+            Service.Log.Error("MountNotebookupdate ENHANCEDDESC triggered");
+            //Service.Log.Error("desc Values at current location: " + origandreplace.Original.Description + " + " + origandreplace.Replacement.Description);
+            SetTextNoSwap(descriptionNode, origandreplace.Replacement.DescriptionEnhanced);
+        }
+        if (origandreplace.Original.Tooltip != origandreplace.Replacement.Tooltip && origandreplace.Replacement.Tooltip != "")
+        {
+            AtkTextNode* tooltipNode = addonNotebook->GetComponentByNodeId(2)->GetNodeById(2)->GetAsAtkComponentTextNineGrid()->GetTextNodeById(2);
+            AtkResNode* tooltipbackgroundNode = addonNotebook->GetComponentByNodeId(2)->GetNodeById(2)->GetAsAtkComponentTextNineGrid()->GetNodeById(3);
+            Service.Log.Error("MountNotebookupdate tooltip triggered");
+            //Service.Log.Error("desc Values at current location: " + origandreplace.Original.Description + " + " + origandreplace.Replacement.Description);
+            SetTextNoSwap(tooltipNode, origandreplace.Replacement.Tooltip);
+            tooltipNode->ResizeNodeForCurrentText();
+
+            tooltipbackgroundNode->SetWidth((ushort)(tooltipNode->Width + 32));
+            tooltipbackgroundNode->SetHeight((ushort)(tooltipNode->Height + 35));
+            tooltipbackgroundNode->SetYShort((short)(-9));
+        }
+    }
     private void OnActionTooltipPostRequestedUpdate(AddonEvent addonEvent, AddonArgs addonArgs)
     {
         Service.Log.Error("Actionrequestupdate triggered");
@@ -652,5 +702,6 @@ public unsafe class ShowTooltipDetour : IDisposable
         Service.AddonLifecycle.UnregisterListener(OnTooltipRequestedUpdate);
         Service.AddonLifecycle.UnregisterListener(OnActionTooltipPreRequestedUpdate);
         Service.AddonLifecycle.UnregisterListener(OnActionTooltipPostRequestedUpdate);
+        Service.AddonLifecycle.UnregisterListener(MountMinionNotebookPostRequestedUpdate);
     }
 }

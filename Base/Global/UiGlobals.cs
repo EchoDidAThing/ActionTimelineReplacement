@@ -213,7 +213,7 @@ public class UiGlobals
     {
         string relay = value;
         string refname = name.Replace(" ", "");
-        if (ImGui.InputTextMultiline("##" + refname + key, ref relay, 2048, new Vector2(800, 100),  ImGuiInputTextFlags.EnterReturnsTrue))
+        if (ImGui.InputTextMultiline("##" + refname + key, ref relay, 2048, new Vector2(800, 100)))
         {
             value = relay;
             if (changesenabled) { Setup.SetupByType(key, type); }
