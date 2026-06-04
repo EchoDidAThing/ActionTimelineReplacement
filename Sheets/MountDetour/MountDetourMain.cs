@@ -62,7 +62,7 @@ public class MountDetourMain
 
                     
                     #region Datainputs
-                    UiGlobals.DrawString("Ride BGM Path", type, key, enablechanges, ref LocalWriter.Replacement.BGMPath, old.BGMPath);
+                    UiGlobals.DrawUInt("Ride BGM Path", type, key, enablechanges, ref LocalWriter.Replacement.BGMIndex, old.BGMIndex, true, ["BGM_Path"]);
                     UiGlobals.DrawInt("Rise/Sink Tilt Angle", type, key, enablechanges, ref LocalWriter.Replacement.RiseSinkTilt, old.RiseSinkTilt);
                     UiGlobals.DrawInt("Ground Animation Speed", type, key, enablechanges, ref LocalWriter.Replacement.GroundAnimationSpeed, old.GroundAnimationSpeed);
                     UiGlobals.DrawInt("Flight Animation Speed", type, key, enablechanges, ref LocalWriter.Replacement.FlightAnimationSpeed, old.FlightAnimationSpeed);

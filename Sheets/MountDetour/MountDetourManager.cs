@@ -48,6 +48,7 @@ public static class MountDetourManager
 
             }
         }
+        if (replacements.Count == 0) { return null; }
         foreach (var replacement in replacements
                          .OrderByDescending(r => r.Key))
         {
@@ -69,7 +70,7 @@ public static class MountDetourManager
             var act6 = Service.DataManager.GetExcelSheet<TiltParam>()?.GetRow(act?.Unknown16 ?? 0);
             var act7 = Service.DataManager.GetExcelSheet<TiltParam>()?.GetRow(act?.Unknown17 ?? 0);
             replacement = new MountDetourReplace(
-                act2?.File.ToString() ?? "",
+                act?.RideBGM.RowId ?? 0,
                 act?.Unknown5 ?? 0,
                 act?.BaseMotionSpeed_Walk ?? 0,
                 act?.BaseMotionSpeed_Run ?? 0,

@@ -46,6 +46,7 @@ public static class StatusHitEffectManager
 
             }
         }
+        if (replacements.Count == 0) { return null; }
         foreach (var replacement in replacements
                          .OrderByDescending(r => r.Key))
         {

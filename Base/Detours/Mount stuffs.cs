@@ -185,6 +185,7 @@ public unsafe class Mountstuffs : IDisposable
         //camera offset stuff
         var mountObject = (Character*)thisptr->MountObject;
         var ownerObject = (Character*)thisptr->OwnerObject;
+
         if ((ownerObject->GetName().ToString() == Service.PlayerState.CharacterName) && (ownerObject->HomeWorld == Service.PlayerState.HomeWorld.RowId) && (ownerObject->IsMounted() == true))
         {
             var origvalue = MountDetourManager.GetOriginal(thisptr->MountId);
@@ -193,9 +194,9 @@ public unsafe class Mountstuffs : IDisposable
             if (mountObject != null)
             {
                 //Service.Log.Warning("trying apply to mount object");
-                //apply scale           
-                mountObject->Scale = (curvalue.Scale.GetByRaceAndSex(thisptr->OwnerObject->DrawData.CustomizeData.Race, thisptr->OwnerObject->GetSex())/100f);
-                //apply tilts
+                //apply scale[WORKS]
+                mountObject->Scale = (curvalue.Scale.GetByRaceAndSex(ownerObject->DrawData.CustomizeData.Race, ownerObject->GetSex())/100f);
+                //apply tilts[FIX]
                 mountObject->Effects.MountGroundTiltAngle = curvalue.MountGroundTilt.TiltAngle;
                 mountObject->Effects.MountGroundTiltSpeed = curvalue.MountGroundTilt.TiltSpeed;
                 mountObject->Effects.MountGroundTiltOrigin = (EffectContainer.TiltOrigin)curvalue.MountGroundTilt.TiltOrigin;
@@ -204,15 +205,17 @@ public unsafe class Mountstuffs : IDisposable
                 mountObject->Effects.MountFlightSwimTiltSpeed = curvalue.MountFlightTilt.TiltSpeed;
                 mountObject->Effects.MountFlightSwimTiltOrigin = (EffectContainer.TiltOrigin)curvalue.MountFlightTilt.TiltOrigin;
                 // apply risefalltilt
-
+                //mountObject->
                 // BGM
+                BGMSystem.SetBGM((ushort)curvalue.BGMIndex, 6);
             }
             if (ownerObject != null)
             {
                 //Service.Log.Warning("trying apply to owner object");
-                //figure out the math that the game
-                //((CharacterContainerFAFO*)ownerObject)->CameraOffset1 = (curvalue.CameraScale.GetByRaceAndSex(thisptr->OwnerObject->DrawData.CustomizeData.Race, thisptr->OwnerObject->GetSex()) / 100);
-                //apply owner tilt
+                //apply Camerascale[WORKS]
+                ownerObject->GameObject.CameraOffset.Y = (ownerObject->GameObject.CameraOffset.Y / (origvalue.CameraScale.GetByRaceAndSex(ownerObject->DrawData.CustomizeData.Race, ownerObject->GetSex()) / 100))* (curvalue.CameraScale.GetByRaceAndSex(ownerObject->DrawData.CustomizeData.Race, ownerObject->GetSex()) / 100);
+                ownerObject->GameObject.CameraOffsetTarget.Y = (ownerObject->GameObject.CameraOffsetTarget.Y / (origvalue.CameraScale.GetByRaceAndSex(ownerObject->DrawData.CustomizeData.Race, ownerObject->GetSex()) / 100)) * (curvalue.CameraScale.GetByRaceAndSex(ownerObject->DrawData.CustomizeData.Race, ownerObject->GetSex()) / 100);
+                //apply owner tiltp[FIX]
                 ownerObject->Effects.RiderGroundTiltAngle = curvalue.RiderGroundTilt.TiltAngle;
                 ownerObject->Effects.RiderGroundTiltSpeed = curvalue.RiderGroundTilt.TiltSpeed;
                 ownerObject->Effects.RiderGroundTiltOrigin = (EffectContainer.TiltOrigin)curvalue.RiderGroundTilt.TiltOrigin;
