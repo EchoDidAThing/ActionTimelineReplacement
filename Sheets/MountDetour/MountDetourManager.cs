@@ -71,6 +71,7 @@ public static class MountDetourManager
             var act7 = Service.DataManager.GetExcelSheet<TiltParam>()?.GetRow(act?.Unknown17 ?? 0);
             replacement = new MountDetourReplace(
                 act?.RideBGM.RowId ?? 0,
+                act2?.File.ToString() ?? "",
                 act?.Unknown5 ?? 0,
                 act?.BaseMotionSpeed_Walk ?? 0,
                 act?.BaseMotionSpeed_Run ?? 0,

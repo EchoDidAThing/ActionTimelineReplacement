@@ -113,6 +113,7 @@ public class MountDetourConfig(MountDetourReplace replace, bool enabled)
 
 public class MountDetourReplace(
     uint bgmIndex,
+    string bgmPath, 
     //int floatHeight,
     int riseSinkTilt,
     int groundAnimationSpeed,
@@ -126,6 +127,7 @@ public class MountDetourReplace(
     TiltSet riderFlightTilt)
 {
     public uint BGMIndex = bgmIndex;
+    public string BGMPath = bgmPath;
     //int FloatHeight = floatHeight;
     public int RiseSinkTilt = riseSinkTilt;
     public int GroundAnimationSpeed = groundAnimationSpeed;

@@ -185,6 +185,7 @@ public unsafe class ShowTooltipDetour : IDisposable
     public ShowTooltipDetour()
     {
         _ActionHoveredHook = Service.GameInteropProvider.HookFromAddress<AgentActionDetail.Delegates.HandleActionHover>(AgentActionDetail.Addresses.HandleActionHover.Value, ActionHoveredDetour);
+        //_StatusHoveredHook = Service.GameInteropProvider.HookFromAddress<AgentStatus.Delegates.>(AgentActionDetail.Addresses.HandleActionHover.Value, ActionHoveredDetour);
         _ItemHoveredHook = Service.GameInteropProvider.HookFromSignature<ItemHoveredDelegate>(Hooks.itemhoveredhook, ItemHoveredDetour);
         _ShowTooltipHook = Service.GameInteropProvider.HookFromAddress<AtkTooltipManager.Delegates.ShowTooltip>(AtkTooltipManager.Addresses.ShowTooltip.Value, AtkTooltipManagerShowTooltipDetour);
         //_MountNotebookEntryHook = Service.GameInteropProvider.HookFromAddress<AgentMountNoteBook.Delegates.Show>(AgentMountNoteBook., MountNotebookEntryDetour);
@@ -197,8 +198,9 @@ public unsafe class ShowTooltipDetour : IDisposable
         Service.AddonLifecycle.RegisterListener(AddonEvent.PreDraw, "Tooltip", OnTooltipPreDraw);
         Service.AddonLifecycle.RegisterListener(AddonEvent.PostRequestedUpdate, "ActionDetail", OnActionTooltipPostRequestedUpdate);
         Service.AddonLifecycle.RegisterListener(AddonEvent.PreRequestedUpdate, "ActionDetail", OnActionTooltipPreRequestedUpdate);
-        Service.AddonLifecycle.RegisterListener(AddonEvent.PostRefresh, "MountNoteBook", MountMinionNotebookPostRequestedUpdate);
-        Service.AddonLifecycle.RegisterListener(AddonEvent.PostRefresh, "MinionNoteBook", MountMinionNotebookPostRequestedUpdate);
+        Service.AddonLifecycle.RegisterListener(AddonEvent.PostRefresh, "MountNoteBook", MountMinionNotebookPostRefresh);
+        Service.AddonLifecycle.RegisterListener(AddonEvent.PostRefresh, "MinionNoteBook", MountMinionNotebookPostRefresh);
+        Service.AddonLifecycle.RegisterListener(AddonEvent.PostReceiveEvent, "OrnamentNoteBook", OrnamentNotebookPostRefresh);
         //Service.AddonLifecycle.RegisterListener(AddonEvent.PreRequestedUpdate, "MountNoteBook", MountNotebookPreRequestedUpdate);
 
     }
@@ -511,7 +513,29 @@ public unsafe class ShowTooltipDetour : IDisposable
             SetText(jobtextNode, null, origandreplace.Original.JobAbbreviation, origandreplace.Replacement.JobAbbreviation);
         }
     }
-    private void MountMinionNotebookPostRequestedUpdate(AddonEvent addonEvent, AddonArgs addonArgs)
+    private void OrnamentNotebookPostRefresh(AddonEvent addonEvent, AddonArgs addonArgs)
+    {
+        Service.Log.Error("Ornament Notebookupdate triggered");
+        //HandlePronounChange(addonEvent);
+
+
+        AtkUnitBase* addonNotebook = (AtkUnitBase*)addonArgs.Addon.Address;
+        if (addonNotebook == null) { return; }
+        if ((HoveredAction.ActionKind.ToString() != "Ornament")) { return; }
+
+        OrigAndReplace origandreplace = GetOrigAndConfByType(HoveredAction.ActionKind.ToString(), HoveredAction.ActionID, Service.PlayerState.ClassJob.RowId);
+        if (origandreplace == null) { return; }
+        if (origandreplace.Matches()) { return; }
+        if (origandreplace.Original.Name != origandreplace.Replacement.Name && origandreplace.Replacement.Name != "")
+        {
+            AtkTextNode* nameNode = addonNotebook->GetTextNodeById(60);
+            if (nameNode->NodeText.ToString().ToLower() != origandreplace.Original.Name.ToLower()) { return; }
+            Service.Log.Error("OrnamentNotebookupdate NAME triggered");
+            //Service.Log.Error("desc Values at current location: " + origandreplace.Original.Description + " + " + origandreplace.Replacement.Description);
+            SetTextNoSwap(nameNode, origandreplace.Replacement.Name);
+        }
+    }
+    private void MountMinionNotebookPostRefresh(AddonEvent addonEvent, AddonArgs addonArgs)
     {
         Service.Log.Error("Mount/MinionNotebookupdate triggered");
         //HandlePronounChange(addonEvent);
@@ -702,6 +726,7 @@ public unsafe class ShowTooltipDetour : IDisposable
         Service.AddonLifecycle.UnregisterListener(OnTooltipRequestedUpdate);
         Service.AddonLifecycle.UnregisterListener(OnActionTooltipPreRequestedUpdate);
         Service.AddonLifecycle.UnregisterListener(OnActionTooltipPostRequestedUpdate);
-        Service.AddonLifecycle.UnregisterListener(MountMinionNotebookPostRequestedUpdate);
+        Service.AddonLifecycle.UnregisterListener(MountMinionNotebookPostRefresh);
+        Service.AddonLifecycle.UnregisterListener(OrnamentNotebookPostRefresh);
     }
 }

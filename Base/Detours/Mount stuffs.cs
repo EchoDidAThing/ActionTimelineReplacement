@@ -15,12 +15,15 @@ using Dalamud.Utility;
 using FFXIVClientStructs.FFXIV.Client.Enums;
 using FFXIVClientStructs.FFXIV.Client.Game;
 using FFXIVClientStructs.FFXIV.Client.Game.Character;
+using FFXIVClientStructs.FFXIV.Client.Sound;
 using FFXIVClientStructs.FFXIV.Client.System.Resource.Handle;
 using FFXIVClientStructs.FFXIV.Client.UI;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 using FFXIVClientStructs.FFXIV.Client.UI.Misc;
 using FFXIVClientStructs.FFXIV.Common.Lua;
+using FFXIVClientStructs.FFXIV.Component.Exd;
 using FFXIVClientStructs.FFXIV.Component.GUI;
+using InteropGenerator.Runtime;
 using Lumina.Data.Parsing.Scd;
 using Lumina.Text;
 using Lumina.Text.Payloads;
@@ -75,6 +78,10 @@ public unsafe class Mountstuffs : IDisposable
         byte Race;
         
     }
+
+    public bool BGMPathUpdate = false;
+    public uint MountID = 0;
+
     private delegate void MountUpdateDelegate(MountContainer* thisptr);
 
     private readonly Hook<MountContainer.Delegates.CreateAndSetupMount>? _CreateAndSetupMountHook;
@@ -82,6 +89,7 @@ public unsafe class Mountstuffs : IDisposable
     private readonly Hook<EffectContainer.Delegates.LoadMountTiltData>? _SetupMountTiltDataHook;
     private readonly Hook<EffectContainer.Delegates.LoadPlayerTiltData>? _SetupRiderTiltDataHook;
     private readonly Hook<MountUpdateDelegate>? _MountUpdateHook;
+    private readonly Hook<SoundManager.Delegates.PlayBGMSound>? _PlayBGMSoundHook;
     //private readonly Hook<MountContainer.Delegates.>? _SetupRiderTiltDataHook;
     //private readonly Hook<AddonInventoryGrid.Delegates.ReceiveEvent>? _InventoryGridReceiveEvent;
 
@@ -92,16 +100,18 @@ public unsafe class Mountstuffs : IDisposable
         //_SetupMountTiltDataHook = Service.GameInteropProvider.HookFromAddress<EffectContainer.Delegates.LoadMountTiltData>(EffectContainer.Addresses.LoadMountTiltData.Value, SetupMountTiltDataDetour);
         //_SetupRiderTiltDataHook = Service.GameInteropProvider.HookFromAddress<EffectContainer.Delegates.LoadPlayerTiltData>(EffectContainer.Addresses.LoadPlayerTiltData.Value, SetupRiderTiltDataDetour);
         _MountUpdateHook = Service.GameInteropProvider.HookFromSignature<MountUpdateDelegate>(Hooks.MountUpdate, MountUpdateDetour);
+        _PlayBGMSoundHook = Service.GameInteropProvider.HookFromAddress<SoundManager.Delegates.PlayBGMSound>(SoundManager.Addresses.PlayBGMSound.Value, PlayBGMSoundDetour);
         //_ItemDragDropGetIconIDHook = Service.GameInteropProvider.HookFromAddress<AtkComponentDragDrop.Delegates.GetIconId>(AtkComponentDragDrop.Addresses.GetIconId.Value, DragDropGetIconDetour);
         //_ItemHoveredHook = Service.GameInteropProvider.HookFromSignature<ItemHoveredDelegate>(Hooks.itemhoveredhook, ItemHoveredDetour);
         //_ShowTooltipHook = Service.GameInteropProvider.HookFromAddress<AtkTooltipManager.Delegates.ShowTooltip>(AtkTooltipManager.Addresses.ShowTooltip.Value, AtkTooltipManagerShowTooltipDetour);
 
-       //this._CreateAndSetupMountHook.Enable();
-       //this._SetupMountHook.Enable();
-       //this._SetupMountTiltDataHook.Enable();
-       //this._SetupRiderTiltDataHook.Enable();
-       this._MountUpdateHook.Enable();
-       //this._ShowTooltipHook.Enable();
+        //this._CreateAndSetupMountHook.Enable();
+        //this._SetupMountHook.Enable();
+        //this._SetupMountTiltDataHook.Enable();
+        //this._SetupRiderTiltDataHook.Enable();
+        this._MountUpdateHook.Enable();
+        this._PlayBGMSoundHook.Enable();
+        //this._ShowTooltipHook.Enable();
 
         //Service.AddonLifecycle.RegisterListener(AddonEvent.PostRequestedUpdate, "Tooltip", OnTooltipRequestedUpdate);
         //Service.AddonLifecycle.RegisterListener(AddonEvent.PreDraw, "Tooltip", OnTooltipPreDraw);
@@ -120,6 +130,28 @@ public unsafe class Mountstuffs : IDisposable
         Service.Log.Error("STOP");
         //thisptr->MountObject->Scale = .2f;
         //thisptr->OwnerObject->DrawData->head
+
+    }
+    private SoundData* PlayBGMSoundDetour(SoundManager* thisptr, CStringPointer path)
+    {
+        //Just do it normally for now, this is a test.
+        var retvalue  = _PlayBGMSoundHook!.Original(thisptr, path);
+        Service.Log.Warning("Mount Id is " + MountID);
+        var origvalue = MountDetourManager.GetOriginal(MountID);
+        var curvalue = MountDetourManager.GetReplacement(MountID);
+        if (BGMPathUpdate)
+        {
+            if (path.ToString() != curvalue.BGMPath)
+            {
+                retvalue = _PlayBGMSoundHook!.Original(thisptr, ProcessingGlobals.PathCString(curvalue.BGMPath));
+            }
+            Service.Log.Error("Playing NEW BGM" + curvalue.BGMPath);
+            BGMPathUpdate = false;
+            MountID = 0;
+        }
+
+        return retvalue;
+
 
     }
     private void SetupRiderTiltDataDetour(EffectContainer* thisptr)
@@ -186,7 +218,7 @@ public unsafe class Mountstuffs : IDisposable
         var mountObject = (Character*)thisptr->MountObject;
         var ownerObject = (Character*)thisptr->OwnerObject;
 
-        if ((ownerObject->GetName().ToString() == Service.PlayerState.CharacterName) && (ownerObject->HomeWorld == Service.PlayerState.HomeWorld.RowId) && (ownerObject->IsMounted() == true))
+        if ((ownerObject->GetName().ToString() == Service.PlayerState.CharacterName) && (ownerObject->HomeWorld == Service.PlayerState.HomeWorld.RowId) && (ownerObject->IsMounted() == true) && (thisptr->MountId != 0))
         {
             var origvalue = MountDetourManager.GetOriginal(thisptr->MountId);
             var curvalue = MountDetourManager.GetReplacement(thisptr->MountId);
@@ -207,7 +239,16 @@ public unsafe class Mountstuffs : IDisposable
                 // apply risefalltilt
                 //mountObject->
                 // BGM[WORKS]
-                BGMSystem.SetBGM((ushort)curvalue.BGMIndex, 6);
+                //TESTHERE: hot swapping the wanted values into the bgm row, then reverting once the setbgm is done.
+                //or better yet hot swap in my own addresses. it is just a intptr after all?
+                //Service.Log.Warning("Mount Id is " + MountID);
+
+                if ((!BGMPathUpdate) && (origvalue.BGMPath != curvalue.BGMPath))
+                { 
+                    MountID = thisptr->MountId;
+                    BGMPathUpdate = true;
+                    BGMSystem.SetBGM((ushort)curvalue.BGMIndex, 6);
+                }
             }
             if (ownerObject != null)
             {
@@ -253,6 +294,7 @@ public unsafe class Mountstuffs : IDisposable
         //this._SetupMountTiltDataHook.Dispose();
         //this._SetupRiderTiltDataHook.Dispose();
         this._MountUpdateHook.Dispose();
+        this._PlayBGMSoundHook.Dispose();
 
         //Service.AddonLifecycle.UnregisterListener(OnTooltipPreDraw);
         //Service.AddonLifecycle.UnregisterListener(OnTooltipRequestedUpdate);

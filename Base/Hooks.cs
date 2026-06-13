@@ -9,6 +9,7 @@ public static unsafe class Hooks
     public const string vfxhook = "E8 ?? ?? ?? ?? 48 8B D0 48 8B CB E8 ?? ?? ?? ?? 45 84 F6"; //updated for 7.5
     public const string statusloopvfxhook = "E8 ?? ?? ?? ?? 48 8B D8 48 85 C0 74 ?? 66 39 38";//updated 7.4
     public const string actiontimelinehook = "E8 ?? ?? ?? ?? 48 85 C0 0F 84 ?? ?? ?? ?? 80 78 ?? ?? 0F 85 ?? ?? ?? ?? 32 C0"; //updated for 7.5HF1. this was a pain to find
+    public const string bgmhook = "TBD"; 
 
     public const string HandleItemHover = "E8 ?? ?? ?? ?? 48 8B 5C 24 ?? 33 C0 48 8B 6C 24 ?? 48 8B B4 24 ?? ?? ?? ?? 41 89 04 24";//updated 7.5, Client::UI::Agent::AgentItemDetail.HandleItemHover
 
@@ -17,7 +18,7 @@ public static unsafe class Hooks
     public const string itemhoveredhook = "E8 ?? ?? ?? ?? 84 C0 0F 84 ?? ?? ?? ?? 48 89 9C 24 ?? ?? ?? ?? 4C 89 A4 24";
 
     //Stuff I pulled myself
-    public const string OtherTiltParamSetup = "E8 ?? ?? ?? ?? 48 8B CB E8 ?? ?? ?? ?? 48 83 BB ?? ?? ?? ?? ?? 74";
+    //public const string OtherTiltParamSetup = "E8 ?? ?? ?? ?? 48 8B CB E8 ?? ?? ?? ?? 48 83 BB ?? ?? ?? ?? ?? 74";
     public const string MountUpdate = "40 55 57 41 57 48 81 EC ?? ?? ?? ?? 48 8B F9";
 
 
@@ -217,8 +218,8 @@ public static unsafe class Hooks
     public static OrnamentCustomizeData* GetOrnamentCustomizeData(uint RowId)
     {
         _getOrnamentCustomizeDataHook ??= Marshal.GetDelegateForFunctionPointer<GetOrnamentCustomizeDataDelegate>(Service.Scanner.ScanText(
-            "E8 ?? ?? ?? ?? 48 8B D8 48 85 C0 0F 84 ?? ?? ?? ?? 0F B7 08"));
-        //Updated for 7.5HF1 Component::Exd::ExdModule.GetOrnamentCustomizeRow located inside A nested function under Client::Game::Character::OrnamentContainer.Update
+            "E8 ?? ?? ?? ?? 48 8B D8 48 85 C0 0F 84 ?? ?? ?? ?? 0F B7 08 0F BF 40"));
+        //Updated for 7.51HF1 Component::Exd::ExdModule.GetOrnamentCustomizeRow located inside A nested function under Client::Game::Character::OrnamentContainer.Update
         return _getOrnamentCustomizeDataHook(RowId);
     }
     

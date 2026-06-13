@@ -1,13 +1,16 @@
 ﻿using Dalamud.Bindings.ImGui;
 using Dalamud.Interface.Utility;
+using InteropGenerator.Runtime;
 using System;
 using System.Numerics;
+using System.Runtime.InteropServices;
+using System.Text;
 using static Dalamud.Interface.Utility.Raii.ImRaii;
 #pragma warning disable CA1416 // Validate platform compatibility
 
 namespace ActionTimelineReplacement.Base.Global;
 
-public class ProcessingGlobals
+public unsafe class ProcessingGlobals
 {
 
     public static int ScoreString(string s1, string search)
@@ -32,5 +35,20 @@ public class ProcessingGlobals
         //Service.Log.Info("Setting PackedBool to [{id}].",  PackedBool);
 
         return PackedBool;
+    }
+
+
+    public static CStringPointer PathCString(string path)
+    {
+        var bytes = Encoding.ASCII.GetBytes(path);
+        var ptr = Marshal.AllocHGlobal(bytes.Length + 1);
+        Marshal.Copy(bytes, 0, ptr, bytes.Length);
+        Marshal.WriteByte(ptr + bytes.Length, 0);
+
+        var retvalue =  new CStringPointer((byte*)ptr);
+
+        Marshal.FreeHGlobal(ptr);
+
+        return retvalue;
     }
 }

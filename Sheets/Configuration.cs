@@ -147,6 +147,7 @@ public class Configuration : IPluginConfiguration
     Dictionary<uint, JobTransientsConfig> jobtransientswriter,
     Dictionary<uint, MountConfig> mountwriter,
     Dictionary<uint, MountCustomizeConfig> mountcustomizewriter,
+    Dictionary<uint, MountLightConfig> mountlightwriter,
     Dictionary<uint, MountDetourConfig> mountdetourwriter,
     Dictionary<uint, MountTransientsConfig> mounttransientswriter,
     Dictionary<uint, OrnamentTransientsConfig> ornamenttransientswriter,
@@ -185,6 +186,7 @@ public class Configuration : IPluginConfiguration
         public Dictionary<uint, JobTransientsConfig> JobTransientsWriter { get; set; } = jobtransientswriter;
         public Dictionary<uint, MountConfig> MountWriter { get; set; } = mountwriter;
         public Dictionary<uint, MountCustomizeConfig> MountCustomizeWriter { get; set; } = mountcustomizewriter;
+        public Dictionary<uint, MountLightConfig> MountLightWriter { get; set; } = mountlightwriter;
         public Dictionary<uint, MountDetourConfig> MountDetourWriter { get; set; } = mountdetourwriter;
         public Dictionary<uint, MountTransientsConfig> MountTransientsWriter { get; set; } = mounttransientswriter;
         public Dictionary<uint, OrnamentTransientsConfig> OrnamentTransientsWriter { get; set; } = ornamenttransientswriter;
