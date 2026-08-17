@@ -11,7 +11,7 @@ public static unsafe class Hooks
     public const string actiontimelinehook = "E8 ?? ?? ?? ?? 48 85 C0 0F 84 ?? ?? ?? ?? 80 78 ?? ?? 0F 85 ?? ?? ?? ?? 32 C0"; //updated for 7.5HF1. this was a pain to find
     public const string bgmhook = "TBD"; 
 
-    public const string HandleItemHover = "E8 ?? ?? ?? ?? 48 8B 5C 24 ?? 33 C0 48 8B 6C 24 ?? 48 8B B4 24 ?? ?? ?? ?? 41 89 04 24";//updated 7.5, Client::UI::Agent::AgentItemDetail.HandleItemHover
+    public const string HandleItemHover = "48 89 5C 24 ?? 48 89 6C 24 ?? 48 89 74 24 ?? 57 48 83 EC ?? 8B FA 41 8B E9";//updated 7.55hf2, Client::UI::Agent::AgentItemDetail.HandleItemHover
 
 
     //yoinked from Simpletweaks
@@ -155,7 +155,7 @@ public static unsafe class Hooks
     {
         _getTiltParamDataHook ??= Marshal.GetDelegateForFunctionPointer<GetTiltParamDataDelegate>(Service.Scanner.ScanText(
             "E8 ?? ?? ?? ?? 0F B7 4F ?? 48 8B F0 E8 ?? ?? ?? ?? 33 D2"));
-        //updated for 7.4, Component::Exd::ExdModule.GetMountTiltParamRow located inside a function within Client::Game::Character::MountContainer.CreateAndSetupMountContainer
+        //updated for 7.4, Component::Exd::ExdModule.GetMountTiltParamRow located inside Client::Game::Character::EffectContainer.LoadPlayerTiltData
         return _getTiltParamDataHook(RowId);
     }
 
@@ -218,8 +218,8 @@ public static unsafe class Hooks
     public static OrnamentCustomizeData* GetOrnamentCustomizeData(uint RowId)
     {
         _getOrnamentCustomizeDataHook ??= Marshal.GetDelegateForFunctionPointer<GetOrnamentCustomizeDataDelegate>(Service.Scanner.ScanText(
-            "E8 ?? ?? ?? ?? 48 8B D8 48 85 C0 0F 84 ?? ?? ?? ?? 0F B7 08 0F BF 40"));
-        //Updated for 7.51HF1 Component::Exd::ExdModule.GetOrnamentCustomizeRow located inside A nested function under Client::Game::Character::OrnamentContainer.Update
+            "E8 ?? ?? ?? ?? 48 8B D8 48 85 C0 0F 84 ?? ?? ?? ?? 0F B7 08"));
+        //Updated for 7.55HF2 Component::Exd::ExdModule.GetOrnamentCustomizeRow located inside A nested function under Client::Game::Character::OrnamentContainer.Update
         return _getOrnamentCustomizeDataHook(RowId);
     }
     
