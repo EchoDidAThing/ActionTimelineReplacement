@@ -55,10 +55,6 @@ namespace ActionTimelineReplace.Base.Detours;
  * 
  * 
  * 
- * this is where isons load for dragdrop:
- * Component::GUI::AtkComponentDragDrop.GetIconId
- * 
- * 
  * other thoughts - HideHeadgear?
  * for scale have 
  * Mount - Exit move distance, exit move speed, basemotionspeed, basemoptionwalk, 
@@ -69,7 +65,7 @@ namespace ActionTimelineReplace.Base.Detours;
 public unsafe class Mountstuffs : IDisposable
 {
     public bool stop = false;
-    class lastowner
+    class lastOwner
     {
         string Name;
         uint Homeworld;
@@ -135,24 +131,22 @@ public unsafe class Mountstuffs : IDisposable
     private SoundData* PlayBGMSoundDetour(SoundManager* thisptr, CStringPointer path)
     {
         //Just do it normally for now, this is a test.
-        var retvalue  = _PlayBGMSoundHook!.Original(thisptr, path);
         Service.Log.Warning("Mount Id is " + MountID);
         var origvalue = MountDetourManager.GetOriginal(MountID);
         var curvalue = MountDetourManager.GetReplacement(MountID);
-        if (BGMPathUpdate)
-        {
-            if (path.ToString() != curvalue.BGMPath)
+        var outpath = path;
+        //if (BGMPathUpdate)
+        //{
+            if ((path.ToString() != curvalue.BGMPath) && (path.ToString() == origvalue.BGMPath ) && (MountID!= 0) && (origvalue != curvalue))
             {
-                retvalue = _PlayBGMSoundHook!.Original(thisptr, ProcessingGlobals.PathCString(curvalue.BGMPath));
+                outpath = ProcessingGlobals.PathCString(curvalue.BGMPath);
+                Service.Log.Error("replace path with" + curvalue.BGMPath);
             }
-            Service.Log.Error("Playing NEW BGM" + curvalue.BGMPath);
-            BGMPathUpdate = false;
-            MountID = 0;
-        }
-
+            //BGMPathUpdate = false;
+            //MountID = 0;
+        //}
+        var retvalue  = _PlayBGMSoundHook!.Original(thisptr, outpath);
         return retvalue;
-
-
     }
     private void SetupRiderTiltDataDetour(EffectContainer* thisptr)
     {
@@ -242,13 +236,14 @@ public unsafe class Mountstuffs : IDisposable
                 //TESTHERE: hot swapping the wanted values into the bgm row, then reverting once the setbgm is done.
                 //or better yet hot swap in my own addresses. it is just a intptr after all?
                 //Service.Log.Warning("Mount Id is " + MountID);
+                MountID = thisptr->MountId;
 
-                if ((!BGMPathUpdate) && (origvalue.BGMPath != curvalue.BGMPath))
-                { 
-                    MountID = thisptr->MountId;
-                    BGMPathUpdate = true;
-                    BGMSystem.SetBGM((ushort)curvalue.BGMIndex, 6);
-                }
+                //if ((!BGMPathUpdate) && (origvalue.BGMPath != curvalue.BGMPath))
+                //{ 
+                //    MountID = thisptr->MountId;
+                //    BGMPathUpdate = true;
+                //    BGMSystem.SetBGM((ushort)curvalue.BGMIndex, 6);
+                //}
             }
             if (ownerObject != null)
             {

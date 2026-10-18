@@ -37,23 +37,23 @@ public class RacialScalingSet (float malemidlander, float femalemidlander, float
             case 0:
                 switch (Race)
                 {
-                    case 100:
+                    case 0:
                         return MaleMidlander;
-                    case 101:
+                    case 1:
                         return MaleMidlander;
-                    case 102:
+                    case 2:
                         return MaleElezen;
-                    case 103:
+                    case 3:
                         return MaleLalafell;
-                    case 104:
+                    case 4:
                         return MaleMiqote;
-                    case 105:
+                    case 5:
                         return MaleRoegadyn;
                     case 6:
                         return MaleAura;
-                    case 107:
+                    case 7:
                         return MaleHrothgar;
-                    case 108:
+                    case 8:
                         return MaleViera;
                     default:
                         Service.Log.Error(Race + "is not defined in GetByRaceAndSex -> Male");
@@ -62,23 +62,23 @@ public class RacialScalingSet (float malemidlander, float femalemidlander, float
             case 1:
                 switch (Race)
                 {
-                    case 100:
+                    case 0:
                         return FemaleMidlander;
-                    case 101:
+                    case 1:
                         return FemaleMidlander;
-                    case 102:
+                    case 2:
                         return FemaleElezen;
-                    case 103:
+                    case 3:
                         return FemaleLalafell;
-                    case 104:
+                    case 4:
                         return FemaleMiqote;
-                    case 105:
+                    case 5:
                         return FemaleRoegadyn;
                     case 6:
                         return FemaleAura;
-                    case 107:
+                    case 7:
                         return FemaleHrothgar;
-                    case 108:
+                    case 8:
                         return FemaleViera;
                     default:
                         Service.Log.Error(Race + "is not defined in GetByRaceAndSex -> Female");

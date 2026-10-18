@@ -14,11 +14,11 @@ namespace ActionTimelineReplacement.Interface;
 
 public sealed partial class ConfigWindow : Window
 {
-    private Dictionary<string, List<string>> _AllHeaders = [];
+    private Dictionary<string, List<string>> _allHeaders = [];
 
     //TOSETUP: Add new search here
     private string _searchAction = string.Empty;
-    private string _searchActionCastVFX = string.Empty;
+    private string _searchActionCastVfx = string.Empty;
     private string _searchActionTransients = string.Empty;
     private string _searchCompanionTransients = string.Empty;
     private string _searchJobTransients = string.Empty;
@@ -29,7 +29,7 @@ public sealed partial class ConfigWindow : Window
     private string _searchOrnamentTransients = string.Empty;
     private string _searchTiltParam = string.Empty;
     private string _searchStatus = string.Empty;
-    private string _searchStatusLoopVFX = string.Empty;
+    private string _searchStatusLoopVfx = string.Empty;
     private string _searchStatusHitEffect = string.Empty;
     private string _searchStatusTransients = string.Empty;
     private string _searchTraitTransients = string.Empty;
@@ -45,31 +45,31 @@ public sealed partial class ConfigWindow : Window
 
     private void DrawSheets()
     {
-        if (!_AllHeaders.ContainsKey("Action"))
+        if (!_allHeaders.ContainsKey("Action"))
         {
             //TOSETUP: Add new headers here
-            _AllHeaders.Add("Action", []);
-            _AllHeaders.Add("ActionCastVFX", []);
-            _AllHeaders.Add("ActionTimeline", []);
-            _AllHeaders.Add("ActionTransients", []);
-            _AllHeaders.Add("CompanionTransients", []);
-            _AllHeaders.Add("JobTransients", []);
-            _AllHeaders.Add("Mount", []);
-            _AllHeaders.Add("MountCustomize", []);
-            _AllHeaders.Add("MountDetour", []);
-            _AllHeaders.Add("MountTransients", []);
-            _AllHeaders.Add("OrnamentTransients", []);
-            _AllHeaders.Add("Status", []);
-            _AllHeaders.Add("StatusLoopVFX", []);
-            _AllHeaders.Add("StatusHitEffect", []);
-            _AllHeaders.Add("StatusTransients", []);
-            _AllHeaders.Add("TiltParam", []);
-            _AllHeaders.Add("TraitTransients", []);
-            _AllHeaders.Add("Glasses", []);
-            _AllHeaders.Add("GlassesStyle", []);
-            _AllHeaders.Add("Ornament", []);
-            _AllHeaders.Add("OrnamentCustomize", []);
-            _AllHeaders.Add("VFX", []);
+            _allHeaders.Add("Action", []);
+            _allHeaders.Add("ActionCastVFX", []);
+            _allHeaders.Add("ActionTimeline", []);
+            _allHeaders.Add("ActionTransients", []);
+            _allHeaders.Add("CompanionTransients", []);
+            _allHeaders.Add("JobTransients", []);
+            _allHeaders.Add("Mount", []);
+            _allHeaders.Add("MountCustomize", []);
+            _allHeaders.Add("MountDetour", []);
+            _allHeaders.Add("MountTransients", []);
+            _allHeaders.Add("OrnamentTransients", []);
+            _allHeaders.Add("Status", []);
+            _allHeaders.Add("StatusLoopVFX", []);
+            _allHeaders.Add("StatusHitEffect", []);
+            _allHeaders.Add("StatusTransients", []);
+            _allHeaders.Add("TiltParam", []);
+            _allHeaders.Add("TraitTransients", []);
+            _allHeaders.Add("Glasses", []);
+            _allHeaders.Add("GlassesStyle", []);
+            _allHeaders.Add("Ornament", []);
+            _allHeaders.Add("OrnamentCustomize", []);
+            _allHeaders.Add("VFX", []);
             //_AllHeaders.Add("PointMenuChoice", []);
 
         }
@@ -86,7 +86,7 @@ public sealed partial class ConfigWindow : Window
                 ActionMain.Draw(activesheet, ref _activeSet, ref _searchAction);
                 break;
             case "ActionCastVFX":
-                ActionCastVFXMain.Draw(activesheet, ref _activeSet, ref _searchActionCastVFX);
+                ActionCastVFXMain.Draw(activesheet, ref _activeSet, ref _searchActionCastVfx);
                 break;
             case "ActionTimeline":
                 ActionTimelineMain.Draw(activesheet, ref _activeSet, ref _searchActionTimeline);
@@ -119,7 +119,7 @@ public sealed partial class ConfigWindow : Window
                 StatusMain.Draw(activesheet, ref _activeSet, ref _searchStatus);
                 break;
             case "StatusLoopVFX":
-                StatusLoopVFXMain.Draw(activesheet, ref _activeSet, ref _searchStatusLoopVFX);
+                StatusLoopVFXMain.Draw(activesheet, ref _activeSet, ref _searchStatusLoopVfx);
                 break;
             case "StatusHitEffect":
                 StatusHitEffectMain.Draw(activesheet, ref _activeSet, ref _searchStatusHitEffect);

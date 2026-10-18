@@ -170,7 +170,7 @@ public unsafe class ShowTooltipDetour : IDisposable
     ];
 
 
-    private delegate byte ItemHoveredDelegate(IntPtr a1, IntPtr* a2, int* containerId, ushort* slotId, IntPtr a5, uint slotIdInt, IntPtr a7);
+    private delegate byte ItemHoveredDelegate(AgentItemDetail* a1, InventoryItem** a2, InventoryType* containerId, short* slotId, uint a5, uint slotIdInt, InventoryItem* a7);
     //private delegate byte MountNotebookEntryDelegate(nint a1, ushort entryid, IntPtr* a3);
 
     private readonly Hook<ItemHoveredDelegate>? _ItemHoveredHook;
@@ -235,7 +235,7 @@ public unsafe class ShowTooltipDetour : IDisposable
     public static InventoryItem HoveredItem { get; private set; }
     public static InventoryItem LastHoveredItem { get; private set; }
 
-    private byte ItemHoveredDetour(IntPtr a1, IntPtr* a2, int* containerid, ushort* slotid, IntPtr a5, uint slotidint, IntPtr a7)
+    private byte ItemHoveredDetour(AgentItemDetail* a1, InventoryItem** a2, InventoryType* containerid, Int16* slotid, uint a5, uint slotidint, InventoryItem* a7)
     {
         var returnValue = _ItemHoveredHook!.Original(a1, a2, containerid, slotid, a5, slotidint, a7);
         HoveredItem = *(InventoryItem*)(a7);

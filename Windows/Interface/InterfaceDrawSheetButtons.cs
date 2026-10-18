@@ -20,7 +20,7 @@ public sealed partial class ConfigWindow : Window
         if (_activeSet is null) return;
         ImGui.Columns(5, "###SheetButtonsSelector", false);
         bool firstrun = true;
-        foreach (var mainkey in _AllHeaders.Keys)
+        foreach (var mainkey in _allHeaders.Keys)
         {
             if (firstrun) { firstrun = false; }
             else ImGui.NextColumn();
