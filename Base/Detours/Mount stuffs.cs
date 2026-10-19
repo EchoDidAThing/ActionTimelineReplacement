@@ -159,11 +159,12 @@ public unsafe class Mountstuffs : IDisposable
         lastSoundManager = thisptr;
         //if (BGMPathUpdate)
         //{
+            lastbgmpath = origvalue.BGMPath;
+            trykill = true;
             if ((path.ToString() != curvalue.BGMPath) && (path.ToString() == origvalue.BGMPath) && (MountID!= 0) && (origvalue != curvalue))
             {
                 outpath = ProcessingGlobals.PathCString(curvalue.BGMPath);
                 lastbgmpath = curvalue.BGMPath;
-                trykill = true;
                 Service.Log.Error("replace path with" + curvalue.BGMPath);
             }
             //BGMPathUpdate = false;
