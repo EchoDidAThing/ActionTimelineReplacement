@@ -77,15 +77,24 @@ public unsafe class Mountstuffs : IDisposable
 
     public bool BGMPathUpdate = false;
     public uint MountID = 0;
+    public SoundManager* lastSoundManager;
+    public string lastbgmpath = "superdefaulttext0w0";
+    public bool trykill = false;
 
+    public const string CheckSig = "E8 ?? ?? ?? ?? 85 C0 74 ?? 48 8B D7 48 8B CE";
     private delegate void MountUpdateDelegate(MountContainer* thisptr);
+    private delegate void MountDismountDelegate(Int64 a1, char* a2);
+
+    private delegate char CheckSigDelegate(Int64 a1);
 
     private readonly Hook<MountContainer.Delegates.CreateAndSetupMount>? _CreateAndSetupMountHook;
     private readonly Hook<MountContainer.Delegates.SetupMount>? _SetupMountHook;
     private readonly Hook<EffectContainer.Delegates.LoadMountTiltData>? _SetupMountTiltDataHook;
     private readonly Hook<EffectContainer.Delegates.LoadPlayerTiltData>? _SetupRiderTiltDataHook;
     private readonly Hook<MountUpdateDelegate>? _MountUpdateHook;
+    private readonly Hook<MountDismountDelegate>? _MountDismountHook;
     private readonly Hook<SoundManager.Delegates.PlayBGMSound>? _PlayBGMSoundHook;
+    private readonly Hook<CheckSigDelegate>? _CheckSigHook;
     //private readonly Hook<MountContainer.Delegates.>? _SetupRiderTiltDataHook;
     //private readonly Hook<AddonInventoryGrid.Delegates.ReceiveEvent>? _InventoryGridReceiveEvent;
 
@@ -97,6 +106,8 @@ public unsafe class Mountstuffs : IDisposable
         //_SetupRiderTiltDataHook = Service.GameInteropProvider.HookFromAddress<EffectContainer.Delegates.LoadPlayerTiltData>(EffectContainer.Addresses.LoadPlayerTiltData.Value, SetupRiderTiltDataDetour);
         _MountUpdateHook = Service.GameInteropProvider.HookFromSignature<MountUpdateDelegate>(Hooks.MountUpdate, MountUpdateDetour);
         _PlayBGMSoundHook = Service.GameInteropProvider.HookFromAddress<SoundManager.Delegates.PlayBGMSound>(SoundManager.Addresses.PlayBGMSound.Value, PlayBGMSoundDetour);
+        _MountDismountHook = Service.GameInteropProvider.HookFromSignature<MountDismountDelegate>(Hooks.MountDismount, MountDismountDetour);
+        _CheckSigHook = Service.GameInteropProvider.HookFromSignature<CheckSigDelegate>(CheckSig, CheckSigDetour);
         //_ItemDragDropGetIconIDHook = Service.GameInteropProvider.HookFromAddress<AtkComponentDragDrop.Delegates.GetIconId>(AtkComponentDragDrop.Addresses.GetIconId.Value, DragDropGetIconDetour);
         //_ItemHoveredHook = Service.GameInteropProvider.HookFromSignature<ItemHoveredDelegate>(Hooks.itemhoveredhook, ItemHoveredDetour);
         //_ShowTooltipHook = Service.GameInteropProvider.HookFromAddress<AtkTooltipManager.Delegates.ShowTooltip>(AtkTooltipManager.Addresses.ShowTooltip.Value, AtkTooltipManagerShowTooltipDetour);
@@ -107,6 +118,8 @@ public unsafe class Mountstuffs : IDisposable
         //this._SetupRiderTiltDataHook.Enable();
         this._MountUpdateHook.Enable();
         this._PlayBGMSoundHook.Enable();
+        this._MountDismountHook.Enable();
+        //this._CheckSigHook.Enable();
         //this._ShowTooltipHook.Enable();
 
         //Service.AddonLifecycle.RegisterListener(AddonEvent.PostRequestedUpdate, "Tooltip", OnTooltipRequestedUpdate);
@@ -115,6 +128,14 @@ public unsafe class Mountstuffs : IDisposable
         //Service.AddonLifecycle.RegisterListener(AddonEvent.PostShow, "_ActionBar07", OnActionBarShow);
 
     }
+    
+    private char CheckSigDetour(Int64 a1)
+    {
+        var output = _CheckSigHook!.Original(a1);
+        Service.Log.Error("Checked Signature has run, result is!" + output.ToString());
+        return output;
+    }
+    
     private void SetupMountTiltDataDetour(EffectContainer* thisptr)
     {
         // check if owner is corret, then pull and apply mounted tilt values.
@@ -135,11 +156,14 @@ public unsafe class Mountstuffs : IDisposable
         var origvalue = MountDetourManager.GetOriginal(MountID);
         var curvalue = MountDetourManager.GetReplacement(MountID);
         var outpath = path;
+        lastSoundManager = thisptr;
         //if (BGMPathUpdate)
         //{
-            if ((path.ToString() != curvalue.BGMPath) && (path.ToString() == origvalue.BGMPath ) && (MountID!= 0) && (origvalue != curvalue))
+            if ((path.ToString() != curvalue.BGMPath) && (path.ToString() == origvalue.BGMPath) && (MountID!= 0) && (origvalue != curvalue))
             {
                 outpath = ProcessingGlobals.PathCString(curvalue.BGMPath);
+                lastbgmpath = curvalue.BGMPath;
+                trykill = true;
                 Service.Log.Error("replace path with" + curvalue.BGMPath);
             }
             //BGMPathUpdate = false;
@@ -211,7 +235,6 @@ public unsafe class Mountstuffs : IDisposable
         //camera offset stuff
         var mountObject = (Character*)thisptr->MountObject;
         var ownerObject = (Character*)thisptr->OwnerObject;
-
         if ((ownerObject->GetName().ToString() == Service.PlayerState.CharacterName) && (ownerObject->HomeWorld == Service.PlayerState.HomeWorld.RowId) && (ownerObject->IsMounted() == true) && (thisptr->MountId != 0))
         {
             var origvalue = MountDetourManager.GetOriginal(thisptr->MountId);
@@ -237,11 +260,11 @@ public unsafe class Mountstuffs : IDisposable
                 //or better yet hot swap in my own addresses. it is just a intptr after all?
                 //Service.Log.Warning("Mount Id is " + MountID);
                 MountID = thisptr->MountId;
+                
+                
 
-                //if ((!BGMPathUpdate) && (origvalue.BGMPath != curvalue.BGMPath))
+                //if ((!BGMPathUpdate) && (lastSoundManager->PlayBGMSound() != curvalue.BGMPath))
                 //{ 
-                //    MountID = thisptr->MountId;
-                //    BGMPathUpdate = true;
                 //    BGMSystem.SetBGM((ushort)curvalue.BGMIndex, 6);
                 //}
             }
@@ -279,6 +302,27 @@ public unsafe class Mountstuffs : IDisposable
         //test = thisptr->MountObject->Effects;
         //Service.Log.Error("TiltSpeed is is ");
     }
+    private void MountDismountDetour(Int64 a1, char* a2)
+    {
+        //Service.Log.Error("Dismount Triggered");
+        _MountDismountHook!.Original(a1, a2);
+        foreach (var soundData in lastSoundManager->SoundDataPool->Entries)
+        {
+            //Service.Log.Error("Current sounddata is  " + soundData.GetFileName().ExtractText());
+            if (soundData.GetFileName().ExtractText() == lastbgmpath)
+            {
+                //Service.Log.Error("Attempting to kill sounddata for " + soundData.GetFileName().ExtractText());
+                //TODO:fix this adhering to dfade out time, when I tried to do so it would only work on second dismount;
+                soundData.Stop();
+                soundData.TryReset();
+                break;
+            }
+        }
+        //thisptr->MountObject->Effects.GroundTiltAngle = 90f;
+        //thisptr->MountObject->Effects.GroundTiltSpeed = 50f;
+        //test = thisptr->MountObject->Effects;
+        //Service.Log.Error("TiltSpeed is is ");
+    }
 
 
     public void Dispose()
@@ -289,6 +333,8 @@ public unsafe class Mountstuffs : IDisposable
         //this._SetupMountTiltDataHook.Dispose();
         //this._SetupRiderTiltDataHook.Dispose();
         this._MountUpdateHook.Dispose();
+        this._MountDismountHook.Dispose();
+        //this._CheckSigHook.Dispose();
         this._PlayBGMSoundHook.Dispose();
 
         //Service.AddonLifecycle.UnregisterListener(OnTooltipPreDraw);

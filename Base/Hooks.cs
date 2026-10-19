@@ -19,7 +19,8 @@ public static unsafe class Hooks
 
     //Stuff I pulled myself
     //public const string OtherTiltParamSetup = "E8 ?? ?? ?? ?? 48 8B CB E8 ?? ?? ?? ?? 48 83 BB ?? ?? ?? ?? ?? 74";
-    public const string MountUpdate = "40 55 57 41 57 48 81 EC ?? ?? ?? ?? 48 8B F9";
+    public const string MountUpdate = "40 55 57 41 57 48 81 EC ?? ?? ?? ?? 48 8B F9"; //Client::Game::Character::MountContainer.Update
+    public const string MountDismount = "E8 ?? ?? ?? ?? 48 8B 4F ?? F6 81"; //Client::Game::Character::MountContainer.Dismount
 
 
     #region delegates
