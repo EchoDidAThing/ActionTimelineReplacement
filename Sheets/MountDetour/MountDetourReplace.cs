@@ -3,7 +3,6 @@ using ActionTimelineReplacement.Base.Structs;
 using ActionTimelineReplacement.Sheets;
 using System.Collections;
 using System.Runtime.InteropServices;
-using static ActionTimelineReplacement.Base.Structs.EffectContainerFAFO;
 
 namespace ActionTimelineReplacement.Sheets;
 

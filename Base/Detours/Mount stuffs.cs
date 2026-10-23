@@ -39,6 +39,7 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml;
+using FFXIVClientStructs.FFXIV.Client.Game.Object;
 using static FFXIVClientStructs.FFXIV.Client.UI.AddonRelicNoteBook;
 using static FFXIVClientStructs.FFXIV.Client.UI.Agent.AgentActionDetail.Delegates;
 using static FFXIVClientStructs.FFXIV.Client.UI.ListPanel.Delegates;
@@ -80,6 +81,7 @@ public unsafe class Mountstuffs : IDisposable
     public SoundManager* lastSoundManager;
     public string lastbgmpath = "superdefaulttext0w0";
     public bool trykill = false;
+    private MountDetourReplace curvalue;
 
     public const string CheckSig = "E8 ?? ?? ?? ?? 85 C0 74 ?? 48 8B D7 48 8B CE";
     private delegate void MountUpdateDelegate(MountContainer* thisptr);
@@ -101,9 +103,9 @@ public unsafe class Mountstuffs : IDisposable
     public Mountstuffs()
     {
         //_CreateAndSetupMountHook = Service.GameInteropProvider.HookFromAddress<MountContainer.Delegates.CreateAndSetupMount>(MountContainer.Addresses.CreateAndSetupMount.Value, CreateAndSetupDetour);
-       // _SetupMountHook = Service.GameInteropProvider.HookFromAddress<MountContainer.Delegates.SetupMount> (MountContainer.Addresses.SetupMount.Value, SetupDetour);
-        //_SetupMountTiltDataHook = Service.GameInteropProvider.HookFromAddress<EffectContainer.Delegates.LoadMountTiltData>(EffectContainer.Addresses.LoadMountTiltData.Value, SetupMountTiltDataDetour);
-        //_SetupRiderTiltDataHook = Service.GameInteropProvider.HookFromAddress<EffectContainer.Delegates.LoadPlayerTiltData>(EffectContainer.Addresses.LoadPlayerTiltData.Value, SetupRiderTiltDataDetour);
+        //_SetupMountHook = Service.GameInteropProvider.HookFromAddress<MountContainer.Delegates.SetupMount> (MountContainer.Addresses.SetupMount.Value, SetupDetour);
+        _SetupMountTiltDataHook = Service.GameInteropProvider.HookFromAddress<EffectContainer.Delegates.LoadMountTiltData>(EffectContainer.Addresses.LoadMountTiltData.Value, SetupMountTiltDataDetour);
+        _SetupRiderTiltDataHook = Service.GameInteropProvider.HookFromAddress<EffectContainer.Delegates.LoadPlayerTiltData>(EffectContainer.Addresses.LoadPlayerTiltData.Value, SetupRiderTiltDataDetour);
         _MountUpdateHook = Service.GameInteropProvider.HookFromSignature<MountUpdateDelegate>(Hooks.MountUpdate, MountUpdateDetour);
         _PlayBGMSoundHook = Service.GameInteropProvider.HookFromAddress<SoundManager.Delegates.PlayBGMSound>(SoundManager.Addresses.PlayBGMSound.Value, PlayBGMSoundDetour);
         _MountDismountHook = Service.GameInteropProvider.HookFromSignature<MountDismountDelegate>(Hooks.MountDismount, MountDismountDetour);
@@ -114,8 +116,8 @@ public unsafe class Mountstuffs : IDisposable
 
         //this._CreateAndSetupMountHook.Enable();
         //this._SetupMountHook.Enable();
-        //this._SetupMountTiltDataHook.Enable();
-        //this._SetupRiderTiltDataHook.Enable();
+        this._SetupMountTiltDataHook.Enable();
+        this._SetupRiderTiltDataHook.Enable();
         this._MountUpdateHook.Enable();
         this._PlayBGMSoundHook.Enable();
         this._MountDismountHook.Enable();
@@ -140,21 +142,30 @@ public unsafe class Mountstuffs : IDisposable
     {
         // check if owner is corret, then pull and apply mounted tilt values.
         _SetupMountTiltDataHook!.Original(thisptr);
-        //Service.Log.Error("SetupTilt Triggered" + (nint)((thisptr->OwnerObject->CharacterSetup).OwnerObject));
-        //Service.Log.Error("This ID is " + thisptr->OwnerObject->Mount.MountObject->OwnerId + " TiltOwner name is " + thisptr->OwnerObject->GetName() + " || Owner homeworld is " + thisptr->OwnerObject->HomeWorld.ToString() + " || Owner classjob is " + JobTransientsManager.GetOriginal(thisptr->OwnerObject->ClassJob).Abbreviation);
-        var test = (EffectContainerFAFO*)thisptr;
-        var testorig = thisptr;
-        Service.Log.Error("STOP");
-        //thisptr->MountObject->Scale = .2f;
-        //thisptr->OwnerObject->DrawData->head
+        var ownerObject = thisptr->OwnerObject->GetParentCharacter();
+        if (ownerObject == null) return;
 
+        if ((ownerObject->GetName().ToString() == Service.PlayerState.CharacterName) &&
+            (ownerObject->HomeWorld == Service.PlayerState.HomeWorld.RowId) && (ownerObject->IsMounted() == true) &&
+            (ownerObject->Mount.MountId != 0))
+        {
+            var curvalue = MountDetourManager.GetReplacement(ownerObject->Mount.MountId);
+            Service.Log.Warning("TILTmountID is" + ownerObject->Mount.MountId);
+            thisptr->MountGroundTiltAngle = curvalue.MountGroundTilt.TiltAngle;
+            thisptr->MountGroundTiltSpeed = curvalue.MountGroundTilt.TiltSpeed;
+            thisptr->MountGroundTiltOrigin = (EffectContainer.TiltOrigin)curvalue.MountGroundTilt.TiltOrigin;
+
+            thisptr->MountFlightSwimTiltAngle = curvalue.MountFlightTilt.TiltAngle;
+            thisptr->MountFlightSwimTiltSpeed = curvalue.MountFlightTilt.TiltSpeed;
+            thisptr->MountFlightSwimTiltOrigin = (EffectContainer.TiltOrigin)curvalue.MountFlightTilt.TiltOrigin;
+        }
     }
     private SoundData* PlayBGMSoundDetour(SoundManager* thisptr, CStringPointer path)
     {
         //Just do it normally for now, this is a test.
         Service.Log.Warning("Mount Id is " + MountID);
         var origvalue = MountDetourManager.GetOriginal(MountID);
-        var curvalue = MountDetourManager.GetReplacement(MountID);
+        curvalue = MountDetourManager.GetReplacement(MountID);
         var outpath = path;
         lastSoundManager = thisptr;
         //if (BGMPathUpdate)
@@ -175,16 +186,27 @@ public unsafe class Mountstuffs : IDisposable
     }
     private void SetupRiderTiltDataDetour(EffectContainer* thisptr)
     {
-        //Check if owner is correct, then pull and apply rider tilt values
+        // check if owner is corret, then pull and apply mounted tilt values.
         _SetupRiderTiltDataHook!.Original(thisptr);
-        Service.Log.Error("SetupTiltOTHER Triggered" + (nint)thisptr->OwnerObject->DrawObject);
-        //Service.Log.Error("Tiltowner address is " + thisptr-> + " TiltOwner name is " + thisptr->OwnerObject->GetName() + " || Owner homeworld is " + thisptr->OwnerObject->HomeWorld.ToString() + " || Owner classjob is " + JobTransientsManager.GetOriginal(thisptr->OwnerObject->ClassJob).Abbreviation);
-        var test = (EffectContainerFAFO*)thisptr;
-        var testOwner = test->OwnerObject->Effects;
-        Service.Log.Error("STOP");
-        //thisptr->MountObject->Scale = .2f;
-        //thisptr->OwnerObject->DrawData->head
+        var ownerObject = thisptr->OwnerObject->GetAsCharacter();
+        Service.Log.Warning("RIDERTILT called");
+        if (ownerObject == null) return;
+        if (ownerObject->Mount.MountObject == null) return;
+        Service.Log.Warning("OWNERmountID is" + ownerObject->Mount.MountId);
+        if ((ownerObject->GetName().ToString() == Service.PlayerState.CharacterName) &&
+            (ownerObject->HomeWorld == Service.PlayerState.HomeWorld.RowId) && (ownerObject->IsMounted() == true) &&
+            (ownerObject->Mount.MountId != 0))
+        {
+            var curvalue = MountDetourManager.GetReplacement(ownerObject->Mount.MountId);
+            Service.Log.Warning("SECONDOWNERmountID is" + ownerObject->Mount.MountId);
+            thisptr->RiderGroundTiltAngle = curvalue.RiderGroundTilt.TiltAngle;
+            thisptr->RiderGroundTiltSpeed = curvalue.RiderGroundTilt.TiltSpeed;
+            thisptr->RiderGroundTiltOrigin = (EffectContainer.TiltOrigin)curvalue.RiderGroundTilt.TiltOrigin;
 
+            thisptr->RiderFlightSwimTiltAngle = curvalue.RiderFlightTilt.TiltAngle;
+            thisptr->RiderFlightSwimTiltSpeed = curvalue.RiderFlightTilt.TiltSpeed;
+            thisptr->RiderFlightSwimTiltOrigin = (EffectContainer.TiltOrigin)curvalue.RiderFlightTilt.TiltOrigin;
+        }
     }
 
     private void CreateAndSetupDetour(MountContainer* thisptr, short mountid, uint buddyModelTop, uint buddyModelBody, uint buddyModelLegs, byte buddystain, byte unk6, byte unk7)
@@ -203,11 +225,11 @@ public unsafe class Mountstuffs : IDisposable
         _CreateAndSetupMountHook!.Original(thisptr, mountid, buddyModelTop, buddyModelBody, buddyModelLegs, buddystain, unk6, unk7);
         Service.Log.Error("This ID is " + thisptr->MountObject->OwnerId + "Mount ID is " + thisptr->MountId + "Owner name is " + thisptr->OwnerObject->GetName +  " || Owner homeworld is " + thisptr->OwnerObject->HomeWorld.ToString() + " || Owner classjob is " + JobTransientsManager.GetOriginal(thisptr->OwnerObject->ClassJob).Abbreviation);
         Service.Log.Error("Scale value is currently: " + thisptr->MountObject->Scale);
-        var test2 = (CharacterContainerFAFO*)thisptr->OwnerObject;
-        Service.Log.Error("camera scale values are probably " + test2->CameraOffset1 + " and " + test2->CameraOffset2 + " testing value 2");
+        //var test2 = (CharacterContainerFAFO*)thisptr->OwnerObject;
+        //Service.Log.Error("camera scale values are probably " + test2->CameraOffset1 + " and " + test2->CameraOffset2 + " testing value 2");
         //test2->CameraOffset1 = 8f;
         //test2->CameraOffset2 = 8f;
-        Service.Log.Error("newvalues are probably " + test2->CameraOffset1 + " and " + test2->CameraOffset2 + " testing value 2");
+        //Service.Log.Error("newvalues are probably " + test2->CameraOffset1 + " and " + test2->CameraOffset2 + " testing value 2");
         //thisptr->OwnerObject->DrawData->head
         var test = thisptr;
         Service.Log.Error("STOP");
@@ -227,15 +249,15 @@ public unsafe class Mountstuffs : IDisposable
 
 
     }
-
+    
     private void MountUpdateDetour(MountContainer* thisptr)
     {
         //might not have mount data?
         _MountUpdateHook!.Original(thisptr);
         //thisptr->MountObject->Scale = 1f;
         //camera offset stuff
-        var mountObject = (Character*)thisptr->MountObject;
-        var ownerObject = (Character*)thisptr->OwnerObject;
+        var mountObject = thisptr->MountObject;
+        var ownerObject = thisptr->OwnerObject;
         if ((ownerObject->GetName().ToString() == Service.PlayerState.CharacterName) && (ownerObject->HomeWorld == Service.PlayerState.HomeWorld.RowId) && (ownerObject->IsMounted() == true) && (thisptr->MountId != 0))
         {
             var origvalue = MountDetourManager.GetOriginal(thisptr->MountId);
@@ -243,17 +265,12 @@ public unsafe class Mountstuffs : IDisposable
             //if ((mountObject == null) || (ownerObject == null)) { return; }
             if (mountObject != null)
             {
+                //CharacterFAFO* mountObjectFAFO = (CharacterFAFO*)thisptr->MountObject;
+                //EffectContainer* mountTiltFAFO = (EffectContainer*)mountObjectFAFO->EffectContainerMem;
                 //Service.Log.Warning("trying apply to mount object");
                 //apply scale[WORKS]
                 mountObject->Scale = (curvalue.Scale.GetByRaceAndSex(ownerObject->DrawData.CustomizeData.Race, ownerObject->GetSex())/100f);
-                //apply tilts[FIX]
-                mountObject->Effects.MountGroundTiltAngle = curvalue.MountGroundTilt.TiltAngle;
-                mountObject->Effects.MountGroundTiltSpeed = curvalue.MountGroundTilt.TiltSpeed;
-                mountObject->Effects.MountGroundTiltOrigin = (EffectContainer.TiltOrigin)curvalue.MountGroundTilt.TiltOrigin;
-
-                mountObject->Effects.MountFlightSwimTiltAngle = curvalue.MountFlightTilt.TiltAngle;
-                mountObject->Effects.MountFlightSwimTiltSpeed = curvalue.MountFlightTilt.TiltSpeed;
-                mountObject->Effects.MountFlightSwimTiltOrigin = (EffectContainer.TiltOrigin)curvalue.MountFlightTilt.TiltOrigin;
+                
                 // apply risefalltilt
                 //mountObject->
                 // BGM[WORKS]
@@ -283,6 +300,7 @@ public unsafe class Mountstuffs : IDisposable
                 ownerObject->Effects.RiderFlightSwimTiltAngle = curvalue.RiderFlightTilt.TiltAngle;
                 ownerObject->Effects.RiderFlightSwimTiltSpeed = curvalue.RiderFlightTilt.TiltSpeed;
                 ownerObject->Effects.RiderFlightSwimTiltOrigin = (EffectContainer.TiltOrigin)curvalue.RiderFlightTilt.TiltOrigin;
+                //ownerObject->Update();
             }
 
         }
@@ -331,8 +349,8 @@ public unsafe class Mountstuffs : IDisposable
         // When we're done, disable the hook again and clean up. Dispose does this in one go!
         //this._CreateAndSetupMountHook.Dispose();
         //this._SetupMountHook.Dispose();
-        //this._SetupMountTiltDataHook.Dispose();
-        //this._SetupRiderTiltDataHook.Dispose();
+        this._SetupMountTiltDataHook.Dispose();
+        this._SetupRiderTiltDataHook.Dispose();
         this._MountUpdateHook.Dispose();
         this._MountDismountHook.Dispose();
         //this._CheckSigHook.Dispose();

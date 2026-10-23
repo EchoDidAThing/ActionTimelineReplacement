@@ -5,7 +5,6 @@ using FFXIVClientStructs.FFXIV.Client.Graphics.Render;
 using System.Collections;
 using System.Numerics;
 using System.Runtime.InteropServices;
-using static ActionTimelineReplacement.Base.Structs.EffectContainerFAFO;
 
 namespace ActionTimelineReplacement.Sheets;
 
