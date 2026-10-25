@@ -58,9 +58,12 @@ public class UiGlobals
         ImGui.NewLine();
     }
 
-    public static bool CheckIsEnabled(bool global, bool set, bool local)
+    public static bool CheckIsEnabled(bool global, Configuration.ReplacementSet set, bool local)
     {
-        if ((global) && (set) && (local))
+        if ((global) && (set.Enabled) && (local) && 
+            (set.Jobs.CheckJob(Service.PlayerState.ClassJob.Value.Abbreviation.ToString())) &&
+            (set.HomeWorld == Service.PlayerState.HomeWorld.RowId) &&
+            (set.CharacterName == Service.PlayerState.CharacterName))
         {
             return true;
         }

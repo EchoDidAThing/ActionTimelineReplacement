@@ -43,7 +43,7 @@ public class StatusLoopVFXMain
                 {
                     var LocalWriter = Writer[key];
                     var GetOriginal = StatusLoopVFXManager.GetOriginal(key);
-                    bool enablechanges = UiGlobals.CheckIsEnabled(Service.Config.EnableReplacement, _activeSet.Enabled, LocalWriter.Enabled);
+                    bool enablechanges = UiGlobals.CheckIsEnabled(Service.Config.EnableReplacement, _activeSet, LocalWriter.Enabled);
 
                     using (ImRaii.PushFont(UiBuilder.IconFont))
                     {
@@ -56,7 +56,7 @@ public class StatusLoopVFXMain
                     }
                     if (ImGui.Checkbox("##" + key, ref LocalWriter.Enabled))
                     {
-                        enablechanges = UiGlobals.CheckIsEnabled(Service.Config.EnableReplacement, _activeSet.Enabled, LocalWriter.Enabled);
+                        enablechanges = UiGlobals.CheckIsEnabled(Service.Config.EnableReplacement, _activeSet, LocalWriter.Enabled);
                         if (enablechanges) Setup.SetupByType(key, type);
                         else Setup.SetupByType(key, type, true);
                         Service.Config.Save();

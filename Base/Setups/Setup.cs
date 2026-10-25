@@ -78,7 +78,7 @@ public static unsafe partial class Setup
                 SetStatusLoopVFX(id, reset);
                 break;
             case "TiltParam":
-                SetTiltParam(id, reset);
+                //SetTiltParam(id, reset);
                 break;
             case "VFX":
                 SetVfx(id, reset);

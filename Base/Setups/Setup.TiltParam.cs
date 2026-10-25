@@ -14,6 +14,9 @@ public static unsafe partial class Setup
     }
     public static void SetTiltParam(uint id, bool reset = false)
     {
+        //testing to see if this is still writing to memory.
+        Service.Log.Warning("SETTILTPARAMCALLED");
+        return;
         var data = Hooks.GetTiltParamData(id);
         var replacement = reset
             ? TiltParamManager.GetOriginal(id)

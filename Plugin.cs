@@ -27,7 +27,7 @@ public sealed class Plugin : IDalamudPlugin
 
 
         //用于读取Config
-        Service.Log.Error("cur value is " + Service.PluginInterface.ConfigFile.FullName);
+        //Service.Log.Error("cur value is " + Service.PluginInterface.ConfigFile.FullName);
         Service.Config = pluginInterface.GetPluginConfig() as Configuration ?? new Configuration();
         //Service.Config.Load();
         //Service.Log.Error("cur value is " + Service.Config.ReplacementSets[0].ActionTransientsWriter[30].Replacement);

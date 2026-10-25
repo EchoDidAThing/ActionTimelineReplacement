@@ -40,7 +40,7 @@ public class OrnamentMain
                 if (ImGui.CollapsingHeader($"#{key:D5} - " + GetName(key))) {
                     var LocalWriter = Writer[key];
                     var old = OrnamentManager.GetOriginal(key);
-                    bool enablechanges = UiGlobals.CheckIsEnabled(Service.Config.EnableReplacement, _activeSet.Enabled, LocalWriter.Enabled);
+                    bool enablechanges = UiGlobals.CheckIsEnabled(Service.Config.EnableReplacement, _activeSet, LocalWriter.Enabled);
 
                     using (ImRaii.PushFont(UiBuilder.IconFont)) {
                         if (UiGlobals.DrawDeleteEntryButton($"{FontAwesomeIcon.Trash.ToIconString()}##{key}")) {
@@ -50,7 +50,7 @@ public class OrnamentMain
                         }
                     }
                     if (ImGui.Checkbox("##" + key, ref LocalWriter.Enabled)) {
-                        enablechanges = UiGlobals.CheckIsEnabled(Service.Config.EnableReplacement, _activeSet.Enabled, LocalWriter.Enabled);
+                        enablechanges = UiGlobals.CheckIsEnabled(Service.Config.EnableReplacement, _activeSet, LocalWriter.Enabled);
                         if (enablechanges) Setup.SetupByType(key, type); 
                         else Setup.SetupByType(key, type, true);
                         Service.Config.Save();

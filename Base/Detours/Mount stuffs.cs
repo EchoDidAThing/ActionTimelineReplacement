@@ -35,6 +35,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.Design;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.Reflection.Metadata.Ecma335;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -85,7 +86,7 @@ public unsafe class Mountstuffs : IDisposable
 
     public const string CheckSig = "E8 ?? ?? ?? ?? 85 C0 74 ?? 48 8B D7 48 8B CE";
     private delegate void MountUpdateDelegate(MountContainer* thisptr);
-    private delegate void MountDismountDelegate(Int64 a1, char* a2);
+    private delegate void MountDismountDelegate(MountContainer* a1, char* a2);
 
     private delegate char CheckSigDelegate(Int64 a1);
 
@@ -109,7 +110,7 @@ public unsafe class Mountstuffs : IDisposable
         _MountUpdateHook = Service.GameInteropProvider.HookFromSignature<MountUpdateDelegate>(Hooks.MountUpdate, MountUpdateDetour);
         _PlayBGMSoundHook = Service.GameInteropProvider.HookFromAddress<SoundManager.Delegates.PlayBGMSound>(SoundManager.Addresses.PlayBGMSound.Value, PlayBGMSoundDetour);
         _MountDismountHook = Service.GameInteropProvider.HookFromSignature<MountDismountDelegate>(Hooks.MountDismount, MountDismountDetour);
-        _CheckSigHook = Service.GameInteropProvider.HookFromSignature<CheckSigDelegate>(CheckSig, CheckSigDetour);
+        //_CheckSigHook = Service.GameInteropProvider.HookFromSignature<CheckSigDelegate>(CheckSig, CheckSigDetour);
         //_ItemDragDropGetIconIDHook = Service.GameInteropProvider.HookFromAddress<AtkComponentDragDrop.Delegates.GetIconId>(AtkComponentDragDrop.Addresses.GetIconId.Value, DragDropGetIconDetour);
         //_ItemHoveredHook = Service.GameInteropProvider.HookFromSignature<ItemHoveredDelegate>(Hooks.itemhoveredhook, ItemHoveredDetour);
         //_ShowTooltipHook = Service.GameInteropProvider.HookFromAddress<AtkTooltipManager.Delegates.ShowTooltip>(AtkTooltipManager.Addresses.ShowTooltip.Value, AtkTooltipManagerShowTooltipDetour);
@@ -140,11 +141,9 @@ public unsafe class Mountstuffs : IDisposable
     
     private void SetupMountTiltDataDetour(EffectContainer* thisptr)
     {
-        // check if owner is corret, then pull and apply mounted tilt values.
         _SetupMountTiltDataHook!.Original(thisptr);
         var ownerObject = thisptr->OwnerObject->GetParentCharacter();
         if (ownerObject == null) return;
-
         if ((ownerObject->GetName().ToString() == Service.PlayerState.CharacterName) &&
             (ownerObject->HomeWorld == Service.PlayerState.HomeWorld.RowId) && (ownerObject->IsMounted() == true) &&
             (ownerObject->Mount.MountId != 0))
@@ -154,10 +153,28 @@ public unsafe class Mountstuffs : IDisposable
             thisptr->MountGroundTiltAngle = curvalue.MountGroundTilt.TiltAngle;
             thisptr->MountGroundTiltSpeed = curvalue.MountGroundTilt.TiltSpeed;
             thisptr->MountGroundTiltOrigin = (EffectContainer.TiltOrigin)curvalue.MountGroundTilt.TiltOrigin;
+            switch (curvalue.MountGroundTilt.ReverseRotation)
+            {
+                case true:
+                    thisptr->MountGroundTiltFlags = EffectContainer.TiltFlags.ReverseRotation;
+                    break;
+                case false:
+                    thisptr->MountGroundTiltFlags = EffectContainer.TiltFlags.None;
+                    break;
+            }
 
             thisptr->MountFlightSwimTiltAngle = curvalue.MountFlightTilt.TiltAngle;
             thisptr->MountFlightSwimTiltSpeed = curvalue.MountFlightTilt.TiltSpeed;
             thisptr->MountFlightSwimTiltOrigin = (EffectContainer.TiltOrigin)curvalue.MountFlightTilt.TiltOrigin;
+            switch (curvalue.MountFlightTilt.ReverseRotation)
+            {
+                case true:
+                    thisptr->MountFlightSwimTiltFlags = EffectContainer.TiltFlags.ReverseRotation;
+                    break;
+                case false:
+                    thisptr->MountFlightSwimTiltFlags = EffectContainer.TiltFlags.None;
+                    break;
+            }
         }
     }
     private SoundData* PlayBGMSoundDetour(SoundManager* thisptr, CStringPointer path)
@@ -202,10 +219,28 @@ public unsafe class Mountstuffs : IDisposable
             thisptr->RiderGroundTiltAngle = curvalue.RiderGroundTilt.TiltAngle;
             thisptr->RiderGroundTiltSpeed = curvalue.RiderGroundTilt.TiltSpeed;
             thisptr->RiderGroundTiltOrigin = (EffectContainer.TiltOrigin)curvalue.RiderGroundTilt.TiltOrigin;
+            switch (curvalue.RiderGroundTilt.ReverseRotation)
+            {
+                case true:
+                    thisptr->RiderGroundTiltFlags = EffectContainer.TiltFlags.ReverseRotation;
+                    break;
+                case false:
+                    thisptr->RiderGroundTiltFlags = EffectContainer.TiltFlags.None;
+                    break;
+            }
 
             thisptr->RiderFlightSwimTiltAngle = curvalue.RiderFlightTilt.TiltAngle;
             thisptr->RiderFlightSwimTiltSpeed = curvalue.RiderFlightTilt.TiltSpeed;
             thisptr->RiderFlightSwimTiltOrigin = (EffectContainer.TiltOrigin)curvalue.RiderFlightTilt.TiltOrigin;
+            switch (curvalue.RiderFlightTilt.ReverseRotation)
+            {
+                case true:
+                    thisptr->RiderFlightSwimReverseTilt = EffectContainer.TiltFlags.ReverseRotation;
+                    break;
+                case false:
+                    thisptr->RiderFlightSwimReverseTilt = EffectContainer.TiltFlags.None;
+                    break;
+            }
         }
     }
 
@@ -270,13 +305,8 @@ public unsafe class Mountstuffs : IDisposable
                 //Service.Log.Warning("trying apply to mount object");
                 //apply scale[WORKS]
                 mountObject->Scale = (curvalue.Scale.GetByRaceAndSex(ownerObject->DrawData.CustomizeData.Race, ownerObject->GetSex())/100f);
-                
+             
                 // apply risefalltilt
-                //mountObject->
-                // BGM[WORKS]
-                //TESTHERE: hot swapping the wanted values into the bgm row, then reverting once the setbgm is done.
-                //or better yet hot swap in my own addresses. it is just a intptr after all?
-                //Service.Log.Warning("Mount Id is " + MountID);
                 MountID = thisptr->MountId;
                 
                 
@@ -321,10 +351,12 @@ public unsafe class Mountstuffs : IDisposable
         //test = thisptr->MountObject->Effects;
         //Service.Log.Error("TiltSpeed is is ");
     }
-    private void MountDismountDetour(Int64 a1, char* a2)
+    private void MountDismountDetour(MountContainer* a1, char* a2)
     {
         //Service.Log.Error("Dismount Triggered");
         _MountDismountHook!.Original(a1, a2);
+        if (lastSoundManager == null) return;
+        if (a1->OwnerObject->GetName().ToString() != Service.PlayerState.CharacterName) return;
         foreach (var soundData in lastSoundManager->SoundDataPool->Entries)
         {
             //Service.Log.Error("Current sounddata is  " + soundData.GetFileName().ExtractText());
@@ -353,8 +385,8 @@ public unsafe class Mountstuffs : IDisposable
         this._SetupRiderTiltDataHook.Dispose();
         this._MountUpdateHook.Dispose();
         this._MountDismountHook.Dispose();
-        //this._CheckSigHook.Dispose();
         this._PlayBGMSoundHook.Dispose();
+        //this._CheckSigHook.Dispose();
 
         //Service.AddonLifecycle.UnregisterListener(OnTooltipPreDraw);
         //Service.AddonLifecycle.UnregisterListener(OnTooltipRequestedUpdate);
