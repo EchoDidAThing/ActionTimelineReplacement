@@ -14,6 +14,7 @@ internal class HookHandler : IDisposable
     private ShowTooltipDetour _ShowTooltipHook;
     private IconLoadDetour _IconLoadHook;
     private Mountstuffs _MountStuffs;
+    private Minionstuffs _MinionStuffs;
     public HookHandler()
     {
         _Register();
@@ -23,6 +24,7 @@ internal class HookHandler : IDisposable
     {
         _ShowTooltipHook = new ShowTooltipDetour();
         _MountStuffs = new Mountstuffs();
+        _MinionStuffs = new Minionstuffs();
         _IconLoadHook = new IconLoadDetour();
         //_ShowActionbarHook = new ShowActionbarDetour();
     }
@@ -31,6 +33,7 @@ internal class HookHandler : IDisposable
     {
         _ShowTooltipHook?.Dispose();
         _MountStuffs?.Dispose();
+        _MinionStuffs?.Dispose();
         _IconLoadHook?.Dispose();
         //_ShowActionbarHook?.Dispose();
     }
